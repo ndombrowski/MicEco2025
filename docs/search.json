@@ -1,0 +1,152 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Microbial Ecology: Introduction into Data Analysis",
+    "section": "",
+    "text": "Nina Dombrowski\n\n\nInstitute for Biodiversity and Ecosystem Dynamics (IBED), University of Amsterdam (UVA)\n\n\nn.dombrowski@uva.nl\n\n\n\nIntroduction\nWelcome to the Microbial Ecology Command-Line Crash Course!\nIn this short tutorial, you will learn how to use the command line and a High-Performance Computing (HPC) environment in order to move from raw 16S sequencing reads to a basic count table of microbial taxa.\nThis course is designed for students in microbial ecology with little or no prior experience using the command line. During this tutorial, you will learn how to:\n\nInstall a Terminal\n\nHow to access a Unix/Linux command line\nHow to run basic commands\n\nDocument your Code\n\nHow to use markdown, Quarto, and comments in scripts\nHow to track your work and make your analyses reproducible\n\nNavigate the Command Line\n\nNavigating the filesystem (cd, ls, pwd)\nWorking with files (mkdir, cp, mv, rm, cat, head, less)\nSearching and filtering data (grep, wc, cut)\nViewing and understanding FASTQ files\n\nWork with an HPC\n\nConnecting to the cluster (SSH)\nUnderstanding file systems and job schedulers (e.g., SLURM)\nRunning and interpreting command-line tools (e.g., fastqc, seqkit)\nSetting up and activating conda environments\nRunning workflows with Snakemake",
+    "crumbs": [
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "source/terminal.html",
+    "href": "source/terminal.html",
+    "title": "1  Setting up a terminal",
+    "section": "",
+    "text": "1.1 Terminology\nThe command-line interface (CLI) is an alternative to a graphical user interface (GUI), with which you are likely more familiar. Both allow you to interact with your computer’s operating system but in a slightly different way:\nThe CLI is also commonly called the shell, terminal, console, or prompt. These terms are related but not identical:\nThere are several types of shells — for example, bash or zsh (that use slightly different languages to issue commands). This tutorial was written on a computer that uses bash, which stands for Bourne Again Shell.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Setting up a terminal</span>"
+    ]
+  },
+  {
+    "objectID": "source/terminal.html#terminology",
+    "href": "source/terminal.html#terminology",
+    "title": "1  Setting up a terminal",
+    "section": "",
+    "text": "In a GUI, you click buttons, open folders, and use menus\nIn the CLI, you type text commands and see text output\n\n\n\nThe terminal (or console) is the window or program that lets you type commands. It is the interface you open, for example, Terminal on macOS, WSL on Windows, or an HPC login session.\nThe shell is the program that actually interprets the commands you type inside the terminal and tells the operating system what to do. The shell understands commands like cd that is used to change directories.\nPrompt: the text displayed by the shell that indicates it is ready to accept a command. The prompt often shows useful information, like your username, machine name, and current directory. Example of a prompt: user@machine:~$",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Setting up a terminal</span>"
+    ]
+  },
+  {
+    "objectID": "source/terminal.html#installation-guides",
+    "href": "source/terminal.html#installation-guides",
+    "title": "1  Setting up a terminal",
+    "section": "1.2 Installation guides",
+    "text": "1.2 Installation guides\n\n1.2.1 Linux\nIf you’re using Linux, you already have everything you need — no installation required. All Linux systems come with a terminal and a shell, and the default shell is usually Bash.\nYou can open a terminal from your applications menu or by searching for Gnome Terminal, KDE Konsole, or xterm, depending on your desktop environment.\nTo confirm which shell you’re using, type:\necho $SHELL\nIf the output does not end in /bash, you can start Bash manually by typing:\nbash\nYou should then see a new prompt (often ending in $) indicating that Bash is running.\n\n\n1.2.2 Mac\nAll Mac computers also come with a built-in terminal and shell. To open the terminal:\n\nIn Finder, go to Go → Utilities, then open Terminal.\nOr use Spotlight Search (⌘ + Space), type Terminal, and press Return.\n\nThe default shell depends on your macOS version:\n\nmacOS Mojave (10.14) or earlier → Bash\nmacOS Catalina (10.15) or later → Zsh\n\nCheck which shell you’re currently using:\necho $SHELL\nIf the output does not end in /bash, you can start Bash manually by typing:\nbash\nThen check again with echo $SHELL. If you have trouble switching, don’t worry — nearly all commands in this tutorial will also work in Zsh.\n\n\n1.2.3 Windows\nUnlike macOS or Linux, Windows doesn’t include a Unix-style terminal by default, so you’ll need to install one of the following:\n\nMobaXterm (recommended)\n\nProvides a terminal with Linux-like commands, built-in\nInstallation guide: MobaXterm setup instructions\nEasiest option for beginners and lightweight to install.\n\nWindows Subsystem for Linux (WSL2)\n\nGives you a full Linux environment directly on Windows.\nRecommended if you’re comfortable installing software or already have some command-line experience.\nUses Ubuntu by default, which includes Bash and all standard Linux tools.\nInstallation guide:Microsoft WSL install instructions\n\n\nOnce installed, open your terminal (MobaXterm or Ubuntu via WSL2) and verify that Bash is available:\necho $SHELL",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Setting up a terminal</span>"
+    ]
+  },
+  {
+    "objectID": "source/terminal.html#sanity-check",
+    "href": "source/terminal.html#sanity-check",
+    "title": "1  Setting up a terminal",
+    "section": "1.3 Sanity check",
+    "text": "1.3 Sanity check\nAfter setup, open your terminal. You should see something like this:\n\nIf you see a prompt ending in $ (for example user@machine:~$), your shell is ready — you’re all set to follow along with the tutorial!",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Setting up a terminal</span>"
+    ]
+  },
+  {
+    "objectID": "source/documentation.html",
+    "href": "source/documentation.html",
+    "title": "2  Documenting your code",
+    "section": "",
+    "text": "2.1 Choosing your editor\nDocumenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts, much like a detailed lab notebook.\nFor more in-depth guidance, see A Guide to Reproducible Code in Ecology and Evolution. While examples are mainly in R, the principles are general and apply across programming languages.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Documenting your code</span>"
+    ]
+  },
+  {
+    "objectID": "source/documentation.html#choosing-your-editor",
+    "href": "source/documentation.html#choosing-your-editor",
+    "title": "2  Documenting your code",
+    "section": "",
+    "text": "2.1.1 Plain text editor\nAvoid visual editors like Word, as they are not designed for code and can inadvertently change syntax (e.g., replacing backticks \\`` with apostrophes’`).\nStart simple with a plain text editor, such as:\n\nTextEdit (Mac)\nNotepad (Windows)\n\nThese allow you to write and save code safely, though they lack advanced features like syntax highlighting or integrated code execution.\n\n\n2.1.2 Rmarkdown in RStudio\nRMarkdown combines plain text, code, and documentation in one document. You can write your analysis and explanatory text together, then “knit” the document to HTML, PDF, or Word.\nTo create an RMarkdown file in RStudio:\n\nGo to File → New File → R Markdown\nChoose a title, author, and output format\nWrite your code and text\nClick Knit to render the document\n\nMore info: RMarkdown tutorial\n\n\n2.1.3 Quarto in Rstudio\nQuarto is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options.\nTo create a Quarto document:\n\nGo to File → New File → Quarto Document\nChoose a title, author, and output format\nClick Render to generate your document\n\nMore info: Quarto documentation",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Documenting your code</span>"
+    ]
+  },
+  {
+    "objectID": "source/documentation.html#markdown-for-documentation",
+    "href": "source/documentation.html#markdown-for-documentation",
+    "title": "2  Documenting your code",
+    "section": "2.2 Markdown for Documentation",
+    "text": "2.2 Markdown for Documentation\nMarkdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables.\nHeaders:\nUse # to add a header and separate different sections of your documentation. The more # symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the # and the header name.\n# Main Header\n## Subheader\nLists:\nUse - or * for unordered lists and numbers for ordered lists.\nOrdered lists are created by using numbers followed by periods. The numbers do not have to be in numerical order, but the list should start with the number one.\n1. First item\n2. Second item\n3. Third item\n4. Fourth item \n1. First item\n2. Second item\n3. Third item\n    1. Indented item\n    2. Indented item\n4. Fourth item \nUnordered lists are created using dashes (-), asterisks (*), or plus signs (+) in front of line items. Indent one or more items to create a nested list.\n- First item\n- Second item\n- Third item\n- Fourth item \n - First item\n- Second item\n- Third item\n    - Indented item\n    - Indented item\n- Fourth item \nYou can also combine ordered with unordered lists:\n1. First item\n2. Second item\n3. Third item\n    - Indented item\n    - Indented item\n4. Fourth item\nCode Blocks:\nEnclose code snippets in triple backticks followed by the computational language, i.e. bash or python, used.\n```bash\ngrep \"control\" downloads/Experiment1.txt\n```\nLinks:\nYou can easily add links to external resources or within your documentation as follows:\n[Link Text](https://www.example.com)\nEmphasis:\nYou can use * or _ to write italic and ** or __ for bold text.\n*italic*\n**bold**\nPictures\nYou can also add images to your documentation as follows:\n![Alt Text](path/to/your/image.jpg)\nHere, replace Alt Text with a descriptive alternative text for your image, and path/to/your/image.jpg with the actual path or URL of your image.\nTables\nTables can be useful for organizing information. Here’s a simple table:\n| Header 1 | Header 2 |\n| ---------| ---------|\n| Content 1| Content 2|\n| Content 3| Content 4|",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Documenting your code</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html",
+    "href": "source/cli.html",
+    "title": "3  Navigating the command line",
+    "section": "",
+    "text": "3.1 pwd: Find out where we are\nOnce your terminal is open, let’s get oriented by typing your first command:\npwd\nThe command pwd stands for print working directory. It tells you where you currently are in the file system — that is, which folder (directory) your shell is “looking at” right now. You should see something like:",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#pwd-find-out-where-we-are",
+    "href": "source/cli.html#pwd-find-out-where-we-are",
+    "title": "3  Navigating the command line",
+    "section": "",
+    "text": "/Users/YourUserName\n\n\n\n\n\n\nTipTip: Finding the Desktop on Different Systems\n\n\n\n\n\nYour home directory path varies slightly across operating systems. Here’s how to locate yourself and connect to familiar locations like the Desktop:\nmacOS\n\nYour home directory is /Users/YourUserName\nTo open the folder you are currently in Finder:open .\nYour desktop is at /Users/YourUserName/Desktop\n\nMobaXterm (Windows)\n\nYour home directory is /home/mobaxterm\nBy default, this is temporary and is deleted when you close MobaXterm. To make it permanent:\n\nGo to Settings –&gt; Configuration –&gt; General\nUnder Persistent home directory, choose a folder of your choice\n\nTo open the folder you are currently in the Windows File explorer: explorer.exe .\nYour Desktop is usually at: /mnt/c/Users/YourUserName/Desktop or /mnt/c/Users/YourUserName/OneDrive/Desktop (when using OneDrive)\n\nWSL2 (Windows)\n\nYour home directory is/home/YourUserName\nTo open the folder you are currently in the Windows File explorer: explorer.exe .\nYour Desktop is usually at: /mnt/c/Users/YourUserName/Desktop or /mnt/c/Users/YourUserName/OneDrive/Desktop (when using OneDrive)\n\nIf you want to access the Uva OneDrive folder:\nIf your OneDrive folder name includes spaces (like OneDrive - UvA), use quotes around the path:\n\ncd \"/mnt/c/Users/YourUserName/OneDrive - UvA\"",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#ls-list-the-contents-of-a-directory",
+    "href": "source/cli.html#ls-list-the-contents-of-a-directory",
+    "title": "3  Navigating the command line",
+    "section": "3.2 ls: List the contents of a directory",
+    "text": "3.2 ls: List the contents of a directory\nNow that we know where we are, let’s find out what is inside that location. The command ls (short for list) shows the files and folders in your current directory. Type the following and press enter:\n\nls\n\nYou should see something like this (your output will vary depending on what’s in your directory):\n\nThe colors and formatting depend on your terminal settings, but typically:\n\nFolders (directories) appear in one color (often green or blue)\nFiles appear in another (often white or bold)\n\nIf your directory contains many items, the output can quickly become overwhelming. To make sense of it, we can use options and arguments to control how commands behave.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#the-structure-of-a-command",
+    "href": "source/cli.html#the-structure-of-a-command",
+    "title": "3  Navigating the command line",
+    "section": "3.3 The structure of a command",
+    "text": "3.3 The structure of a command\nA command generally has three parts:\n\nA command: The program you want to run, i.e. ls\nAn option (or flag): A way to modify how the command behaves, i.e -l (long format)\nAn optional argument: The input, i.e. a file or folder\n\n\nTry the following command in your current directory to “List (ls) the contents of the current folder and show details in long format (-l)”:\n\nls -l\n\nAfter running this you should see a more detail list of the contents of your folder.In the example below we can see that we now print additional information about who owns the files (i.e. access modes), how large the files are, when they were last modified and of course the name:",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#getting-help",
+    "href": "source/cli.html#getting-help",
+    "title": "3  Navigating the command line",
+    "section": "3.4 Getting help",
+    "text": "3.4 Getting help\nAt some point, you’ll want to know what options a command has or how it works. In this case, you can always check the manual pages (or man pages). Try this:\n\nman ls\n\nThis opens the manual entry for the command ls. You can scroll through it using:\n\n↑ / ↓ arrows or the space bar to move down,\nb to move back up,\nq to quit the manual.\n\nNot all commands use man. Depending on the program, there are a few common patterns you can try\n\nman ls\nls --help\nls -h\n\nFor complex software, like bioinformatics tools, the most helpful documentation is often:\n\nThe tool’s official website or GitHub repository\nThe –help output that lists all parameters and examples",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#mkdir-make-a-new-folder",
+    "href": "source/cli.html#mkdir-make-a-new-folder",
+    "title": "3  Navigating the command line",
+    "section": "3.5 mkdir: Make a new folder",
+    "text": "3.5 mkdir: Make a new folder\nBefore we start moving around, let’s make sure we all work from the same place. To stay organized, we will create a dedicated folder for our analysis. We will call it data_analysis and create it in our home directory:\n\n# Move into the home directory (the starting point of your system)\ncd ~\n\n# Create a new folder called 'data_analysis'\nmkdir data_analysis\n\n# Check that the folder was created successfully\nls\n\n# Move into the new folder\ncd data_analysis\n\n# Confirm where we are\npwd\n\nYou should now see that your current working directory (pwd) ends with /data_analysis. This is where we’ll keep all our files and run our commands for the next exercises.\n\n\n\n\n\n\nTipTip: Commenting your code\n\n\n\n\n\nNotice how we added # and some notes above each command?\nAnything written after # in Bash is a comment — it won’t be executed, but it helps you (and others) understand what the command does.\nIn your own work, add short, meaningful comments above key steps. Avoid restating the obvious — instead, explain why you’re doing something or what it achieves.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#cd-move-around-folders",
+    "href": "source/cli.html#cd-move-around-folders",
+    "title": "3  Navigating the command line",
+    "section": "3.6 cd: Move around folders",
+    "text": "3.6 cd: Move around folders\nNow that we have our own project folder, let’s learn how to move around the file system.\nThe file system is structured like a tree, starting from a single “root” directory /. All other folders branch out from it.\n\nThere are two ways to specify a path:\n\nAbsolute path: starts from the root (e.g. /Users/YourUserName/Documents)\nRelative path: starts from your current location (e.g. Documents if you’re already in /Users/YourUserName)\n\nLet’s practice moving between folders (at each step, use pwd in case you feel that you get lost):\n\n# Make a new folder in data_analysis \nmkdir raw_reads \n\n# Move into a new folder (by using the relative path)\ncd raw_reads\n\n# Move one level up\ncd ..\n\n# Move multiple levels at once\ncd data_analysis/raw_reads\n\n# Quickly go back home\ncd ~\n\n\n\n\n\n\n\nTipTip: Command-line completion\n\n\n\n\n\nSome tips for faster navigation:\n\nUse Tab for autocompletion — type the first few letters of a folder name and press Tab.\nIf there’s more than one match, press Tab twice to see all options.\nUse ↑ / ↓ arrows to scroll through previously entered commands\n\n\n\n\n\n\n\n\n\n\nCautionExercise\n\n\n\n\n\n\nCreate a new folder inside your data_analysis directory called results.\nMove into that folder and confirm your location with pwd.\nMove back to data_analysis using cd …\nUse ls to confirm both results and raw_reads are there.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  }
+]

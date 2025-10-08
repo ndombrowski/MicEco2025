@@ -1,0 +1,49 @@
+---
+format:
+  html:
+    toc: false      # hide TOC in HTML
+  pdf:
+    toc: true       # keep TOC in PDF
+---
+
+::: {.content-visible when-format="html"}
+
+<div class="paper-authors">
+  <p><strong>Nina Dombrowski</strong></p>
+  <p>Institute for Biodiversity and Ecosystem Dynamics (IBED), University of Amsterdam (UVA)</p>
+  <p><a href="mailto:n.dombrowski@uva.nl">n.dombrowski@uva.nl</a></p>
+</div>
+
+:::
+
+# Introduction {.unnumbered} 
+
+Welcome to the *Microbial Ecology Command-Line Crash Course*!  
+
+In this short tutorial, you will learn how to use the command line and a High-Performance Computing (HPC) environment in order to move from raw 16S sequencing reads to a basic count table of microbial taxa.
+
+This course is designed for students in microbial ecology with little or no prior experience using the command line. During this tutorial, you will learn how to:
+
+1. **Install a Terminal**
+    - How to access a Unix/Linux command line 
+    - How to run basic commands
+
+2. **Document your Code**
+    - How to use markdown, Quarto, and comments in scripts
+    - How to track your work and make your analyses reproducible
+
+3. **Navigate the Command Line**
+    - Navigating the filesystem (`cd`, `ls`, `pwd`)
+    - Working with files (`mkdir`, `cp`, `mv`, `rm`, `cat`, `head`, `less`)
+    - Searching and filtering data (`grep`, `wc`, `cut`)
+    - Viewing and understanding FASTQ files
+
+4. **Work with an HPC**
+    - Connecting to the cluster (SSH)
+    - Understanding file systems and job schedulers (e.g., SLURM)
+    - Running and interpreting command-line tools (e.g., `fastqc`, `seqkit`)
+    - Setting up and activating conda environments
+    - Running workflows with Snakemake
+
+
+</div>

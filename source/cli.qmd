@@ -1,0 +1,215 @@
+---
+engine: knitr
+---
+
+# Navigating the command line
+
+## `pwd`: Find out where we are
+
+Once your terminal is open, let’s get oriented by typing your first command: 
+
+```{bash}
+pwd
+```
+
+The command `pwd` stands for **print working directory**. It tells you where you currently are in the file system — that is, which folder (directory) your shell is “looking at” right now. You should see something like:
+
+```
+/Users/YourUserName
+```
+
+::: {.callout-tip title="Tip: Finding the Desktop on Different Systems" collapse="true"}
+Your home directory path varies slightly across operating systems. Here’s how to locate yourself and connect to familiar locations like the Desktop:
+
+**macOS**
+
+-   Your home directory is `/Users/YourUserName`
+-   To open the folder you are currently in Finder:`open .`
+-   Your desktop is at `/Users/YourUserName/Desktop`
+
+**MobaXterm (Windows)**
+
+-   Your home directory is `/home/mobaxterm`
+-   By default, this is temporary and is deleted when you close MobaXterm. To make it permanent:
+    -   Go to Settings --\> Configuration --\> General
+    -   Under Persistent home directory, choose a folder of your choice
+-   To open the folder you are currently in the Windows File explorer: `explorer.exe .`
+-   Your Desktop is usually at: `/mnt/c/Users/YourUserName/Desktop` or `/mnt/c/Users/YourUserName/OneDrive/Desktop` (when using OneDrive)
+
+**WSL2 (Windows)**
+
+-   Your home directory is`/home/YourUserName`
+-   To open the folder you are currently in the Windows File explorer: `explorer.exe .`
+-   Your Desktop is usually at: `/mnt/c/Users/YourUserName/Desktop` or `/mnt/c/Users/YourUserName/OneDrive/Desktop` (when using OneDrive)
+
+
+If you want to access the Uva OneDrive folder:
+
+If your OneDrive folder name includes spaces (like OneDrive - UvA), use quotes around the path: 
+
+```{bash}
+cd "/mnt/c/Users/YourUserName/OneDrive - UvA"
+```
+
+:::
+
+
+## `ls`: List the contents of a directory
+
+Now that we know where we are, let's find out what is inside that location. The command `ls` (short for *list*) shows the files and folders in your current directory. Type the following and press enter:
+
+```{bash}
+ls
+```
+
+You should see something like this (your output will vary depending on what’s in your directory):
+
+![](../img/ls.png)
+
+The colors and formatting depend on your terminal settings, but typically:
+
+- Folders (directories) appear in one color (often green or blue)
+- Files appear in another (often white or bold)
+
+If your directory contains many items, the output can quickly become overwhelming. To make sense of it, we can use options and arguments to control how commands behave.
+
+
+## The structure of a command
+
+A command generally has three parts:
+
+- A command: The program you want to run, i.e. `ls`
+- An option (or flag): A way to modify how the command behaves, i.e `-l` (long format)
+- An optional argument: The input, i.e. a file or folder
+
+![](../img/unix_command.png){width=80%}
+
+Try the following command in your current directory to "List (ls) the contents of the current folder and show details in long format (-l)":
+
+```{bash}
+ls -l
+```
+
+After running this you should see a more detail list of the contents of your folder.In the example below we can see that we now print additional information about who owns the files (i.e. access modes), how large the files are, when they were last modified and of course the name:
+
+![](../img/ls2.png)
+
+
+
+## Getting help
+
+At some point, you’ll want to know what options a command has or how it works. In this case, you can always check the **manual pages** (or *man pages*). Try this:
+
+```{bash}
+man ls
+```
+
+This opens the manual entry for the command ls. You can scroll through it using:
+
+- ↑ / ↓ arrows or the space bar to move down,
+- b to move back up,
+- q to quit the manual.
+
+Not all commands use man. Depending on the program, there are a few common patterns you can try
+
+-   `man ls`
+-   `ls --help`
+-   `ls -h`
+
+For complex software, like bioinformatics tools, the most helpful documentation is often:
+
+- The tool’s official website or GitHub repository
+- The --help output that lists all parameters and examples
+
+
+## `mkdir`: Make a new folder
+
+Before we start moving around, let's first learn how to create new folders (also called directories).This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is `mkdir`, which stands for *make directory`.
+
+For now, we will use it to create a shared working folder for this tutorial. Don’t worry about how to move into the folder yet — we’ll cover that next with the cd command.
+
+```{bash}
+# Move into the home directory (the starting point of your system)
+cd ~
+
+# Create a new folder called 'data_analysis'
+mkdir data_analysis
+
+# Check that the folder was created successfully
+ls
+```
+
+You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial.
+
+```{bash}
+# Move into the new folder
+cd data_analysis
+
+# Confirm where we are
+pwd
+```
+
+You should now see that your current working directory (pwd) ends with `/data_analysis`. This is where we’ll keep all our files and run our commands for the next exercises.
+
+::: {.callout-tip title="Tip: Commenting your code" collapse="true"}
+Notice how we added # and some notes above each command?
+
+Anything written after # in Bash is a comment — it won’t be executed, but it helps you (and others) understand what the command does.
+
+In your own work, add short, meaningful comments above key steps.
+Avoid restating the obvious — instead, explain why you’re doing something or what it achieves.
+:::
+
+
+## `cd`: Move around folders
+
+Now that we have our own project folder, let’s learn how to move around the file system.
+
+The file system is structured like a tree, starting from a single “root” directory `/`. All other folders branch out from it.
+
+![](../img/filesystem.png)
+
+There are two ways to specify a path:
+
+- Absolute path: starts from the root (e.g. `/Users/Name/Documents`)
+- Relative path: starts from your current location (e.g. `Documents` if you’re already in `/Users/Name`)
+
+Let’s practice moving between folders (at each step, use `pwd` in case you feel that you get lost):
+
+```{bash}
+# Make a new folder in data_analysis 
+mkdir raw_reads 
+
+# Move into a new folder (by using the relative path)
+cd raw_reads
+
+# Move one level up
+cd ..
+
+# Move multiple levels at once
+cd data_analysis/raw_reads
+
+# Quickly go back home
+cd ~
+```
+
+In the code above, the tilde symbol (`~`) is a shortcut for your home directory. It’s equivalent to typing the full absolute path to your home (e.g. `/Users/YourName`) but it is much faster to type.
+
+
+::: {.callout-tip title="Tip: Command-line completion" collapse="true"}
+Some tips for faster navigation:
+
+- Use Tab for autocompletion — type the first few letters of a folder name and press Tab.
+- If there’s more than one match, press Tab twice to see all options.
+- Use ↑ / ↓ arrows to scroll through previously entered commands
+:::
+
+
+::: {.callout-caution collapse="false" title="Exercise"}
+
+- Create a new folder inside your data_analysis directory called results.
+- Move into that folder and confirm your location with pwd.
+- Move back to data_analysis using cd ...
+- Use ls to confirm both results and raw_reads are there.
+
+:::

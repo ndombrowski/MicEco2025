@@ -1,0 +1,162 @@
+
+# Documenting your code
+
+Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts, much like a detailed lab notebook.
+
+For more in-depth guidance, see [A Guide to Reproducible Code in Ecology and Evolution](https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf). While examples are mainly in R, the principles are general and apply across programming languages.
+
+
+## Choosing your editor
+
+### Plain text editor
+
+Avoid visual editors like Word, as they are not designed for code and can inadvertently change syntax (e.g., replacing backticks `\`` with apostrophes `'`).  
+
+Start simple with a **plain text editor**, such as:
+
+- **TextEdit** (Mac)
+- **Notepad** (Windows)
+
+These allow you to write and save code safely, though they lack advanced features like syntax highlighting or integrated code execution.
+
+
+### Rmarkdown in RStudio
+
+**RMarkdown** combines plain text, code, and documentation in one document. You can write your analysis and explanatory text together, then "knit" the document to HTML, PDF, or Word.
+
+To create an RMarkdown file in RStudio:
+
+1. Go to **File → New File → R Markdown**
+2. Choose a **title**, **author**, and **output format**
+3. Write your code and text
+4. Click **Knit** to render the document
+
+More info: [RMarkdown tutorial](https://rmarkdown.rstudio.com/lesson-1.html)
+
+
+### Quarto in Rstudio
+
+**Quarto** is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options.
+
+To create a Quarto document:
+
+1. Go to **File → New File → Quarto Document**
+2. Choose a **title**, **author**, and **output format**
+3. Click **Render** to generate your document
+
+More info: [Quarto documentation](https://quarto.org/docs/get-started/hello/rstudio.html)
+
+
+## Markdown for Documentation
+
+Markdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables.  
+
+**Headers:**
+
+Use `#` to add a header and separate different sections of your documentation. The more `#` symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the `#` and the header name.
+
+```markdown
+# Main Header
+## Subheader
+```
+
+**Lists:**
+
+Use `-` or `*` for unordered lists and numbers for ordered lists.
+
+Ordered lists are created by using numbers followed by periods. The numbers do not have to be in numerical order, but the list should start with the number one.
+
+``` markdown
+1. First item
+2. Second item
+3. Third item
+4. Fourth item 
+```
+
+``` markdown
+1. First item
+2. Second item
+3. Third item
+    1. Indented item
+    2. Indented item
+4. Fourth item 
+```
+
+Unordered lists are created using dashes (`-`), asterisks (`*`), or plus signs (`+`) in front of line items. Indent one or more items to create a nested list.
+
+``` markdown
+- First item
+- Second item
+- Third item
+- Fourth item 
+```
+
+``` markdown
+ - First item
+- Second item
+- Third item
+    - Indented item
+    - Indented item
+- Fourth item 
+```
+
+You can also combine ordered with unordered lists:
+
+``` markdown
+1. First item
+2. Second item
+3. Third item
+    - Indented item
+    - Indented item
+4. Fourth item
+```
+
+**Code Blocks:**
+
+Enclose code snippets in triple backticks followed by the computational language, i.e. bash or python, used.
+
+````markdown
+```bash
+grep "control" downloads/Experiment1.txt
+```
+````
+
+**Links:**
+
+You can easily add links to external resources or within your documentation as follows:
+
+``` markdown
+[Link Text](https://www.example.com)
+```
+
+**Emphasis:**
+
+You can use `*` or `_` to write italic and `**` or `__` for bold text.
+
+``` markdown
+*italic*
+**bold**
+```
+
+**Pictures**
+
+You can also add images to your documentation as follows:
+
+``` markdown
+![Alt Text](path/to/your/image.jpg)
+```
+
+Here, replace `Alt Text` with a descriptive alternative text for your image, and `path/to/your/image.jpg` with the actual path or URL of your image.
+
+**Tables**
+
+Tables can be useful for organizing information. Here's a simple table:
+
+``` markdown
+| Header 1 | Header 2 |
+| ---------| ---------|
+| Content 1| Content 2|
+| Content 3| Content 4|
+```
+
+</div>

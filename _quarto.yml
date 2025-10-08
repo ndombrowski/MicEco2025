@@ -1,0 +1,37 @@
+project:
+  type: book
+  output-dir: docs
+  execute-dir: project
+
+book:
+  title: "Microbial Ecology: Introduction into Data Analysis"
+  chapters:
+    - index.qmd
+    - source/terminal.qmd
+    - source/documentation.qmd
+    - source/cli.qmd
+
+bibliography: source/references.bib
+
+format:
+  html:
+    theme: 
+      - cosmo
+      - styles.scss
+    toc: true
+    toc-title: Contents
+    toc-depth: 4
+  pdf:
+    documentclass: scrreprt
+    geometry: margin=2.5cm
+    toc: true
+    toc-depth: 3
+    titlepage: true
+    include-in-header: source/titlepage.tex
+
+engine: knitr 
+execute:
+  freeze: auto
+  eval: false
+
+
