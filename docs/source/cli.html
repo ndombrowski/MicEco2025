@@ -184,6 +184,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help"><span class="header-section-number">3.4</span> Getting help</a></li>
   <li><a href="#mkdir-make-a-new-folder" id="toc-mkdir-make-a-new-folder" class="nav-link" data-scroll-target="#mkdir-make-a-new-folder"><span class="header-section-number">3.5</span> <code>mkdir</code>: Make a new folder</a></li>
   <li><a href="#cd-move-around-folders" id="toc-cd-move-around-folders" class="nav-link" data-scroll-target="#cd-move-around-folders"><span class="header-section-number">3.6</span> <code>cd</code>: Move around folders</a></li>
+  <li><a href="#wget-download-data" id="toc-wget-download-data" class="nav-link" data-scroll-target="#wget-download-data"><span class="header-section-number">3.7</span> <code>wget</code>: Download data</a></li>
+  <li><a href="#cp-copy-files" id="toc-cp-copy-files" class="nav-link" data-scroll-target="#cp-copy-files"><span class="header-section-number">3.8</span> <code>cp</code>: Copy files</a></li>
+  <li><a href="#mv-move-or-rename-files" id="toc-mv-move-or-rename-files" class="nav-link" data-scroll-target="#mv-move-or-rename-files"><span class="header-section-number">3.9</span> <code>mv</code>: Move (or rename) files</a></li>
+  <li><a href="#rm-remove-files-and-directories" id="toc-rm-remove-files-and-directories" class="nav-link" data-scroll-target="#rm-remove-files-and-directories"><span class="header-section-number">3.10</span> <code>rm</code>: Remove files and directories</a></li>
+  <li><a href="#exploring-file-contents" id="toc-exploring-file-contents" class="nav-link" data-scroll-target="#exploring-file-contents"><span class="header-section-number">3.11</span> Exploring file contents</a>
+  <ul>
+  <li><a href="#cat-print-the-full-file" id="toc-cat-print-the-full-file" class="nav-link" data-scroll-target="#cat-print-the-full-file"><span class="header-section-number">3.11.1</span> <code>cat</code>: Print the full file</a></li>
+  <li><a href="#head-and-tail-view-parts-of-a-file" id="toc-head-and-tail-view-parts-of-a-file" class="nav-link" data-scroll-target="#head-and-tail-view-parts-of-a-file"><span class="header-section-number">3.11.2</span> <code>head</code> and <code>tail</code>: View parts of a file</a></li>
+  <li><a href="#less-view-the-full-file" id="toc-less-view-the-full-file" class="nav-link" data-scroll-target="#less-view-the-full-file"><span class="header-section-number">3.11.3</span> <code>less</code>: View the full file</a></li>
+  </ul></li>
+  <li><a href="#wc-count-things" id="toc-wc-count-things" class="nav-link" data-scroll-target="#wc-count-things"><span class="header-section-number">3.12</span> <code>wc</code>: Count things</a></li>
+  <li><a href="#pipes" id="toc-pipes" class="nav-link" data-scroll-target="#pipes"><span class="header-section-number">3.13</span> Pipes</a></li>
+  <li><a href="#zcat-and-head-working-with-compressed-files" id="toc-zcat-and-head-working-with-compressed-files" class="nav-link" data-scroll-target="#zcat-and-head-working-with-compressed-files"><span class="header-section-number">3.14</span> <code>zcat</code> and <code>head</code>: Working with compressed files</a></li>
+  <li><a href="#working-with-multiple-files" id="toc-working-with-multiple-files" class="nav-link" data-scroll-target="#working-with-multiple-files"><span class="header-section-number">3.15</span> Working with multiple files</a>
+  <ul>
+  <li><a href="#touch-make-example-files" id="toc-touch-make-example-files" class="nav-link" data-scroll-target="#touch-make-example-files"><span class="header-section-number">3.15.1</span> <code>touch</code>: Make example files</a></li>
+  <li><a href="#wildcards-match-multiple-files" id="toc-wildcards-match-multiple-files" class="nav-link" data-scroll-target="#wildcards-match-multiple-files"><span class="header-section-number">3.15.2</span> Wildcards (<code>*</code>): Match multiple files</a></li>
+  <li><a href="#cat-combining-files" id="toc-cat-combining-files" class="nav-link" data-scroll-target="#cat-combining-files"><span class="header-section-number">3.15.3</span> <code>cat</code>: Combining files</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -319,7 +338,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="mkdir-make-a-new-folder" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="mkdir-make-a-new-folder"><span class="header-section-number">3.5</span> <code>mkdir</code>: Make a new folder</h2>
-<p>Before we start moving around, let’s make sure we all work from the same place. To stay organized, we will create a dedicated folder for our analysis. We will call it <code>data_analysis</code> and create it in our home directory:</p>
+<p>Before we start moving around, let’s first learn how to create new folders (also called directories).This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is <code>mkdir</code>, which stands for *make directory`.</p>
+<p>For now, we will use it to create a shared working folder for this tutorial. Don’t worry about how to move into the folder yet — we’ll cover that next with the cd command.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into the home directory (the starting point of your system)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span>
@@ -328,13 +348,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> data_analysis</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the folder was created successfully</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into the new folder</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm where we are</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into the new folder</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm where we are</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You should now see that your current working directory (pwd) ends with <code>/data_analysis</code>. This is where we’ll keep all our files and run our commands for the next exercises.</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Commenting your code">
@@ -363,26 +385,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="../img/filesystem.png" class="img-fluid"></p>
 <p>There are two ways to specify a path:</p>
 <ul>
-<li>Absolute path: starts from the root (e.g.&nbsp;<code>/Users/YourUserName/Documents</code>)</li>
-<li>Relative path: starts from your current location (e.g.&nbsp;<code>Documents</code> if you’re already in <code>/Users/YourUserName</code>)</li>
+<li>Absolute path: starts from the root (e.g.&nbsp;<code>/Users/Name/Documents</code>)</li>
+<li>Relative path: starts from your current location (e.g.&nbsp;<code>Documents</code> if you’re already in <code>/Users/Name</code>)</li>
 </ul>
 <p>Let’s practice moving between folders (at each step, use <code>pwd</code> in case you feel that you get lost):</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a new folder in data_analysis </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> raw_reads </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into a new folder (by using the relative path)</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> raw_reads</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Move one level up</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Move multiple levels at once</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis/raw_reads</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Quickly go back home</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a new folder in data_analysis </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> raw_reads </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into a new folder (by using the relative path)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> raw_reads</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Move one level up</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Move multiple levels at once</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis/raw_reads</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Quickly go back home</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>In the code above, the tilde symbol (<code>~</code>) is a shortcut for your home directory. It’s equivalent to typing the full absolute path to your home (e.g.&nbsp;<code>/Users/YourName</code>) but it is much faster to type.</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Command-line completion">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -425,8 +448,236 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</section>
+<section id="wget-download-data" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="wget-download-data"><span class="header-section-number">3.7</span> <code>wget</code>: Download data</h2>
+<p>Next, let’s download a sequencing file for this exercise. We’ll use wget to fetch a file <code>barcode01_merged.fastq.gz</code> from the web:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the example fastq into the current directory</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>After you download data, it is always a good idea to do some sanity check to see if the file is present and check how large it is:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list files in long and human-readable format</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> barcode01_merged.fastq.gz</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># alternative: disk usage of that file</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> barcode01_merged.fastq.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="cp-copy-files" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="cp-copy-files"><span class="header-section-number">3.8</span> <code>cp</code>: Copy files</h2>
+<p><code>cp</code> duplicates files or directories. Let’s use it to copy the downloaded file into <code>raw_reads</code>:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy file into raw_reads </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> barcode01_merged.fastq.gz raw_reads/</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show content of both locations</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> raw_reads</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>When running the two <code>ls</code> commands, we see that we now have two copies of <code>seq_project.tar.gz</code>, one file is in our working directory and the other one is in our data folder. Copying large amounts of data is not ideal since we will use unneccassary space. However, we can use another command to move the tar folder into our data folder.</p>
+</section>
+<section id="mv-move-or-rename-files" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="mv-move-or-rename-files"><span class="header-section-number">3.9</span> <code>mv</code>: Move (or rename) files</h2>
+<p><code>mv</code> moves or renames files without creating a second copy:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move the file into raw_reads</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> barcode01_merged.fastq.gz raw_reads/</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> raw_reads</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Notice that <code>mv</code> will move the tar file and, without asking, overwrite the existing tar file we had in the data folder when we ran <code>cp</code>. This means for you that if you run move its best to make sure that you do not overwrite files by mistake.</p>
+</section>
+<section id="rm-remove-files-and-directories" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="rm-remove-files-and-directories"><span class="header-section-number">3.10</span> <code>rm</code>: Remove files and directories</h2>
+<p>To remove files and folders, we use the <code>rm</code> command. We want to remove the <code>barcode01_merged.fastq.gz</code> file since we do not need two copies:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove a file</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> barcode01_merged.fastq.gz</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if that worked</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If we want to remove a folder, we need to tell <code>rm</code> that we want to remove folders using an option. To do this, we use <code>-r</code> , which allows us to remove directories and their contents recursively.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Unix does not have an undelete command.</strong></p>
+<p>This means that if you delete something with rm, it’s gone. Therefore, use <code>rm</code> with care and check what you write twice before pressing enter! Also, NEVER run <code>rm -rf</code> on the root <code>/</code> folder or any important path. Always double check the path or file name before pressing enter.</p>
+</div>
+</div>
+</section>
+<section id="exploring-file-contents" class="level2" data-number="3.11">
+<h2 data-number="3.11" class="anchored" data-anchor-id="exploring-file-contents"><span class="header-section-number">3.11</span> Exploring file contents</h2>
+<p>Before working with large compressed sequencing files, let’s get comfortable with some basic tools to inspect text files. These commands are useful for quickly checking what a file contains without opening it in a text editor.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download Alice Adventures in Wonderland</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://www.gutenberg.org/files/11/11-0.txt</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify </span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> 11-0.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="cat-print-the-full-file" class="level3" data-number="3.11.1">
+<h3 data-number="3.11.1" class="anchored" data-anchor-id="cat-print-the-full-file"><span class="header-section-number">3.11.1</span> <code>cat</code>: Print the full file</h3>
+<p>We can use <code>cat</code> print the entire file to the screen — fine for short files, but overwhelming for long ones.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> 11-0.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="head-and-tail-view-parts-of-a-file" class="level3" data-number="3.11.2">
+<h3 data-number="3.11.2" class="anchored" data-anchor-id="head-and-tail-view-parts-of-a-file"><span class="header-section-number">3.11.2</span> <code>head</code> and <code>tail</code>: View parts of a file</h3>
+<p>To only print the first few or last few lines we can use the <code>head</code> and <code>tail</code> command, respectively:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the first 10 lines (default)</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> 11-0.txt</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the last 5 lines</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> <span class="at">-n</span> 5 11-0.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="less-view-the-full-file" class="level3" data-number="3.11.3">
+<h3 data-number="3.11.3" class="anchored" data-anchor-id="less-view-the-full-file"><span class="header-section-number">3.11.3</span> <code>less</code>: View the full file</h3>
+<p><code>less</code> let’s you view a file’s contents one screen at a time. This is useful when dealing with a large text file (such as a sequence data file) because it doesn’t load the entire file but accesses it page by page, resulting in fast loading speeds.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> 11-0.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>You can use the arrow Up and Page arrow keys to move through the text file</li>
+<li>To exit less, type <code>q</code></li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled" title="Tip: Editing text files">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Tip: Editing text files
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You can also edit the content of a text file and there are different programs available to do this on the command line, the most commonly used tool is <code>nano</code>, which should come with most command line interpreters. You can open any file as follows:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> 11-0.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Once the document is open you can edit it however you want and then</p>
+<ul>
+<li>Close the document with <code>control + X</code></li>
+<li>Type <code>y</code> to save changes and press enter</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="wc-count-things" class="level2" data-number="3.12">
+<h2 data-number="3.12" class="anchored" data-anchor-id="wc-count-things"><span class="header-section-number">3.12</span> <code>wc</code>: Count things</h2>
+<p>Another useful tool is the <code>wc</code> (= wordcount) command that allows us to count the number of lines via <code>-l</code> in a file. It is an useful tool for sanity checking and here allows us to count how many lines of text are found in the text document.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> 11-0.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="pipes" class="level2" data-number="3.13">
+<h2 data-number="3.13" class="anchored" data-anchor-id="pipes"><span class="header-section-number">3.13</span> Pipes</h2>
+<p>So far, we’ve run one command at a time — for example, using wc -l to count lines or head to look at the first few lines. But often, you’ll want to combine commands so that the output of one becomes the input of another. That’s what the pipe (|) does.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: show only the first 5 lines of the line count output</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> 11-0.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 5</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Here:</p>
+<ul>
+<li><code>cat 11-0.txt</code>prints the full text.</li>
+<li>The pipe (<code>|</code>) sends that output directly to head.</li>
+<li><code>head -n 5</code> only shows the first 5 lines of the result.</li>
+</ul>
+</section>
+<section id="zcat-and-head-working-with-compressed-files" class="level2" data-number="3.14">
+<h2 data-number="3.14" class="anchored" data-anchor-id="zcat-and-head-working-with-compressed-files"><span class="header-section-number">3.14</span> <code>zcat</code> and <code>head</code>: Working with compressed files</h2>
+<p>Now that you know how to combine commands, let’s try the same idea with a compressed file.</p>
+<p>The <code>.gz</code>ending we have in the sequence data file means that the file is compressed with gzip. To view its contents without uncompressing it, we use zcat. Because these files can be very large, we’ll use a pipe again to only view the first few line</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">zcat</span> raw_reads/barcode01_merged.fastq.gz <span class="kw">|</span> <span class="fu">head</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>This command:</p>
+<ul>
+<li>Decompresses the file temporarily (zcat),</li>
+<li>Sends the decompressed text through a pipe (|),</li>
+<li>Displays only the first few lines (head).</li>
+</ul>
+<p>For macOS users, the equivalent command is often gzcat:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gzcat</span> raw_reads/barcode01_merged.fastq.gz <span class="kw">|</span> <span class="fu">head</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="working-with-multiple-files" class="level2" data-number="3.15">
+<h2 data-number="3.15" class="anchored" data-anchor-id="working-with-multiple-files"><span class="header-section-number">3.15</span> Working with multiple files</h2>
+<p>So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files — for example, one FASTQ file per barcode. Let’s practice handling several files at once.</p>
+<section id="touch-make-example-files" class="level3" data-number="3.15.1">
+<h3 data-number="3.15.1" class="anchored" data-anchor-id="touch-make-example-files"><span class="header-section-number">3.15.1</span> <code>touch</code>: Make example files</h3>
+<p>To try this safely, we’ll create a few empty “dummy” files in our raw_reads folder using the touch command:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> raw_reads </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a few dummy FASTQ files</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> barcode02_01.fastq barcode02_02.fastq barcode03_01.fastq</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what was done</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="wildcards-match-multiple-files" class="level3" data-number="3.15.2">
+<h3 data-number="3.15.2" class="anchored" data-anchor-id="wildcards-match-multiple-files"><span class="header-section-number">3.15.2</span> Wildcards (<code>*</code>): Match multiple files</h3>
+<p>Typing every filename can get tedious. Wildcards help you work with groups of files using pattern matching.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List all files that start with "barcode02"</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> barcode02_<span class="pp">*</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List all files ending with ".fastq"</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="pp">*</span>.fastq</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="cat-combining-files" class="level3" data-number="3.15.3">
+<h3 data-number="3.15.3" class="anchored" data-anchor-id="cat-combining-files"><span class="header-section-number">3.15.3</span> <code>cat</code>: Combining files</h3>
+<p>The cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several sequencing runs from the same barcode and want to merge them:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the two barcode01 files into one merged file</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> barcode02_<span class="pp">*</span>.fastq <span class="op">&gt;</span> barcode02_all.fastq</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Here:</p>
+<ul>
+<li><code>barcode01_*.fastq</code>selects all files that start with barcode01_</li>
+<li><code>&gt;</code> tells the shell to write the combined output into a new file called barcode01_merged.fastq</li>
+</ul>
+<div class="callout callout-style-default callout-caution callout-titled" title="Important: Be careful with >">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Important: Be careful with &gt;
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The <code>&gt;</code> operator overwrites files without asking. If you want to add (append) to an existing file instead of replacing it, use <code>&gt;&gt;</code>:</p>
+</div>
+</div>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

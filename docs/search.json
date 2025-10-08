@@ -134,7 +134,7 @@
     "href": "source/cli.html#mkdir-make-a-new-folder",
     "title": "3  Navigating the command line",
     "section": "3.5 mkdir: Make a new folder",
-    "text": "3.5 mkdir: Make a new folder\nBefore we start moving around, let’s make sure we all work from the same place. To stay organized, we will create a dedicated folder for our analysis. We will call it data_analysis and create it in our home directory:\n\n# Move into the home directory (the starting point of your system)\ncd ~\n\n# Create a new folder called 'data_analysis'\nmkdir data_analysis\n\n# Check that the folder was created successfully\nls\n\n# Move into the new folder\ncd data_analysis\n\n# Confirm where we are\npwd\n\nYou should now see that your current working directory (pwd) ends with /data_analysis. This is where we’ll keep all our files and run our commands for the next exercises.\n\n\n\n\n\n\nTipTip: Commenting your code\n\n\n\n\n\nNotice how we added # and some notes above each command?\nAnything written after # in Bash is a comment — it won’t be executed, but it helps you (and others) understand what the command does.\nIn your own work, add short, meaningful comments above key steps. Avoid restating the obvious — instead, explain why you’re doing something or what it achieves.",
+    "text": "3.5 mkdir: Make a new folder\nBefore we start moving around, let’s first learn how to create new folders (also called directories).This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is mkdir, which stands for *make directory`.\nFor now, we will use it to create a shared working folder for this tutorial. Don’t worry about how to move into the folder yet — we’ll cover that next with the cd command.\n\n# Move into the home directory (the starting point of your system)\ncd ~\n\n# Create a new folder called 'data_analysis'\nmkdir data_analysis\n\n# Check that the folder was created successfully\nls\n\nYou should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial.\n\n# Move into the new folder\ncd data_analysis\n\n# Confirm where we are\npwd\n\nYou should now see that your current working directory (pwd) ends with /data_analysis. This is where we’ll keep all our files and run our commands for the next exercises.\n\n\n\n\n\n\nTipTip: Commenting your code\n\n\n\n\n\nNotice how we added # and some notes above each command?\nAnything written after # in Bash is a comment — it won’t be executed, but it helps you (and others) understand what the command does.\nIn your own work, add short, meaningful comments above key steps. Avoid restating the obvious — instead, explain why you’re doing something or what it achieves.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
     ]
@@ -144,7 +144,97 @@
     "href": "source/cli.html#cd-move-around-folders",
     "title": "3  Navigating the command line",
     "section": "3.6 cd: Move around folders",
-    "text": "3.6 cd: Move around folders\nNow that we have our own project folder, let’s learn how to move around the file system.\nThe file system is structured like a tree, starting from a single “root” directory /. All other folders branch out from it.\n\nThere are two ways to specify a path:\n\nAbsolute path: starts from the root (e.g. /Users/YourUserName/Documents)\nRelative path: starts from your current location (e.g. Documents if you’re already in /Users/YourUserName)\n\nLet’s practice moving between folders (at each step, use pwd in case you feel that you get lost):\n\n# Make a new folder in data_analysis \nmkdir raw_reads \n\n# Move into a new folder (by using the relative path)\ncd raw_reads\n\n# Move one level up\ncd ..\n\n# Move multiple levels at once\ncd data_analysis/raw_reads\n\n# Quickly go back home\ncd ~\n\n\n\n\n\n\n\nTipTip: Command-line completion\n\n\n\n\n\nSome tips for faster navigation:\n\nUse Tab for autocompletion — type the first few letters of a folder name and press Tab.\nIf there’s more than one match, press Tab twice to see all options.\nUse ↑ / ↓ arrows to scroll through previously entered commands\n\n\n\n\n\n\n\n\n\n\nCautionExercise\n\n\n\n\n\n\nCreate a new folder inside your data_analysis directory called results.\nMove into that folder and confirm your location with pwd.\nMove back to data_analysis using cd …\nUse ls to confirm both results and raw_reads are there.",
+    "text": "3.6 cd: Move around folders\nNow that we have our own project folder, let’s learn how to move around the file system.\nThe file system is structured like a tree, starting from a single “root” directory /. All other folders branch out from it.\n\nThere are two ways to specify a path:\n\nAbsolute path: starts from the root (e.g. /Users/Name/Documents)\nRelative path: starts from your current location (e.g. Documents if you’re already in /Users/Name)\n\nLet’s practice moving between folders (at each step, use pwd in case you feel that you get lost):\n\n# Make a new folder in data_analysis \nmkdir raw_reads \n\n# Move into a new folder (by using the relative path)\ncd raw_reads\n\n# Move one level up\ncd ..\n\n# Move multiple levels at once\ncd data_analysis/raw_reads\n\n# Quickly go back home\ncd ~\n\nIn the code above, the tilde symbol (~) is a shortcut for your home directory. It’s equivalent to typing the full absolute path to your home (e.g. /Users/YourName) but it is much faster to type.\n\n\n\n\n\n\nTipTip: Command-line completion\n\n\n\n\n\nSome tips for faster navigation:\n\nUse Tab for autocompletion — type the first few letters of a folder name and press Tab.\nIf there’s more than one match, press Tab twice to see all options.\nUse ↑ / ↓ arrows to scroll through previously entered commands\n\n\n\n\n\n\n\n\n\n\nCautionExercise\n\n\n\n\n\n\nCreate a new folder inside your data_analysis directory called results.\nMove into that folder and confirm your location with pwd.\nMove back to data_analysis using cd …\nUse ls to confirm both results and raw_reads are there.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#wget-download-data",
+    "href": "source/cli.html#wget-download-data",
+    "title": "3  Navigating the command line",
+    "section": "3.7 wget: Download data",
+    "text": "3.7 wget: Download data\nNext, let’s download a sequencing file for this exercise. We’ll use wget to fetch a file barcode01_merged.fastq.gz from the web:\n\n# Download the example fastq into the current directory\nwget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz\n\nAfter you download data, it is always a good idea to do some sanity check to see if the file is present and check how large it is:\n\n# list files in long and human-readable format\nls -lh barcode01_merged.fastq.gz\n\n# alternative: disk usage of that file\ndu -h barcode01_merged.fastq.gz",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#cp-copy-files",
+    "href": "source/cli.html#cp-copy-files",
+    "title": "3  Navigating the command line",
+    "section": "3.8 cp: Copy files",
+    "text": "3.8 cp: Copy files\ncp duplicates files or directories. Let’s use it to copy the downloaded file into raw_reads:\n\n# Copy file into raw_reads \ncp barcode01_merged.fastq.gz raw_reads/\n\n# Show content of both locations\nls -l\nls -l raw_reads\n\nWhen running the two ls commands, we see that we now have two copies of seq_project.tar.gz, one file is in our working directory and the other one is in our data folder. Copying large amounts of data is not ideal since we will use unneccassary space. However, we can use another command to move the tar folder into our data folder.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#mv-move-or-rename-files",
+    "href": "source/cli.html#mv-move-or-rename-files",
+    "title": "3  Navigating the command line",
+    "section": "3.9 mv: Move (or rename) files",
+    "text": "3.9 mv: Move (or rename) files\nmv moves or renames files without creating a second copy:\n\n# Move the file into raw_reads\nmv barcode01_merged.fastq.gz raw_reads/\n\n# Verify\nls -l\nls -l raw_reads\n\nNotice that mv will move the tar file and, without asking, overwrite the existing tar file we had in the data folder when we ran cp. This means for you that if you run move its best to make sure that you do not overwrite files by mistake.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#rm-remove-files-and-directories",
+    "href": "source/cli.html#rm-remove-files-and-directories",
+    "title": "3  Navigating the command line",
+    "section": "3.10 rm: Remove files and directories",
+    "text": "3.10 rm: Remove files and directories\nTo remove files and folders, we use the rm command. We want to remove the barcode01_merged.fastq.gz file since we do not need two copies:\n\n# Remove a file\nrm barcode01_merged.fastq.gz\n\n# Check if that worked\nls -l\n\nIf we want to remove a folder, we need to tell rm that we want to remove folders using an option. To do this, we use -r , which allows us to remove directories and their contents recursively.\n\n\n\n\n\n\nImportant\n\n\n\nUnix does not have an undelete command.\nThis means that if you delete something with rm, it’s gone. Therefore, use rm with care and check what you write twice before pressing enter! Also, NEVER run rm -rf on the root / folder or any important path. Always double check the path or file name before pressing enter.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#exploring-file-contents",
+    "href": "source/cli.html#exploring-file-contents",
+    "title": "3  Navigating the command line",
+    "section": "3.11 Exploring file contents",
+    "text": "3.11 Exploring file contents\nBefore working with large compressed sequencing files, let’s get comfortable with some basic tools to inspect text files. These commands are useful for quickly checking what a file contains without opening it in a text editor.\n\n# Download Alice Adventures in Wonderland\nwget https://www.gutenberg.org/files/11/11-0.txt\n\n# Verify \nls -lh 11-0.txt\n\n\n3.11.1 cat: Print the full file\nWe can use cat print the entire file to the screen — fine for short files, but overwhelming for long ones.\n\ncat 11-0.txt\n\n\n\n3.11.2 head and tail: View parts of a file\nTo only print the first few or last few lines we can use the head and tail command, respectively:\n\n# Show the first 10 lines (default)\nhead 11-0.txt\n\n# Show the last 5 lines\ntail -n 5 11-0.txt\n\n\n\n3.11.3 less: View the full file\nless let’s you view a file’s contents one screen at a time. This is useful when dealing with a large text file (such as a sequence data file) because it doesn’t load the entire file but accesses it page by page, resulting in fast loading speeds.\n\nless -S 11-0.txt\n\n\nYou can use the arrow Up and Page arrow keys to move through the text file\nTo exit less, type q\n\n\n\n\n\n\n\nTipTip: Editing text files\n\n\n\n\n\nYou can also edit the content of a text file and there are different programs available to do this on the command line, the most commonly used tool is nano, which should come with most command line interpreters. You can open any file as follows:\n\nnano 11-0.txt\n\nOnce the document is open you can edit it however you want and then\n\nClose the document with control + X\nType y to save changes and press enter",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#wc-count-things",
+    "href": "source/cli.html#wc-count-things",
+    "title": "3  Navigating the command line",
+    "section": "3.12 wc: Count things",
+    "text": "3.12 wc: Count things\nAnother useful tool is the wc (= wordcount) command that allows us to count the number of lines via -l in a file. It is an useful tool for sanity checking and here allows us to count how many lines of text are found in the text document.\n\nwc -l 11-0.txt",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#pipes",
+    "href": "source/cli.html#pipes",
+    "title": "3  Navigating the command line",
+    "section": "3.13 Pipes",
+    "text": "3.13 Pipes\nSo far, we’ve run one command at a time — for example, using wc -l to count lines or head to look at the first few lines. But often, you’ll want to combine commands so that the output of one becomes the input of another. That’s what the pipe (|) does.\n\n# Example: show only the first 5 lines of the line count output\ncat 11-0.txt | head -n 5\n\nHere:\n\ncat 11-0.txtprints the full text.\nThe pipe (|) sends that output directly to head.\nhead -n 5 only shows the first 5 lines of the result.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#zcat-and-head-working-with-compressed-files",
+    "href": "source/cli.html#zcat-and-head-working-with-compressed-files",
+    "title": "3  Navigating the command line",
+    "section": "3.14 zcat and head: Working with compressed files",
+    "text": "3.14 zcat and head: Working with compressed files\nNow that you know how to combine commands, let’s try the same idea with a compressed file.\nThe .gzending we have in the sequence data file means that the file is compressed with gzip. To view its contents without uncompressing it, we use zcat. Because these files can be very large, we’ll use a pipe again to only view the first few line\n\nzcat raw_reads/barcode01_merged.fastq.gz | head\n\nThis command:\n\nDecompresses the file temporarily (zcat),\nSends the decompressed text through a pipe (|),\nDisplays only the first few lines (head).\n\nFor macOS users, the equivalent command is often gzcat:\n\ngzcat raw_reads/barcode01_merged.fastq.gz | head",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
+    ]
+  },
+  {
+    "objectID": "source/cli.html#working-with-multiple-files",
+    "href": "source/cli.html#working-with-multiple-files",
+    "title": "3  Navigating the command line",
+    "section": "3.15 Working with multiple files",
+    "text": "3.15 Working with multiple files\nSo far, we’ve worked with single files. In practice, sequencing data often comes as multiple files — for example, one FASTQ file per barcode. Let’s practice handling several files at once.\n\n3.15.1 touch: Make example files\nTo try this safely, we’ll create a few empty “dummy” files in our raw_reads folder using the touch command:\n\ncd raw_reads \n\n# Create a few dummy FASTQ files\ntouch barcode02_01.fastq barcode02_02.fastq barcode03_01.fastq\n\n# Check what was done\nls -lh\n\n\n\n3.15.2 Wildcards (*): Match multiple files\nTyping every filename can get tedious. Wildcards help you work with groups of files using pattern matching.\n\n# List all files that start with \"barcode02\"\nls barcode02_*\n\n# List all files ending with \".fastq\"\nls *.fastq\n\n\n\n3.15.3 cat: Combining files\nThe cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several sequencing runs from the same barcode and want to merge them:\n\n# Combine the two barcode01 files into one merged file\ncat barcode02_*.fastq &gt; barcode02_all.fastq\n\nHere:\n\nbarcode01_*.fastqselects all files that start with barcode01_\n&gt; tells the shell to write the combined output into a new file called barcode01_merged.fastq\n\n\n\n\n\n\n\nCautionImportant: Be careful with &gt;\n\n\n\n\n\nThe &gt; operator overwrites files without asking. If you want to add (append) to an existing file instead of replacing it, use &gt;&gt;:",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Navigating the command line</span>"
     ]

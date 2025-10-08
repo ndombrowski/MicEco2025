@@ -213,3 +213,243 @@ Some tips for faster navigation:
 - Use ls to confirm both results and raw_reads are there.
 
 :::
+
+
+## `wget`: Download data
+
+Next, let’s download a sequencing file for this exercise. We’ll use wget to fetch a file `barcode01_merged.fastq.gz` from the web:
+
+```{bash}
+# Download the example fastq into the current directory
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz
+```
+
+After you download data, it is always a good idea to do some sanity check to see if the file is present and check how large it is:
+
+```{bash}
+# list files in long and human-readable format
+ls -lh barcode01_merged.fastq.gz
+
+# alternative: disk usage of that file
+du -h barcode01_merged.fastq.gz
+```
+
+
+## `cp`: Copy files
+
+`cp` duplicates files or directories. Let's use it to copy the downloaded file into `raw_reads`:
+
+```{bash}
+# Copy file into raw_reads 
+cp barcode01_merged.fastq.gz raw_reads/
+
+# Show content of both locations
+ls -l
+ls -l raw_reads
+```
+
+When running the two `ls` commands, we see that we now have two copies of `seq_project.tar.gz`, one file is in our working directory and the other one is in our data folder. Copying large amounts of data is not ideal since we will use unneccassary space. However, we can use another command to move the tar folder into our data folder.
+
+
+## `mv`: Move (or rename) files
+
+`mv` moves or renames files without creating a second copy:
+
+```{bash}
+# Move the file into raw_reads
+mv barcode01_merged.fastq.gz raw_reads/
+
+# Verify
+ls -l
+ls -l raw_reads
+```
+
+Notice that `mv` will move the tar file and, without asking, overwrite the existing tar file we had in the data folder when we ran `cp`. This means for you that if you run move its best to make sure that you do not overwrite files by mistake.
+
+
+
+## `rm`: Remove files and directories
+
+To remove files and folders, we use the `rm` command. We want to remove the `barcode01_merged.fastq.gz` file since we do not need two copies:
+
+```{bash}
+# Remove a file
+rm barcode01_merged.fastq.gz
+
+# Check if that worked
+ls -l
+```
+
+If we want to remove a folder, we need to tell `rm` that we want to remove folders using an option. To do this, we use `-r` , which allows us to remove directories and their contents recursively.
+
+::: callout-important
+**Unix does not have an undelete command.**
+
+This means that if you delete something with rm, it's gone. Therefore, use `rm` with care and check what you write twice before pressing enter!
+Also, NEVER run `rm -rf` on the root `/` folder or any important path. Always double check the path or file name before pressing enter.
+:::
+
+
+## Exploring file contents
+
+Before working with large compressed sequencing files, let’s get comfortable with some basic tools to inspect text files. These commands are useful for quickly checking what a file contains without opening it in a text editor.
+
+```{bash}
+# Download Alice Adventures in Wonderland
+wget https://www.gutenberg.org/files/11/11-0.txt
+
+# Verify 
+ls -lh 11-0.txt
+```
+
+
+### `cat`: Print the full file
+
+We can use `cat` print the entire file to the screen — fine for short files, but overwhelming for long ones.
+
+```{bash}
+cat 11-0.txt
+```
+
+
+### `head` and `tail`: View parts of a file
+
+To only print the first few or last few lines we can use the `head` and `tail` command, respectively:
+
+```{bash}
+# Show the first 10 lines (default)
+head 11-0.txt
+
+# Show the last 5 lines
+tail -n 5 11-0.txt
+```
+
+
+### `less`: View the full file
+
+`less` let's you view a file's contents one screen at a time. This is useful when dealing with a large text file (such as a sequence data file) because it doesn't load the entire file but accesses it page by page, resulting in fast loading speeds.
+
+```{bash}
+less -S 11-0.txt
+```
+
+-   You can use the arrow Up and Page arrow keys to move through the text file
+-   To exit less, type `q`
+
+
+::: {.callout-tip title="Tip: Editing text files" collapse="true"}
+You can also edit the content of a text file and there are different programs available to do this on the command line, the most commonly used tool is `nano`, which should come with most command line interpreters. You can open any file as follows:
+
+```{bash}
+nano 11-0.txt
+```
+
+Once the document is open you can edit it however you want and then
+
+-   Close the document with `control + X`
+-   Type `y` to save changes and press enter
+:::
+
+
+
+## `wc`: Count things
+
+Another useful tool is the `wc` (= wordcount) command that allows us to count the number of lines via `-l` in a file. It is an useful tool for sanity checking and here allows us to count how many lines of text are found in the text document.
+
+```{bash}
+wc -l 11-0.txt
+```
+
+
+
+
+## Pipes 
+
+So far, we’ve run one command at a time — for example, using wc -l to count lines or head to look at the first few lines. But often, you’ll want to combine commands so that the output of one becomes the input of another. That’s what the pipe (|) does.
+
+```{bash}
+# Example: show only the first 5 lines of the line count output
+cat 11-0.txt | head -n 5
+```
+
+Here:
+
+- `cat 11-0.txt `prints the full text.
+- The pipe (`|`) sends that output directly to head.
+- `head -n 5` only shows the first 5 lines of the result.
+
+
+## `zcat` and `head`: Working with compressed files
+
+Now that you know how to combine commands, let’s try the same idea with a compressed file.
+
+The `.gz `ending we have in the sequence data file means that the file is compressed with gzip. To view its contents without uncompressing it, we use zcat. Because these files can be very large, we’ll use a pipe again to only view the first few line
+
+```{bash}
+zcat raw_reads/barcode01_merged.fastq.gz | head
+```
+
+This command:
+
+- Decompresses the file temporarily (zcat),
+- Sends the decompressed text through a pipe (|),
+- Displays only the first few lines (head).
+
+For macOS users, the equivalent command is often gzcat:
+
+```{bash}
+gzcat raw_reads/barcode01_merged.fastq.gz | head
+```
+
+
+## Working with multiple files
+
+So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files — for example, one FASTQ file per barcode. Let’s practice handling several files at once.
+
+### `touch`: Make example files 
+
+To try this safely, we’ll create a few empty “dummy” files in our raw_reads folder using the touch command:
+
+```{bash}
+cd raw_reads 
+
+# Create a few dummy FASTQ files
+touch barcode02_01.fastq barcode02_02.fastq barcode03_01.fastq
+
+# Check what was done
+ls -lh
+```
+
+
+### Wildcards (`*`): Match multiple files
+
+Typing every filename can get tedious. Wildcards help you work with groups of files using pattern matching.
+
+```{bash}
+# List all files that start with "barcode02"
+ls barcode02_*
+
+# List all files ending with ".fastq"
+ls *.fastq
+```
+
+
+### `cat`: Combining files 
+
+The cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several sequencing runs from the same barcode and want to merge them:
+
+```{bash}
+# Combine the two barcode01 files into one merged file
+cat barcode02_*.fastq > barcode02_all.fastq
+```
+
+Here:
+
+- `barcode01_*.fastq `selects all files that start with barcode01_
+- `>` tells the shell to write the combined output into a new file called barcode01_merged.fastq
+
+
+::: {.callout-caution title="Important: Be careful with >" collapse="false"}
+The `>` operator overwrites files without asking.
+If you want to add (append) to an existing file instead of replacing it, use `>>`:
+:::
