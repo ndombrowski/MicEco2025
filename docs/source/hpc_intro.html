@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Microbial Ecology: Introduction into Data Analysis</title>
+<title>4&nbsp; HPC introduction – Microbial Ecology: Introduction into Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,25 +23,26 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./source/terminal.html" rel="next">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ce867c9c69d5854e0904775db70fd856.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../source/hpc_howto.html" rel="next">
+<link href="../source/cli.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-ce867c9c69d5854e0904775db70fd856.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -73,7 +74,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar floating fullcontent quarto-light">
+<body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -82,7 +83,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Introduction</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../source/hpc_intro.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">HPC introduction</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -96,10 +97,10 @@ ul.task-list li input[type="checkbox"] {
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="./index.html" class="sidebar-logo-link">
+      <a href="../index.html" class="sidebar-logo-link">
       </a>
     <div class="sidebar-title mb-0 py-0">
-      <a href="./">Microbial Ecology: Introduction into Data Analysis</a> 
+      <a href="../">Microbial Ecology: Introduction into Data Analysis</a> 
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -111,37 +112,37 @@ ul.task-list li input[type="checkbox"] {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Introduction</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./source/terminal.html" class="sidebar-item-text sidebar-link">
+  <a href="../source/terminal.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Setting up a terminal</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./source/documentation.html" class="sidebar-item-text sidebar-link">
+  <a href="../source/documentation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Documenting your code</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./source/cli.html" class="sidebar-item-text sidebar-link">
+  <a href="../source/cli.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Navigating the command line</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./source/hpc_intro.html" class="sidebar-item-text sidebar-link">
+  <a href="../source/hpc_intro.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">HPC introduction</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./source/hpc_howto.html" class="sidebar-item-text sidebar-link">
+  <a href="../source/hpc_howto.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Using an HPC</span></span></a>
   </div>
 </li>
@@ -150,13 +151,15 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Microbial Ecology: Introduction into Data Analysis</h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">HPC introduction</span></h1>
 </div>
 
 
@@ -173,55 +176,69 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="paper-authors">
-<p>
-<strong>Nina Dombrowski</strong>
-</p>
-<p>
-Institute for Biodiversity and Ecosystem Dynamics (IBED), University of Amsterdam (UVA)
-</p>
-<p>
-<a href="mailto:n.dombrowski@uva.nl">n.dombrowski@uva.nl</a>
-</p>
+<p>If you work at IBED you can get access to the Crunchomics HPC, the Genomics Compute Environment for SILS and IBED. If you need access to Crunchomics, send an email to Wim de Leeuw <a href="mailto:w.c.deleeuw@uva.nl" class="email">w.c.deleeuw@uva.nl</a> to get an account set up by giving him your UvA netID.</p>
+<p>Using an HPC works a bit differently than running jobs on your computer, below you find a simplified schematic:</p>
+<p><img src="../img/crunchomics1.png" class="img-fluid"></p>
+<p>Very briefly, you can log into an HPC onto a login node. The purpose of a <strong>login node</strong>, sometimes also called head node, is to prepare to run a program (e.g., moving and editing files as well as compiling and preparing a job script). You then submit a job script from the head to the compute nodes via Slurm. The <strong>compute nodes</strong> are used to actually run a program and <strong>Slurm</strong> is an open-source workload manager/scheduler that is used on many big HPCs. Slurm has three key functions:</p>
+<ul>
+<li>provide the users access to the resources on the compute nodes for a certain amount of time to perform any computation</li>
+<li>provide a framework to start, execute, and check the work on the set of allocated compute nodes</li>
+<li>mange the queue of submitted jobs based on the availability of resources</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<section id="introduction" class="level1 unnumbered">
-<h1 class="unnumbered">Introduction</h1>
-<p>Welcome to the <em>Microbial Ecology Command-Line Crash Course</em>!</p>
-<p>In this short tutorial, you will learn how to use the command line and a High-Performance Computing (HPC) environment in order to move from raw 16S sequencing reads to a basic count table of microbial taxa.</p>
-<p>This course is designed for students in microbial ecology with little or no prior experience using the command line. During this tutorial, you will learn how to:</p>
-<ol type="1">
-<li><strong>Install a Terminal</strong>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Crunchomics etiquette</strong></p>
+<p>You share the HPC with other people, therefore, take care to only ask for the resources you actually use. Some general rules:</p>
 <ul>
-<li>How to access a Unix/Linux command line</li>
-<li>How to run basic commands</li>
-</ul></li>
-<li><strong>Document your Code</strong>
+<li>There are no hard limits on resource usage, instead we expect you to keep in mind that you are sharing the system with other users. Some rules of thumb:
 <ul>
-<li>How to use markdown, Quarto, and comments in scripts</li>
-<li>How to track your work and make your analyses reproducible</li>
+<li>Do NOT run jobs that request many CPUs and lots of memory on the head-node (omics-h0), use the compute nodes (omics-cn001 - omics-cn005) for this</li>
+<li>Do NOT allocate more than 20% (CPU or memory) of the cluster for more than a day. If you have large jobs, contact Wim de Leeuw</li>
+<li>Do not leave allocations unused and set reasonable time limits on you jobs</li>
 </ul></li>
-<li><strong>Navigate the Command Line</strong>
+<li>For large compute jobs a job queuing system (SLURM) is available. Interactive usage is possible but is discouraged for larger jobs. We will learn how to use the queue during this tutorial</li>
+<li>Close applications when not in use, i.e.&nbsp;when running R interactively</li>
+</ul>
+</div>
+</div>
+<p>On crunchomics you:</p>
 <ul>
-<li>Navigating the filesystem (<code>cd</code>, <code>ls</code>, <code>pwd</code>)</li>
-<li>Working with files (<code>mkdir</code>, <code>cp</code>, <code>mv</code>, <code>rm</code>, <code>cat</code>, <code>head</code>, <code>less</code>)</li>
-<li>Searching and filtering data (<code>grep</code>, <code>wc</code>, <code>cut</code>)</li>
-<li>Viewing and understanding FASTQ files</li>
-</ul></li>
-<li><strong>Work with an HPC</strong>
+<li>Are granted a storage of 500 GB. After the duration of your grant, or when your UvAnetID expires, your data will be removed from the HPC. If you need more storage space, contact the Crunchomics team.</li>
+<li>In your home directory, <code>/home/$USER</code> , you have 25 G quotum</li>
+<li>In your personal directory, <code>/zfs/omics/personal/$USER</code> , you can store up to 500 GB data</li>
+<li>For larger, collaborative projects you can contact the Crunchomics team and ask for a shared folder to which several team members can have access</li>
+<li>You are in charge of backing up your own data and Crunchomics is NOT an archiving system. To learn about data archiving options at UvA visit the <a href="https://ibed.uva.nl/facilities/computational-facilities/ibed-computational-support-team/ibed-computational-support-team.html">website of the computational support team</a></li>
+<li>A manual with more information and documentation about the cluster can be found <a href="https://crunchomics-documentation.readthedocs.io/en/latest">here</a></li>
+</ul>
+<p>Crunchomics gives you access to:</p>
 <ul>
-<li>Connecting to the cluster (SSH)</li>
-<li>Understanding file systems and job schedulers (e.g., SLURM)</li>
-<li>Running and interpreting command-line tools (e.g., <code>fastqc</code>, <code>seqkit</code>)</li>
-<li>Setting up and activating conda environments</li>
-<li>Running workflows with Snakemake</li>
+<li>5 compute nodes</li>
+<li>Each compute node has 512 GB of memory and 64 CPUs</li>
+<li>If you need more resources (or access to GPUs), visit the <a href="https://ibed.uva.nl/facilities/computational-facilities/ibed-computational-support-team/ibed-computational-support-team.html">website of the computational support team</a> for more information</li>
+<li>Access to two directories:
+<ul>
+<li>The home directory with 25 GB of storage</li>
+<li>your personal directory, with 500 GB of storage</li>
 </ul></li>
-</ol>
-</section></main></div>
+</ul>
+<p>Some information about storage:</p>
+<ul>
+<li>Snapshots are made daily at 00.00.00 and kept for 2 weeks. This means that if you accidentally remove a file it can be restored up to 2 weeks after removal. This also means that even if you remove files to make space, these files will still count towards your quota for two weeks</li>
+<li>Data on Crunchomics is stored on multiple disks. Therefore, there is protection against disk failure. However, the data is not replicated and you are responsible for backing up and/or archiving your data.</li>
+</ul>
+<p>On the next page you find a tutorial to move the sequencing data that we worked on during the introduction into bash onto the server and run software to assess the quality of our sequencing data. We will learn to use some pre-installed software and also install software ourselves with conda and we will learn different ways to submit jobs to the compute nodes using SLURM.</p>
 
 
 
-
- <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -624,14 +641,17 @@ Institute for Biodiversity and Ecosystem Dynamics (IBED), University of Amsterda
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="../source/cli.html" class="pagination-link" aria-label="Navigating the command line">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Navigating the command line</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./source/terminal.html" class="pagination-link" aria-label="Setting up a terminal">
-        <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Setting up a terminal</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../source/hpc_howto.html" class="pagination-link" aria-label="Using an HPC">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Using an HPC</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
- <!-- /content -->
+</div> <!-- /content -->
 
 
 
