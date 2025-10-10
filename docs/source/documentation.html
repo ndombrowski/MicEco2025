@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-ce867c9c69d5854e0904775db70fd856.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-54a9f5e5b84719245279d64876a6a11a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -223,19 +223,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts, much like a detailed lab notebook.</p>
+<p>Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts. You want to document your code in the same way that you would write a detailed lab notebook.</p>
 <p>For more in-depth guidance, see <a href="https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf">A Guide to Reproducible Code in Ecology and Evolution</a>. While examples are mainly in R, the principles are general and apply across programming languages.</p>
 <section id="choosing-your-editor" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="choosing-your-editor"><span class="header-section-number">2.1</span> Choosing your editor</h2>
 <section id="plain-text-editor" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="plain-text-editor"><span class="header-section-number">2.1.1</span> Plain text editor</h3>
-<p>Avoid visual editors like Word, as they are not designed for code and can inadvertently change syntax (e.g., replacing backticks <code>\`` with apostrophes</code>’`).</p>
-<p>Start simple with a <strong>plain text editor</strong>, such as:</p>
+<p>Avoid visual editors like Word, as they are not designed for code and can change syntax by for example replacing backticks (`) with apostrophes (').</p>
+<p>One of the easiest solutions is to use a <strong>plain text editor</strong>, such as:</p>
 <ul>
 <li><strong>TextEdit</strong> (Mac)</li>
 <li><strong>Notepad</strong> (Windows)</li>
 </ul>
-<p>These allow you to write and save code safely, though they lack advanced features like syntax highlighting or integrated code execution.</p>
+<p>These editors allow you to write and save code safely, but they lack advanced features like syntax highlighting or integrated code execution.</p>
 </section>
 <section id="rmarkdown-in-rstudio" class="level3" data-number="2.1.2">
 <h3 data-number="2.1.2" class="anchored" data-anchor-id="rmarkdown-in-rstudio"><span class="header-section-number">2.1.2</span> Rmarkdown in RStudio</h3>
@@ -251,7 +251,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="quarto-in-rstudio" class="level3" data-number="2.1.3">
 <h3 data-number="2.1.3" class="anchored" data-anchor-id="quarto-in-rstudio"><span class="header-section-number">2.1.3</span> Quarto in Rstudio</h3>
-<p><strong>Quarto</strong> is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options.</p>
+<p><strong>Quarto</strong> is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options. This software was used to generate this tutorial.</p>
 <p>To create a Quarto document:</p>
 <ol type="1">
 <li>Go to <strong>File → New File → Quarto Document</strong></li>
@@ -263,9 +263,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="markdown-for-documentation" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="markdown-for-documentation"><span class="header-section-number">2.2</span> Markdown for Documentation</h2>
-<p>Markdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables.</p>
+<p>Markdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables. You can use markdown inside a plain text editor or inside a Rmarkdown or Quarto document.</p>
 <p><strong>Headers:</strong></p>
-<p>Use <code>#</code> to add a header and separate different sections of your documentation. The more <code>#</code> symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the <code>#</code> and the header name.</p>
+<p>Use <code>#</code> to add a header and separate different sections of your documentation. The more <code>#</code> symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the <code>#</code> and the header name:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Main Header</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subheader</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Lists:</strong></p>
@@ -300,12 +300,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>Indented item</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Fourth item</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Code Blocks:</strong></p>
-<p>Enclose code snippets in triple backticks followed by the computational language, i.e.&nbsp;bash or python, used.</p>
+<p>Enclose code snippets in triple backticks followed by the computational language, i.e.&nbsp;bash or r, used.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="st">"control"</span> downloads/Experiment1.txt</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Links:</strong></p>
-<p>You can easily add links to external resources or within your documentation as follows:</p>
+<p>You can easily add links to external resources as follows:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Link Text</span><span class="co">](https://www.example.com)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Emphasis:</strong></p>
 <p>You can use <code>*</code> or <code>_</code> to write italic and <code>**</code> or <code>__</code> for bold text.</p>

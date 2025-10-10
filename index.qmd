@@ -18,32 +18,50 @@ format:
 
 # Introduction {.unnumbered} 
 
-Welcome to the *Microbial Ecology Command-Line Crash Course*!  
+Welcome to the *Microbial Ecology Data Analysis Course*!  
 
-In this short tutorial, you will learn how to use the command line and a High-Performance Computing (HPC) environment in order to move from raw 16S sequencing reads to a basic count table of microbial taxa.
+In this short tutorial, you will learn how to use the command line and a High-Performance Computing (HPC) environment in order to move from raw 16S nanopore reads to a basic count table of microbial taxa.
 
 This course is designed for students in microbial ecology with little or no prior experience using the command line. During this tutorial, you will learn how to:
 
 1. **Install a Terminal**
-    - How to access a Unix/Linux command line 
+    - How to access the command line 
     - How to run basic commands
 
 2. **Document your Code**
-    - How to use markdown, Quarto, and comments in scripts
-    - How to track your work and make your analyses reproducible
+    - Decide what software to use for code documentation
+    - How to use markdown and document workflows
 
 3. **Navigate the Command Line**
-    - Navigating the filesystem (`cd`, `ls`, `pwd`)
-    - Working with files (`mkdir`, `cp`, `mv`, `rm`, `cat`, `head`, `less`)
-    - Searching and filtering data (`grep`, `wc`, `cut`)
-    - Viewing and understanding FASTQ files
+    - Navigate the filesystem (`cd`, `ls`, `pwd`)
+    - Work with files (`mkdir`, `cp`, `mv`, `rm`, `cat`, `head`, `less`)
+    - Search and filter data (`grep`, `wc`, `cut`)
+    - View and underrstand FASTQ files
 
 4. **Work with an HPC**
-    - Connecting to the cluster (SSH)
-    - Understanding file systems and job schedulers (e.g., SLURM)
-    - Running and interpreting command-line tools (e.g., `fastqc`, `seqkit`)
-    - Setting up and activating conda environments
-    - Running workflows with Snakemake
+    - Connect to an HPC (SSH)
+    - Understand job schedulers (e.g., SLURM)
+    - Run command-line tools (e.g., `fastqc`, `seqkit`)
+    - Set up and activating conda environments
+    - Run workflows with Snakemake
 
+
+::: {.content-hidden}
+
+::: {.callout-question .callout-warning collapse=false}
+# Question 
+
+X
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+X
+
+:::
+:::
+
+
+:::
 
 </div>

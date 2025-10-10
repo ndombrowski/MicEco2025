@@ -1,18 +1,19 @@
 ---
 engine: knitr
+toc-expand: 3
 ---
 
 # Navigating the command line
 
 ## `pwd`: Find out where we are
 
-Once your terminal is open, let’s get oriented by typing your first command: 
+Once your terminal is open, let’s get oriented by typing your first command and then pressing enter: 
 
 ```{bash}
 pwd
 ```
 
-The command `pwd` stands for **print working directory**. It tells you where you currently are in the file system — that is, which folder (directory) your shell is “looking at” right now. You should see something like:
+The command `pwd` stands for **print working directory**. It tells you where you currently are in the file system, that is, which folder (directory) your shell is operating on right now. You should see something like:
 
 ```
 /Users/YourUserName
@@ -42,7 +43,6 @@ Your home directory path varies slightly across operating systems. Here’s how 
 -   To open the folder you are currently in the Windows File explorer: `explorer.exe .`
 -   Your Desktop is usually at: `/mnt/c/Users/YourUserName/Desktop` or `/mnt/c/Users/YourUserName/OneDrive/Desktop` (when using OneDrive)
 
-
 If you want to access the Uva OneDrive folder:
 
 If your OneDrive folder name includes spaces (like OneDrive - UvA), use quotes around the path: 
@@ -56,7 +56,7 @@ cd "/mnt/c/Users/YourUserName/OneDrive - UvA"
 
 ## `ls`: List the contents of a directory
 
-Now that we know where we are, let's find out what is inside that location. The command `ls` (short for *list*) shows the files and folders in your current directory. Type the following and press enter:
+Now that we know where we are, let's find out what is inside that location, i.e. what files and folders can be found there. The command `ls` (short for *list*) shows the files and folders in your current directory. Type the following and press enter:
 
 ```{bash}
 ls
@@ -92,13 +92,22 @@ ls -l
 
 After running this you should see a more detail list of the contents of your folder.In the example below we can see that we now print additional information about who owns the files (i.e. access modes), how large the files are, when they were last modified and of course the name:
 
-![](../img/ls2.png)
+![](../img/ls2.png){width="80%"}
 
 
+::: {.callout-tip title="Tip: Using ls in practice" collapse="false"}
+
+Throughout this tutorial, you’ll notice that we use ls frequently. There’s a reason for that:
+
+When working with data, sanity checks are essential, because it is easy to make mistakes, overwrite files, or lose track of where things are. Using simple commands like `ls`, `wc`, or `grep` helps you verify what’s happening to your files at every step of an analysis workflow.
+
+These habits are not just for beginners, experienced bioinformaticians rely on them constantly. For newcomers, practicing these checks early will help you build confidence and intuition when working on the command line.
+
+:::
 
 ## Getting help
 
-At some point, you’ll want to know what options a command has or how it works. In this case, you can always check the **manual pages** (or *man pages*). Try this:
+At some point, you’ll want to know what options a command has or how it works. In this case, you can always check the **manual pages** (or *man pages*) by typing `man` followed by the command name:
 
 ```{bash}
 man ls
@@ -106,11 +115,11 @@ man ls
 
 This opens the manual entry for the command ls. You can scroll through it using:
 
-- ↑ / ↓ arrows or the space bar to move down,
-- b to move back up,
-- q to quit the manual.
+- ↑ / ↓ arrows or the space bar to move down
+- b to move back up
+- q to quit the manual
 
-Not all commands use man. Depending on the program, there are a few common patterns you can try
+Not all commands come with such a manual. Depending on the program, there are a few common patterns you can try to get help:
 
 -   `man ls`
 -   `ls --help`
@@ -126,7 +135,7 @@ For complex software, like bioinformatics tools, the most helpful documentation 
 
 Before we start moving around, let's first learn how to create new folders (also called directories).This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is `mkdir`, which stands for *make directory*.
 
-For now, we will use `mkdir` to create a shared working folder for this tutorial. Don’t worry about how to move into the folder yet — we’ll cover that in a bit.
+For now, we will use `mkdir` to create a shared working folder with the name `data_analysis` for this tutorial. Don’t worry about how to move into the folder yet, we’ll cover that in the next section.
 
 ```{bash}
 # Move into the home directory (the starting point of your system)
@@ -139,7 +148,7 @@ mkdir data_analysis
 ls
 ```
 
-You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial. You can easily make a new `data` folder inside this folder by typing the following:
+You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial. You can easily make a new `data` folder inside the new data_analysis folder by typing the following:
 
 ```{bash}
 # Make a data folder inside the data_analysis folder
@@ -154,10 +163,10 @@ ls data_analysis
 ::: {.callout-tip title="Tip: Commenting your code" collapse="true"}
 Notice how we added # and some notes above each command?
 
-Anything written after # in Bash is a comment — it won’t be executed, but it helps you (and others) understand what the command does.
+Anything written after # in Bash is a comment. A comment won't be executed, but it helps you (and others) understand what the command does.
 
 In your own work, add short, meaningful comments above key steps.
-Avoid restating the obvious — instead, explain why you’re doing something or what it achieves.
+Avoid restating the obvious, instead, explain why you’re doing something or what it achieves.
 :::
 
 
@@ -165,14 +174,16 @@ Avoid restating the obvious — instead, explain why you’re doing something or
 
 Now that we have our own project folder, let’s learn how to move around the file system.
 
-The file system is structured like a tree that starts from a single root directory (that is also denoted as `/` in bash). All other folders branch out from this root directory.
+The file system is structured like a tree that starts from a single root directory (that is also denoted as `/` in bash). All other folders branch out from this root directory. For example, we can go from the root directory, to the users folder and from there into the john folder.
 
 ![](../img/filesystem.png)
 
-There are two ways to specify a path:
+There are two ways to specify a path to go the the portfolio folder:
 
-- Absolute path: starts from the root (e.g. `/Users/John/Documents`)
-- Relative path: starts from your current location (e.g. `Documents` if you’re already in `/Users/John`)
+- **Absolute path**: starts from the root (e.g. `/users/john/portfolio`)
+- **Relative path**: starts from your current location (e.g. `portfolio` if you’re already in `/users/john`)
+
+It is generally recommended to use the relative path from inside your working/project directory. That makes your code more portable and still allows you to run the code even if your computer changes.
 
 Let’s practice moving between folders (at each step, use `pwd` in case you feel that you get lost):
 
@@ -184,7 +195,7 @@ cd data_analysis
 pwd
 ```
 
-We now should see that we are in something like `/Users/Name/data_analysis`. We can use the `cd` command in multiple ways:
+We now should see that we are in something like `/Users/Name/data_analysis`. We can use the `cd` command in multiple ways to move around:
 
 ```{bash}
 # Move into the data folder
@@ -196,6 +207,9 @@ cd ..
 # Move multiple levels at once
 cd data_analysis/data
 
+# Move two levels up
+cd ../.. 
+
 # Quickly go back home
 cd ~
 
@@ -203,38 +217,57 @@ cd ~
 cd data_analysis
 ```
 
-In the code above, the tilde symbol (`~`) is a shortcut for your home directory. It’s equivalent to typing the full absolute path to your home (e.g. `/Users/YourName`) but it is much faster to type.
+In the code above, the tilde symbol (`~`) is a shortcut for your home directory. It's equivalent to typing the full absolute path to your home (e.g. `/Users/YourName`) but it is much faster to type.
 
 
-::: {.callout-tip title="Tip: Command-line completion" collapse="true"}
-Some tips for faster navigation:
+::: {.callout-tip title="Tip: Command-line completion" collapse="false"}
+Here, are some other tips for faster navigation (and less typos):
 
 - Use Tab for autocompletion — type the first few letters of a folder name and press Tab.
 - If there’s more than one match, press Tab twice to see all options.
 - Use ↑ / ↓ arrows to scroll through previously entered commands
+
+**Hint**: From now on try to use the Tab key once in a while so that you do not have to write everything yourself all the time.
 :::
 
 
-::: {.callout-caution collapse="false" title="Exercise"}
+::: {.callout-question .callout-warning collapse=false}
+# Question 
+
+Familiarize yourself with these first commands and:
 
 - Create a new folder inside your data_analysis directory called results
-- Move into that folder and confirm your location with pwd
-- Move back to data_analysis using `cd`
+- Move into that folder and confirm your location with `pwd`
+- Move back inside the data_analysis folder
 - Use `ls` to confirm both results and data are there
 
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+```{bash}
+mkdir results 
+cd results 
+pwd 
+cd ..
+ls 
+```
+
 :::
+:::
+
+
 
 
 ## `wget`: Download data
 
-Next, let’s download a genome fasta file to go through some other useful commands. We’ll use the `wget` command to fetch a file `barcode01_merged.fastq.gz` from the NCBI database:
+Next, let’s download a genome fasta file to go through some other useful commands. We can use the `wget` command to fetch a genome fasta from the NCBI database:
 
 ```{bash}
 # Download the example fasta into the current directory
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz
 ```
 
-After you download data, it is always a good idea to do some sanity check to see if the file is present and check how large it is:
+After you download data, it is always a good idea to do some sanity check to see if the file is present and know how large it is:
 
 ```{bash}
 # List files in long (-l) and human-readable (-h) format
@@ -245,7 +278,9 @@ ls -lh GCF_000005845.2_ASM584v2_genomic.fna.gz
 
 ## `cp`: Copy files
 
-`cp` duplicates files or directories. Let's use it to copy the downloaded file into `data`:
+`cp` duplicates files or directories. It is a useful feature to keep our files organized and not have every single file organized but organize our files into folders categories (useful folders can be: data, scripts and results). 
+
+Let's use `cp` to copy the downloaded file into `data` and to organize the data a bit cleaner:
 
 ```{bash}
 # Copy file into data 
@@ -256,7 +291,7 @@ ls -l
 ls -l data
 ```
 
-When running the two `ls` commands, we see that we now have two copies of `GCF_000005845.2_ASM584v2_genomic.fna.gz`, one file is in our working directory and the other one is in our data folder. Having large files in multiple locations is generally not ideal since we will use unneccassary space. However, we can use another command to move the tar folder into our data folder.
+When running the two `ls` commands, we see that we now have two copies of `GCF_000005845.2_ASM584v2_genomic.fna.gz`, one file is in our working directory and the other one is in our data folder. Having large files in multiple locations is not ideal since we will use unneccassary space. However, we can use another command to move the file into our data folder instead of copying it.
 
 
 ## `mv`: Move (or rename) files
@@ -272,16 +307,16 @@ ls -l
 ls -l data
 ```
 
-Notice that `mv` will move a file and, without asking, overwrite the existing genome file we had in the data folder when we ran `cp`. This means for you that if you run `mv` its best to make sure that you do not overwrite files by mistake.
+Notice that `mv` will move a file and, without asking, overwrite the existing file we had in the data folder when we ran `cp`. This means that if you run `mv` its best to make sure that you do not overwrite files by mistake.
 
 
 
 ## `rm`: Remove files and directories
 
-To remove files and folders, we use the `rm` command. We want to remove the `GCF_000005845.2_ASM584v2_genomic.fna.gz` file since we do not need two copies:
+To remove files and folders, we use the `rm` command. For example we could remove the `GCF_000005845.2_ASM584v2_genomic.fna.gz` in case we don't need it anymore:
 
 ```{bash}
-# Remove a file
+# Remove the genome file from the data folder
 rm data/GCF_000005845.2_ASM584v2_genomic.fna.gz
 
 # Check if that worked
@@ -294,18 +329,45 @@ If we want to remove a folder, we need to tell `rm` that we want to remove folde
 **Unix does not have an undelete command.**
 
 This means that if you delete something with rm, it's gone. Therefore, use `rm` with care and check what you write twice before pressing enter!
-Also, NEVER run `rm -rf` on the root `/` folder or any important path. Always double check the path or file name before pressing enter.
+
+Also, NEVER run `rm -r` or `rm -rf` on the root `/` folder or any important path. And yes, we have seen recommendations to use these combinations online. Therefore, always double check the path or file name before pressing enter when using the `rm` command.
 :::
 
+::: {.callout-question .callout-warning collapse=false}
+# Question 
 
+Download another genome:
+
+- Download the genome from this url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/050/115/GCF_001050115.1_ASM105011v1/GCF_001050115.1_ASM105011v1_genomic.fna.gz
+- Make sure that the new genome stored in the data folder
+- Compare the file size between the two genomes (hint: use the -h option with ls)
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+```{bash}
+# Download the genome
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/050/115/GCF_001050115.1_ASM105011v1/GCF_001050115.1_ASM105011v1_genomic.fna.gz 
+
+# Move the genome file to the data folder
+mv GCF_001050115.1_ASM105011v1_genomic.fna.gz data
+
+# Compare the file sizes : 
+# GCF_001050115 has a genome size of 3.4 Mb, GCF_000005845 a size of 4.6 Mb
+# Since we store more nucleotdes in GCF_000005845 it makes sense that we have a larger file size
+ls -lh data/
+```
+
+:::
+:::
 
 
 ## `gzip`: (Un)compressing files
 
-You might have noticed that the file we downloaded ends with `.gz`. This extension is used for files that are compressed to make the file smaller. This is useful for saving files, but this makes the file unreadable for a human. To be able to learn how to read the content of a file, let's uncompress the file first.
+You might have noticed that the file we downloaded ends with `.gz`. This extension is used for files that are compressed to make the file smaller. This is useful for saving files, but this makes the file unreadable for a human. To be able to learn how to read the content of a file, let's learn how to uncompress the file first.
 
 ```{bash}
-# Download the genome again 
+# Download the first genome again 
 # Here, we use the -P option to directly download the file into the data folder 
 wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz -P data
 
@@ -313,30 +375,29 @@ wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_AS
 ls data
 
 # Uncompress the file with gzip 
-# Here, we use -d to decompress the file (by default gzip will compress a file)
+# Here, we use -d to decompress the file 
+# (by default gzip will compress a file)
 gzip -d data/GCF_000005845.2_ASM584v2_genomic.fna.gz 
 
 # Check that this worked 
+# We now should see that one file is uncompressed (i.e. it lost the gz extension)
 ls data
 ```
 
 
 ## `zcat`: Decompress and print to screen
 
-`gzip` will decompress the file and allows us to read the content of the fasta file. This is perfect for large files, but not ideal sequence data files since these files get rather larger and we might not want to decompress these files as they would clutter our system.
+`gzip` will decompress the file and allows us to read the content of the fasta file. This is perfect for smaller files, but not ideal for sequence data since these files get large and we might not want to decompress these files as they would clutter our system.
 
-Luckily, there is one useful tool in bash to decompress the file and print the content to the screen called `zcat` which will print the content of a file to the screen but leave the file as is.
+Luckily, there is one useful tool in bash to decompress the file and print the content to the screen. `zcat` will print the content of a file to the screen but leave the file as is. Since the file is quite large, we see a lot of content flying across the screen, that is fine, we will see how to improve in a bit.
 
 ```{bash}
-# Download another file to see how zcat works 
-wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/016/864/595/GCF_016864595.1_ASM1686459v1/GCF_016864595.1_ASM1686459v1_genomic.fna.gz -P data 
-
 # Check the content of the data folder 
 # We should have one compressed and one uncompressed file 
 ls data
 
 # Use zcat on the compressed file 
-zcat data/GCF_016864595.1_ASM1686459v1_genomic.fna.gz
+zcat data/GCF_001050115.1_ASM105011v1_genomic.fna.gz
 
 # Check the content of the data folder 
 # We still should have one compressed and one uncompressed file 
@@ -346,12 +407,11 @@ ls data
 
 ## Exploring file contents
 
-There are different ways, to explore the content of a file, below you find the most common options.
-
+Now that we have the uncompressed file we can use different ways to explore the content of a file.
 
 ### `cat`: Print the full file
 
-We can use `cat` print the entire file to the screen — fine for short files, but overwhelming for long ones, which for our file is the case as we will see the nucleotides just running across the screen.
+We can use `cat` print the entire file to the screen, this is fine for short files, but overwhelming for long ones, which for our file is the case as we will see the nucleotides just running across the screen.
 
 ```{bash}
 cat data/GCF_000005845.2_ASM584v2_genomic.fna
@@ -360,10 +420,10 @@ cat data/GCF_000005845.2_ASM584v2_genomic.fna
 
 ### `head` and `tail`: View parts of a file
 
-To only print the first few or last few lines we can use the `head` and `tail` command, respectively:
+To only print the first few or last few lines we can use the `head` and `tail` commands:
 
 ```{bash}
-# Show the first 10 lines (default)
+# Show the first 10 lines
 head data/GCF_000005845.2_ASM584v2_genomic.fna
 
 # Show the last 5 lines
@@ -401,13 +461,13 @@ Once the document is open you can edit it however you want and then
 
 ## `wc`: Count things
 
-Another useful tool is the `wc` (= wordcount) command that allows us to count the number of lines via `-l` in a file. It is an useful tool for sanity checking and here allows us to count how many lines of text are found in the text document.
+Another useful tool is the `wc` (short for *wordcount*) command that allows us to count the number of lines via `-l` in a file. It is an useful tool for sanity checking.
 
 ```{bash}
 wc -l data/GCF_000005845.2_ASM584v2_genomic.fna
 ```
 
-We see that this file does contain 58,022 lines of text. For fasta files this is not very informative, but once you have a dataframe with rows and columns where you filter rows using certain conditions this can become very useful for sanity checking.
+We see that this file does contain 58,022 lines of text. For fasta files this is not very informative, but if you for example work with a dataframe with rows and columns where you filter rows using certain conditions this can become very useful for sanity checking.
 
 
 
@@ -419,19 +479,64 @@ The `grep` command searches for patterns in a file. We could for example use thi
 grep "CATGAAACGCA" data/GCF_000005845.2_ASM584v2_genomic.fna
 ```
 
-We see, highlighted in red, where we find the pattern in the nucleotide sequence. If we simply are interested in the number of files that match our pattern, we could add the option -c to count how often the pattern we search for occurs:
+We see, highlighted in red, where we find the pattern in the nucleotide sequence. If we simply are interested in the number of files that match our pattern, we could add the option `-c` to count how often the pattern we search for occurs:
 
 ```{bash}
 grep -c "CATGAAACGCA" data/GCF_000005845.2_ASM584v2_genomic.fna
 ```
 
 
-## Pipes 
+::: {.callout-tip title="The structure of a fasta file" collapse="false"}
 
-So far, we’ve run one command at a time — for example, using wc -l to count lines or head to look at the first few lines. But often, you’ll want to combine commands so that the output of one becomes the input of another. That’s what the pipe (`|`) does.
+A sequence FASTA file is a text based format to store DNA or peptide sequences.  It should always look something like this:
+
+![](../img/fasta.png)
+
+The header always starts with a `>` followed by descriptive information. In a new line the sequence data gets stored in either a single line or multiple lines. A fasta file can continue single sequence or multiple sequences.
+
+By convention the extensions `.fna` is used to store fasta sequences from nucleotides and `.faa` is used to store fasta sequences from proteins.
+
+:::
+
+
+
+::: {.callout-question .callout-warning collapse=false}
+# Question 
+
+1. Uncompress the file for GCF_001050115.1
+2. Explore the header of both files, can you see from what species these genomes are?
+3. Use grep to count the number of contigs in each genome 
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
 
 ```{bash}
-# Example: show only the first 10 lines and count how many lines of text that is
+# Uncompress 
+gzip -d data/GCF_001050115.1_ASM105011v1_genomic.fna.gz
+
+# View the header 
+# We work with genomes from Escherichia coli  and Bacillus smithii
+head data/GCF_000005845.2_ASM584v2_genomic.fna
+head data/GCF_001050115.1_ASM105011v1_genomic.fna
+
+# Count the number of contigs 
+# We work with genomes with 1 and 2 contigs
+grep -c ">" data/GCF_000005845.2_ASM584v2_genomic.fna
+grep -c ">" data/GCF_001050115.1_ASM105011v1_genomic.fna
+
+```
+
+:::
+:::
+
+
+## Pipes 
+
+So far, we’ve run one command at a time, for example. But often, you might want to combine commands so that the output of one becomes the input of another. That’s what the pipe (`|`) does. It allows us to chain simple commands together to do more complex operations.
+
+```{bash}
+# Example: show only the first 100 lines and then
+# count how often a sequence motif occurs in these lines
 head -n 100 data/GCF_000005845.2_ASM584v2_genomic.fna | grep -c "CATGAAACGCA" 
 ```
 
@@ -445,7 +550,7 @@ Here:
 
 ## Working with multiple files
 
-So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files — for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes!
+So far, we’ve worked with single files. In practice, sequencing data often comes as multiple filesm for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes and not only get the nucleotide but also some protein sequences:
 
 ```{bash}
 # Download more data 
@@ -459,7 +564,7 @@ wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/317/675/GCF_000317675.1_AS
 ls -lh data
 ```
 
-We now should have 6 files, 5 of which are still compressed. Notice, how there are some slight differences:
+We now should have 6 files, 4 of which are still compressed. Notice, how there are some slight differences:
 
 - The file names start with either GCA or GCF indicating that they come from the GenBank versus RefSeq database
 - The file names end with either fna.gz or faa.gz indicating that the contain nucleotide versus protein sequences
@@ -503,14 +608,14 @@ Imagine we want to uncompress all the new files. Typing every filename can get t
 ls data/*gz
 
 # List all protein fasta files inside the data folder 
-# using `*faa*` means we look for filenames that contain a faa inside the name and that we allow for characters before and after
-ls data/*faa*
+# using `*fna*` means we look for filenames that contain a faa inside the name and that we allow for characters before and after
+ls data/*fna*
 
 # If we would not add a asterisk after the faa we do not get any files, because none of the files end with faa
-ls data/*faa
+ls data/*fna
 ```
 
-We can use Wildcards with every bash command and use it to unzip every file at once with:
+We can use Wildcards with every bash command and use it to unzip every file at once with the following command:
 
 ```{bash}
 gzip -d data/*gz
@@ -522,11 +627,11 @@ ls -lh data
 
 ### `cat`: Combining files 
 
-The cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several protein files and want to merge them:
+The cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several genome nucleotide files and want to merge them:
 
 ```{bash}
-# Combine the protein fasta files into one
-cat data/*faa > proteins.faa
+# Combine the nucleotide fasta files into one
+cat data/*fna > nucleotides.faa
 ```
 
 Here:
@@ -542,12 +647,34 @@ If you want to add (append) to an existing file instead of replacing it, use `>>
 
 Whenever you modify files it is a good idea to do some sanity checks. Luckily, we already learned about useful ways to do this:
 
-
 ```{bash}
 # Check how many protein files are in the individual faa files 
-grep -c ">" data/*faa
+grep -c ">" data/*fna
 
 # Check how many protein files are in concatenated file
 # Hopefully the numbers add up
+grep -c ">" nucleotides.faa
+```
+
+
+
+::: {.callout-question .callout-warning collapse=false}
+# Question 
+
+1. Combine the protein files into one
+2. Count the total number of proteins in the individual and the combined file
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+```{bash}
+# Combine
+cat data/*faa > proteins.faa
+
+# Count 
+grep -c ">" data/*faa
 grep -c ">" proteins.faa
 ```
+
+:::
+:::

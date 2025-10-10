@@ -3,16 +3,16 @@
 
 ## Terminology
 
-The **command-line interface (CLI)** is an alternative to a graphical user interface (GUI), with which you are likely more familiar. Both allow you to interact with your computer’s operating system but in a slightly different way:
+The **command-line interface (CLI)** is an alternative to a graphical user interface (GUI), with which you are likely more familiar. Both allow you to interact with your computer's operating system but in a slightly different way:
 
 - In a **GUI**, you click buttons, open folders, and use menus
-- In the **CLI**, you type text commands and see text output
+- In the **CLI**, you type text to issue commands and see text output in the terminal
 
-The CLI is also commonly called the **shell**, **terminal**, **console**, or **prompt**. These terms are related but not identical:
+The CLI is commonly called the **shell**, **terminal**, **console**, or **prompt**. These terms are related but not identical:
 
-- The **terminal** (or **console**) is the window or program that lets you type commands. It is the interface you open, for example, *Terminal* on macOS, *WSL* on Windows, or an HPC login session.
-- The **shell** is the program that actually interprets the commands you type inside the terminal and tells the operating system what to do. The shell understands commands like `cd` that is used to change directories.
-- **Prompt**: the text displayed by the shell that indicates it is ready to accept a command. The prompt often shows useful information, like your username, machine name, and current directory. Example of a prompt: `user@machine:~$`
+- The **terminal** (or **console**) is the window or program that lets you type commands.
+- The **shell** is the program that interprets the commands you type inside the terminal and tells the operating system what to do. 
+- A **prompt** is the text displayed by the shell that indicates that it is ready to accept a command. The prompt often shows useful information, like your username, machine name, and current directory. This is one example for how a prompt can look like: `user@machine:~$`
 
 There are several types of shells — for example, **bash** or **zsh** (that use slightly different languages to issue commands). This tutorial was written on a computer that uses **bash**, which stands for *Bourne Again Shell*.  
 
@@ -21,7 +21,7 @@ There are several types of shells — for example, **bash** or **zsh** (that use
 
 ### Linux
 
-If you’re using Linux, you already have everything you need — no installation required. All Linux systems come with a terminal and a shell, and the default shell is usually Bash.
+If you’re using Linux, you already have everything you need and you don't need to install anything. All Linux systems come with a terminal and a shell, and the default shell is usually Bash.
 
 You can open a terminal from your applications menu or by searching for Gnome Terminal, KDE Konsole, or xterm, depending on your desktop environment.
 
@@ -31,13 +31,6 @@ To confirm which shell you’re using, type:
 echo $SHELL
 ```
 
-If the output does not end in `/bash`, you can start Bash manually by typing:
-
-```{bash}
-bash
-```
-
-You should then see a new prompt (often ending in `$`) indicating that Bash is running.
 
 ### Mac
 
@@ -68,16 +61,16 @@ Then check again with echo `$SHELL`. If you have trouble switching, don’t worr
 
 ### Windows
 
-Unlike macOS or Linux, Windows doesn’t include a Unix-style terminal by default, so you’ll need to install one of the following:
+Unlike macOS or Linux, Windows doesn’t include a Unix-style terminal by default, so you will need to install one of the following:
 
 1. MobaXterm (recommended)
-    - Provides a terminal with Linux-like commands, built-in
+    - Provides a terminal with Linux-like commands built-in
     - Installation guide: [MobaXterm setup instructions](https://hpc.ncsu.edu/Documents/mobaxterm.php)
-    - Easiest option for beginners and lightweight to install.
+    - Easiest option for beginners and lightweight to install
 2. Windows Subsystem for Linux (WSL2)
-    - Gives you a full Linux environment directly on Windows.
-    - Recommended if you’re comfortable installing software or already have some command-line experience.
-    - Uses Ubuntu by default, which includes Bash and all standard Linux tools.
+    - Gives you a full Linux environment directly on Windows
+    - Recommended if you’re comfortable installing software or already have some command-line experience
+    - Uses Ubuntu by default, which includes Bash and all standard Linux tools
     - Installation guide:[ Microsoft WSL install instructions](https://learn.microsoft.com/en-us/windows/wsl/install)
 
 Once installed, open your terminal (MobaXterm or Ubuntu via WSL2) and verify that Bash is available:
@@ -89,10 +82,10 @@ echo $SHELL
 
 ## Sanity check
 
-After setup, open your terminal. You should see something like this:
+After setup, open your terminal and type `echo $SHELL` and press enter. You should see something like this:
 
 ![](../img/terminal.png)
 
-If you see a prompt ending in `$` (for example `user@machine:~$`), your shell is ready — you’re all set to follow along with the tutorial!
+If you see a prompt ending in `$` (for example `user@machine:~$`), your shell is ready to go and you are all set to follow along with the tutorial!
 
 </div>

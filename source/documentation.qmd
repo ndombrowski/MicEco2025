@@ -1,7 +1,7 @@
 
 # Documenting your code
 
-Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts, much like a detailed lab notebook.
+Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts. You want to document your code in the same way that you would write a detailed lab notebook.
 
 For more in-depth guidance, see [A Guide to Reproducible Code in Ecology and Evolution](https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf). While examples are mainly in R, the principles are general and apply across programming languages.
 
@@ -10,14 +10,14 @@ For more in-depth guidance, see [A Guide to Reproducible Code in Ecology and Evo
 
 ### Plain text editor
 
-Avoid visual editors like Word, as they are not designed for code and can inadvertently change syntax (e.g., replacing backticks `\`` with apostrophes `'`).  
+Avoid visual editors like Word, as they are not designed for code and can change syntax by for example replacing backticks (\`) with apostrophes (\').  
 
-Start simple with a **plain text editor**, such as:
+One of the easiest solutions is to use a **plain text editor**, such as:
 
 - **TextEdit** (Mac)
 - **Notepad** (Windows)
 
-These allow you to write and save code safely, though they lack advanced features like syntax highlighting or integrated code execution.
+These editors allow you to write and save code safely, but they lack advanced features like syntax highlighting or integrated code execution.
 
 
 ### Rmarkdown in RStudio
@@ -36,7 +36,7 @@ More info: [RMarkdown tutorial](https://rmarkdown.rstudio.com/lesson-1.html)
 
 ### Quarto in Rstudio
 
-**Quarto** is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options.
+**Quarto** is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options. This software was used to generate this tutorial.
 
 To create a Quarto document:
 
@@ -49,11 +49,11 @@ More info: [Quarto documentation](https://quarto.org/docs/get-started/hello/rstu
 
 ## Markdown for Documentation
 
-Markdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables.  
+Markdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables. You can use markdown inside a plain text editor or inside a Rmarkdown or Quarto document.
 
 **Headers:**
 
-Use `#` to add a header and separate different sections of your documentation. The more `#` symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the `#` and the header name.
+Use `#` to add a header and separate different sections of your documentation. The more `#` symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the `#` and the header name:
 
 ```markdown
 # Main Header
@@ -113,7 +113,7 @@ You can also combine ordered with unordered lists:
 
 **Code Blocks:**
 
-Enclose code snippets in triple backticks followed by the computational language, i.e. bash or python, used.
+Enclose code snippets in triple backticks followed by the computational language, i.e. bash or r, used.
 
 ````markdown
 ```bash
@@ -123,7 +123,7 @@ grep "control" downloads/Experiment1.txt
 
 **Links:**
 
-You can easily add links to external resources or within your documentation as follows:
+You can easily add links to external resources as follows:
 
 ``` markdown
 [Link Text](https://www.example.com)

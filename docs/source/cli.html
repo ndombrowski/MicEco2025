@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-ce867c9c69d5854e0904775db70fd856.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-54a9f5e5b84719245279d64876a6a11a.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -187,7 +187,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
     <h2 id="toc-title">Contents</h2>
    
   <ul>
@@ -244,11 +244,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="pwd-find-out-where-we-are" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="pwd-find-out-where-we-are"><span class="header-section-number">3.1</span> <code>pwd</code>: Find out where we are</h2>
-<p>Once your terminal is open, let’s get oriented by typing your first command:</p>
+<p>Once your terminal is open, let’s get oriented by typing your first command and then pressing enter:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The command <code>pwd</code> stands for <strong>print working directory</strong>. It tells you where you currently are in the file system — that is, which folder (directory) your shell is “looking at” right now. You should see something like:</p>
+<p>The command <code>pwd</code> stands for <strong>print working directory</strong>. It tells you where you currently are in the file system, that is, which folder (directory) your shell is operating on right now. You should see something like:</p>
 <pre><code>/Users/YourUserName</code></pre>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Finding the Desktop on Different Systems">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -297,7 +297,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="ls-list-the-contents-of-a-directory" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="ls-list-the-contents-of-a-directory"><span class="header-section-number">3.2</span> <code>ls</code>: List the contents of a directory</h2>
-<p>Now that we know where we are, let’s find out what is inside that location. The command <code>ls</code> (short for <em>list</em>) shows the files and folders in your current directory. Type the following and press enter:</p>
+<p>Now that we know where we are, let’s find out what is inside that location, i.e.&nbsp;what files and folders can be found there. The command <code>ls</code> (short for <em>list</em>) shows the files and folders in your current directory. Type the following and press enter:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -324,21 +324,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>After running this you should see a more detail list of the contents of your folder.In the example below we can see that we now print additional information about who owns the files (i.e.&nbsp;access modes), how large the files are, when they were last modified and of course the name:</p>
-<p><img src="../img/ls2.png" class="img-fluid"></p>
+<p><img src="../img/ls2.png" class="img-fluid" style="width:80.0%"></p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Tip: Using ls in practice">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Tip: Using ls in practice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Throughout this tutorial, you’ll notice that we use ls frequently. There’s a reason for that:</p>
+<p>When working with data, sanity checks are essential, because it is easy to make mistakes, overwrite files, or lose track of where things are. Using simple commands like <code>ls</code>, <code>wc</code>, or <code>grep</code> helps you verify what’s happening to your files at every step of an analysis workflow.</p>
+<p>These habits are not just for beginners, experienced bioinformaticians rely on them constantly. For newcomers, practicing these checks early will help you build confidence and intuition when working on the command line.</p>
+</div>
+</div>
+</div>
 </section>
 <section id="getting-help" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="getting-help"><span class="header-section-number">3.4</span> Getting help</h2>
-<p>At some point, you’ll want to know what options a command has or how it works. In this case, you can always check the <strong>manual pages</strong> (or <em>man pages</em>). Try this:</p>
+<p>At some point, you’ll want to know what options a command has or how it works. In this case, you can always check the <strong>manual pages</strong> (or <em>man pages</em>) by typing <code>man</code> followed by the command name:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">man</span> ls</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>This opens the manual entry for the command ls. You can scroll through it using:</p>
 <ul>
-<li>↑ / ↓ arrows or the space bar to move down,</li>
-<li>b to move back up,</li>
-<li>q to quit the manual.</li>
+<li>↑ / ↓ arrows or the space bar to move down</li>
+<li>b to move back up</li>
+<li>q to quit the manual</li>
 </ul>
-<p>Not all commands use man. Depending on the program, there are a few common patterns you can try</p>
+<p>Not all commands come with such a manual. Depending on the program, there are a few common patterns you can try to get help:</p>
 <ul>
 <li><code>man ls</code></li>
 <li><code>ls --help</code></li>
@@ -353,7 +371,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="mkdir-make-a-new-folder" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="mkdir-make-a-new-folder"><span class="header-section-number">3.5</span> <code>mkdir</code>: Make a new folder</h2>
 <p>Before we start moving around, let’s first learn how to create new folders (also called directories).This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is <code>mkdir</code>, which stands for <em>make directory</em>.</p>
-<p>For now, we will use <code>mkdir</code> to create a shared working folder for this tutorial. Don’t worry about how to move into the folder yet — we’ll cover that in a bit.</p>
+<p>For now, we will use <code>mkdir</code> to create a shared working folder with the name <code>data_analysis</code> for this tutorial. Don’t worry about how to move into the folder yet, we’ll cover that in the next section.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into the home directory (the starting point of your system)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span>
@@ -364,7 +382,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that the folder was created successfully</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial. You can easily make a new <code>data</code> folder inside this folder by typing the following:</p>
+<p>You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial. You can easily make a new <code>data</code> folder inside the new data_analysis folder by typing the following:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a data folder inside the data_analysis folder</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> data_analysis/data</span>
@@ -374,7 +392,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data_analysis</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Commenting your code">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -383,11 +401,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Notice how we added # and some notes above each command?</p>
-<p>Anything written after # in Bash is a comment — it won’t be executed, but it helps you (and others) understand what the command does.</p>
-<p>In your own work, add short, meaningful comments above key steps. Avoid restating the obvious — instead, explain why you’re doing something or what it achieves.</p>
+<p>Anything written after # in Bash is a comment. A comment won’t be executed, but it helps you (and others) understand what the command does.</p>
+<p>In your own work, add short, meaningful comments above key steps. Avoid restating the obvious, instead, explain why you’re doing something or what it achieves.</p>
 </div>
 </div>
 </div>
@@ -395,13 +413,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="cd-move-around-folders" class="level2" data-number="3.6">
 <h2 data-number="3.6" class="anchored" data-anchor-id="cd-move-around-folders"><span class="header-section-number">3.6</span> <code>cd</code>: Move around folders</h2>
 <p>Now that we have our own project folder, let’s learn how to move around the file system.</p>
-<p>The file system is structured like a tree that starts from a single root directory (that is also denoted as <code>/</code> in bash). All other folders branch out from this root directory.</p>
+<p>The file system is structured like a tree that starts from a single root directory (that is also denoted as <code>/</code> in bash). All other folders branch out from this root directory. For example, we can go from the root directory, to the users folder and from there into the john folder.</p>
 <p><img src="../img/filesystem.png" class="img-fluid"></p>
-<p>There are two ways to specify a path:</p>
+<p>There are two ways to specify a path to go the the portfolio folder:</p>
 <ul>
-<li>Absolute path: starts from the root (e.g.&nbsp;<code>/Users/John/Documents</code>)</li>
-<li>Relative path: starts from your current location (e.g.&nbsp;<code>Documents</code> if you’re already in <code>/Users/John</code>)</li>
+<li><strong>Absolute path</strong>: starts from the root (e.g.&nbsp;<code>/users/john/portfolio</code>)</li>
+<li><strong>Relative path</strong>: starts from your current location (e.g.&nbsp;<code>portfolio</code> if you’re already in <code>/users/john</code>)</li>
 </ul>
+<p>It is generally recommended to use the relative path from inside your working/project directory. That makes your code more portable and still allows you to run the code even if your computer changes.</p>
 <p>Let’s practice moving between folders (at each step, use <code>pwd</code> in case you feel that you get lost):</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into the data analysis folder </span></span>
@@ -410,7 +429,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check where we are </span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We now should see that we are in something like <code>/Users/Name/data_analysis</code>. We can use the <code>cd</code> command in multiple ways:</p>
+<p>We now should see that we are in something like <code>/Users/Name/data_analysis</code>. We can use the <code>cd</code> command in multiple ways to move around:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move into the data folder</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data</span>
@@ -421,15 +440,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Move multiple levels at once</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis/data</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Quickly go back home</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Move two levels up</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../.. </span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># And go back to the data_analysis folder </span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Quickly go back home</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># And go back to the data_analysis folder </span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In the code above, the tilde symbol (<code>~</code>) is a shortcut for your home directory. It’s equivalent to typing the full absolute path to your home (e.g.&nbsp;<code>/Users/YourName</code>) but it is much faster to type.</p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Command-line completion">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -438,88 +460,113 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Some tips for faster navigation:</p>
+<p>Here, are some other tips for faster navigation (and less typos):</p>
 <ul>
 <li>Use Tab for autocompletion — type the first few letters of a folder name and press Tab.</li>
 <li>If there’s more than one match, press Tab twice to see all options.</li>
 <li>Use ↑ / ↓ arrows to scroll through previously entered commands</li>
 </ul>
+<p><strong>Hint</strong>: From now on try to use the Tab key once in a while so that you do not have to write everything yourself all the time.</p>
 </div>
 </div>
 </div>
-<div class="callout callout-style-default callout-caution callout-titled" title="Exercise">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Exercise
+<span class="screen-reader-only">Question</span>Question
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
+<p>Familiarize yourself with these first commands and:</p>
 <ul>
 <li>Create a new folder inside your data_analysis directory called results</li>
-<li>Move into that folder and confirm your location with pwd</li>
-<li>Move back to data_analysis using <code>cd</code></li>
+<li>Move into that folder and confirm your location with <code>pwd</code></li>
+<li>Move back inside the data_analysis folder</li>
 <li>Use <code>ls</code> to confirm both results and data are there</li>
 </ul>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> results </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </section>
 <section id="wget-download-data" class="level2" data-number="3.7">
 <h2 data-number="3.7" class="anchored" data-anchor-id="wget-download-data"><span class="header-section-number">3.7</span> <code>wget</code>: Download data</h2>
-<p>Next, let’s download a genome fasta file to go through some other useful commands. We’ll use the <code>wget</code> command to fetch a file <code>barcode01_merged.fastq.gz</code> from the NCBI database:</p>
+<p>Next, let’s download a genome fasta file to go through some other useful commands. We can use the <code>wget</code> command to fetch a genome fasta from the NCBI database:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the example fasta into the current directory</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the example fasta into the current directory</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>After you download data, it is always a good idea to do some sanity check to see if the file is present and check how large it is:</p>
+<p>After you download data, it is always a good idea to do some sanity check to see if the file is present and know how large it is:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List files in long (-l) and human-readable (-h) format</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># combining these two commands becomes -lh</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> GCF_000005845.2_ASM584v2_genomic.fna.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List files in long (-l) and human-readable (-h) format</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># combining these two commands becomes -lh</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> GCF_000005845.2_ASM584v2_genomic.fna.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="cp-copy-files" class="level2" data-number="3.8">
 <h2 data-number="3.8" class="anchored" data-anchor-id="cp-copy-files"><span class="header-section-number">3.8</span> <code>cp</code>: Copy files</h2>
-<p><code>cp</code> duplicates files or directories. Let’s use it to copy the downloaded file into <code>data</code>:</p>
+<p><code>cp</code> duplicates files or directories. It is a useful feature to keep our files organized and not have every single file organized but organize our files into folders categories (useful folders can be: data, scripts and results).</p>
+<p>Let’s use <code>cp</code> to copy the downloaded file into <code>data</code> and to organize the data a bit cleaner:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy file into data </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> GCF_000005845.2_ASM584v2_genomic.fna.gz data/</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show content of both locations</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy file into data </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> GCF_000005845.2_ASM584v2_genomic.fna.gz data/</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show content of both locations</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>When running the two <code>ls</code> commands, we see that we now have two copies of <code>GCF_000005845.2_ASM584v2_genomic.fna.gz</code>, one file is in our working directory and the other one is in our data folder. Having large files in multiple locations is generally not ideal since we will use unneccassary space. However, we can use another command to move the tar folder into our data folder.</p>
+<p>When running the two <code>ls</code> commands, we see that we now have two copies of <code>GCF_000005845.2_ASM584v2_genomic.fna.gz</code>, one file is in our working directory and the other one is in our data folder. Having large files in multiple locations is not ideal since we will use unneccassary space. However, we can use another command to move the file into our data folder instead of copying it.</p>
 </section>
 <section id="mv-move-or-rename-files" class="level2" data-number="3.9">
 <h2 data-number="3.9" class="anchored" data-anchor-id="mv-move-or-rename-files"><span class="header-section-number">3.9</span> <code>mv</code>: Move (or rename) files</h2>
 <p><code>mv</code> moves or renames files without creating a second copy:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move the file into data</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> GCF_000005845.2_ASM584v2_genomic.fna.gz data/</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Move the file into data</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> GCF_000005845.2_ASM584v2_genomic.fna.gz data/</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Notice that <code>mv</code> will move a file and, without asking, overwrite the existing genome file we had in the data folder when we ran <code>cp</code>. This means for you that if you run <code>mv</code> its best to make sure that you do not overwrite files by mistake.</p>
+<p>Notice that <code>mv</code> will move a file and, without asking, overwrite the existing file we had in the data folder when we ran <code>cp</code>. This means that if you run <code>mv</code> its best to make sure that you do not overwrite files by mistake.</p>
 </section>
 <section id="rm-remove-files-and-directories" class="level2" data-number="3.10">
 <h2 data-number="3.10" class="anchored" data-anchor-id="rm-remove-files-and-directories"><span class="header-section-number">3.10</span> <code>rm</code>: Remove files and directories</h2>
-<p>To remove files and folders, we use the <code>rm</code> command. We want to remove the <code>GCF_000005845.2_ASM584v2_genomic.fna.gz</code> file since we do not need two copies:</p>
+<p>To remove files and folders, we use the <code>rm</code> command. For example we could remove the <code>GCF_000005845.2_ASM584v2_genomic.fna.gz</code> in case we don’t need it anymore:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove a file</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> data/GCF_000005845.2_ASM584v2_genomic.fna.gz</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if that worked</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the genome file from the data folder</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> data/GCF_000005845.2_ASM584v2_genomic.fna.gz</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if that worked</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>If we want to remove a folder, we need to tell <code>rm</code> that we want to remove folders using an option. To do this, we use <code>-r</code> , which allows us to remove directories and their contents recursively.</p>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -533,83 +580,131 @@ Important
 </div>
 <div class="callout-body-container callout-body">
 <p><strong>Unix does not have an undelete command.</strong></p>
-<p>This means that if you delete something with rm, it’s gone. Therefore, use <code>rm</code> with care and check what you write twice before pressing enter! Also, NEVER run <code>rm -rf</code> on the root <code>/</code> folder or any important path. Always double check the path or file name before pressing enter.</p>
+<p>This means that if you delete something with rm, it’s gone. Therefore, use <code>rm</code> with care and check what you write twice before pressing enter!</p>
+<p>Also, NEVER run <code>rm -r</code> or <code>rm -rf</code> on the root <code>/</code> folder or any important path. And yes, we have seen recommendations to use these combinations online. Therefore, always double check the path or file name before pressing enter when using the <code>rm</code> command.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Question</span>Question
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Download another genome:</p>
+<ul>
+<li>Download the genome from this url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/050/115/GCF_001050115.1_ASM105011v1/GCF_001050115.1_ASM105011v1_genomic.fna.gz</li>
+<li>Make sure that the new genome stored in the data folder</li>
+<li>Compare the file size between the two genomes (hint: use the -h option with ls)</li>
+</ul>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the genome</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/050/115/GCF_001050115.1_ASM105011v1/GCF_001050115.1_ASM105011v1_genomic.fna.gz </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Move the genome file to the data folder</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> GCF_001050115.1_ASM105011v1_genomic.fna.gz data</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the file sizes : </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># GCF_001050115 has a genome size of 3.4 Mb, GCF_000005845 a size of 4.6 Mb</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Since we store more nucleotdes in GCF_000005845 it makes sense that we have a larger file size</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> data/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </section>
 <section id="gzip-uncompressing-files" class="level2" data-number="3.11">
 <h2 data-number="3.11" class="anchored" data-anchor-id="gzip-uncompressing-files"><span class="header-section-number">3.11</span> <code>gzip</code>: (Un)compressing files</h2>
-<p>You might have noticed that the file we downloaded ends with <code>.gz</code>. This extension is used for files that are compressed to make the file smaller. This is useful for saving files, but this makes the file unreadable for a human. To be able to learn how to read the content of a file, let’s uncompress the file first.</p>
+<p>You might have noticed that the file we downloaded ends with <code>.gz</code>. This extension is used for files that are compressed to make the file smaller. This is useful for saving files, but this makes the file unreadable for a human. To be able to learn how to read the content of a file, let’s learn how to uncompress the file first.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the genome again </span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Here, we use the -P option to directly download the file into the data folder </span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz <span class="at">-P</span> data</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that this worked </span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress the file with gzip </span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Here, we use -d to decompress the file (by default gzip will compress a file)</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> data/GCF_000005845.2_ASM584v2_genomic.fna.gz </span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that this worked </span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the first genome again </span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Here, we use the -P option to directly download the file into the data folder </span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/005/845/GCF_000005845.2_ASM584v2/GCF_000005845.2_ASM584v2_genomic.fna.gz <span class="at">-P</span> data</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that this worked </span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress the file with gzip </span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Here, we use -d to decompress the file </span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># (by default gzip will compress a file)</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> data/GCF_000005845.2_ASM584v2_genomic.fna.gz </span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Check that this worked </span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co"># We now should see that one file is uncompressed (i.e. it lost the gz extension)</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="zcat-decompress-and-print-to-screen" class="level2" data-number="3.12">
 <h2 data-number="3.12" class="anchored" data-anchor-id="zcat-decompress-and-print-to-screen"><span class="header-section-number">3.12</span> <code>zcat</code>: Decompress and print to screen</h2>
-<p><code>gzip</code> will decompress the file and allows us to read the content of the fasta file. This is perfect for large files, but not ideal sequence data files since these files get rather larger and we might not want to decompress these files as they would clutter our system.</p>
-<p>Luckily, there is one useful tool in bash to decompress the file and print the content to the screen called <code>zcat</code> which will print the content of a file to the screen but leave the file as is.</p>
+<p><code>gzip</code> will decompress the file and allows us to read the content of the fasta file. This is perfect for smaller files, but not ideal for sequence data since these files get large and we might not want to decompress these files as they would clutter our system.</p>
+<p>Luckily, there is one useful tool in bash to decompress the file and print the content to the screen. <code>zcat</code> will print the content of a file to the screen but leave the file as is. Since the file is quite large, we see a lot of content flying across the screen, that is fine, we will see how to improve in a bit.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download another file to see how zcat works </span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/016/864/595/GCF_016864595.1_ASM1686459v1/GCF_016864595.1_ASM1686459v1_genomic.fna.gz <span class="at">-P</span> data </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the content of the data folder </span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># We should have one compressed and one uncompressed file </span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Use zcat on the compressed file </span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">zcat</span> data/GCF_016864595.1_ASM1686459v1_genomic.fna.gz</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the content of the data folder </span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># We still should have one compressed and one uncompressed file </span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the content of the data folder </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We should have one compressed and one uncompressed file </span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Use zcat on the compressed file </span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">zcat</span> data/GCF_001050115.1_ASM105011v1_genomic.fna.gz</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the content of the data folder </span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># We still should have one compressed and one uncompressed file </span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="exploring-file-contents" class="level2" data-number="3.13">
 <h2 data-number="3.13" class="anchored" data-anchor-id="exploring-file-contents"><span class="header-section-number">3.13</span> Exploring file contents</h2>
-<p>There are different ways, to explore the content of a file, below you find the most common options.</p>
+<p>Now that we have the uncompressed file we can use different ways to explore the content of a file.</p>
 <section id="cat-print-the-full-file" class="level3" data-number="3.13.1">
 <h3 data-number="3.13.1" class="anchored" data-anchor-id="cat-print-the-full-file"><span class="header-section-number">3.13.1</span> <code>cat</code>: Print the full file</h3>
-<p>We can use <code>cat</code> print the entire file to the screen — fine for short files, but overwhelming for long ones, which for our file is the case as we will see the nucleotides just running across the screen.</p>
+<p>We can use <code>cat</code> print the entire file to the screen, this is fine for short files, but overwhelming for long ones, which for our file is the case as we will see the nucleotides just running across the screen.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="head-and-tail-view-parts-of-a-file" class="level3" data-number="3.13.2">
 <h3 data-number="3.13.2" class="anchored" data-anchor-id="head-and-tail-view-parts-of-a-file"><span class="header-section-number">3.13.2</span> <code>head</code> and <code>tail</code>: View parts of a file</h3>
-<p>To only print the first few or last few lines we can use the <code>head</code> and <code>tail</code> command, respectively:</p>
+<p>To only print the first few or last few lines we can use the <code>head</code> and <code>tail</code> commands:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the first 10 lines (default)</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the last 5 lines</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Here, the option -n allows us to control how many lines get printed</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> <span class="at">-n</span> 5 data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the first 10 lines</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the last 5 lines</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Here, the option -n allows us to control how many lines get printed</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> <span class="at">-n</span> 5 data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="less-view-the-full-file" class="level3" data-number="3.13.3">
 <h3 data-number="3.13.3" class="anchored" data-anchor-id="less-view-the-full-file"><span class="header-section-number">3.13.3</span> <code>less</code>: View the full file</h3>
 <p><code>less</code> let’s you view a file’s contents one screen at a time. This is useful when dealing with a large text file (such as a sequence data file) because it doesn’t load the entire file but accesses it page by page, resulting in fast loading speeds.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>You can use the arrow Up and Page arrow keys to move through the text file</li>
 <li>To exit less, type <code>q</code></li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Editing text files">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -618,11 +713,11 @@ Important
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>You can also edit the content of a text file and there are different programs available to do this on the command line, the most commonly used tool is <code>nano</code>, which should come with most command line interpreters. You can open any file as follows:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Once the document is open you can edit it however you want and then</p>
 <ul>
@@ -636,29 +731,98 @@ Important
 </section>
 <section id="wc-count-things" class="level2" data-number="3.14">
 <h2 data-number="3.14" class="anchored" data-anchor-id="wc-count-things"><span class="header-section-number">3.14</span> <code>wc</code>: Count things</h2>
-<p>Another useful tool is the <code>wc</code> (= wordcount) command that allows us to count the number of lines via <code>-l</code> in a file. It is an useful tool for sanity checking and here allows us to count how many lines of text are found in the text document.</p>
+<p>Another useful tool is the <code>wc</code> (short for <em>wordcount</em>) command that allows us to count the number of lines via <code>-l</code> in a file. It is an useful tool for sanity checking.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We see that this file does contain 58,022 lines of text. For fasta files this is not very informative, but once you have a dataframe with rows and columns where you filter rows using certain conditions this can become very useful for sanity checking.</p>
+<p>We see that this file does contain 58,022 lines of text. For fasta files this is not very informative, but if you for example work with a dataframe with rows and columns where you filter rows using certain conditions this can become very useful for sanity checking.</p>
 </section>
 <section id="grep-print-lines-that-match-patterns" class="level2" data-number="3.15">
 <h2 data-number="3.15" class="anchored" data-anchor-id="grep-print-lines-that-match-patterns"><span class="header-section-number">3.15</span> <code>grep</code> : print lines that match patterns</h2>
 <p>The <code>grep</code> command searches for patterns in a file. We could for example use this to ask how often a specific nucleotide motif occurs in our fasta file.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="st">"CATGAAACGCA"</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="st">"CATGAAACGCA"</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We see, highlighted in red, where we find the pattern in the nucleotide sequence. If we simply are interested in the number of files that match our pattern, we could add the option -c to count how often the pattern we search for occurs:</p>
+<p>We see, highlighted in red, where we find the pattern in the nucleotide sequence. If we simply are interested in the number of files that match our pattern, we could add the option <code>-c</code> to count how often the pattern we search for occurs:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"CATGAAACGCA"</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"CATGAAACGCA"</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="The structure of a fasta file">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>The structure of a fasta file
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>A sequence FASTA file is a text based format to store DNA or peptide sequences. It should always look something like this:</p>
+<p><img src="../img/fasta.png" class="img-fluid"></p>
+<p>The header always starts with a <code>&gt;</code> followed by descriptive information. In a new line the sequence data gets stored in either a single line or multiple lines. A fasta file can continue single sequence or multiple sequences.</p>
+<p>By convention the extensions <code>.fna</code> is used to store fasta sequences from nucleotides and <code>.faa</code> is used to store fasta sequences from proteins.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Question</span>Question
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Uncompress the file for GCF_001050115.1</li>
+<li>Explore the header of both files, can you see from what species these genomes are?</li>
+<li>Use grep to count the number of contigs in each genome</li>
+</ol>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress </span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> data/GCF_001050115.1_ASM105011v1_genomic.fna.gz</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># View the header </span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co"># We work with genomes from Escherichia coli  and Bacillus smithii</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> data/GCF_001050115.1_ASM105011v1_genomic.fna</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of contigs </span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># We work with genomes with 1 and 2 contigs</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> data/GCF_000005845.2_ASM584v2_genomic.fna</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> data/GCF_001050115.1_ASM105011v1_genomic.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
 <section id="pipes" class="level2" data-number="3.16">
 <h2 data-number="3.16" class="anchored" data-anchor-id="pipes"><span class="header-section-number">3.16</span> Pipes</h2>
-<p>So far, we’ve run one command at a time — for example, using wc -l to count lines or head to look at the first few lines. But often, you’ll want to combine commands so that the output of one becomes the input of another. That’s what the pipe (<code>|</code>) does.</p>
+<p>So far, we’ve run one command at a time, for example. But often, you might want to combine commands so that the output of one becomes the input of another. That’s what the pipe (<code>|</code>) does. It allows us to chain simple commands together to do more complex operations.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: show only the first 10 lines and count how many lines of text that is</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-n</span> 100 data/GCF_000005845.2_ASM584v2_genomic.fna <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-c</span> <span class="st">"CATGAAACGCA"</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: show only the first 100 lines and then</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co"># count how often a sequence motif occurs in these lines</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span> <span class="at">-n</span> 100 data/GCF_000005845.2_ASM584v2_genomic.fna <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-c</span> <span class="st">"CATGAAACGCA"</span> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here:</p>
 <ul>
@@ -669,25 +833,25 @@ Important
 </section>
 <section id="working-with-multiple-files" class="level2" data-number="3.17">
 <h2 data-number="3.17" class="anchored" data-anchor-id="working-with-multiple-files"><span class="header-section-number">3.17</span> Working with multiple files</h2>
-<p>So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files — for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let’s begin by getting more genomes!</p>
+<p>So far, we’ve worked with single files. In practice, sequencing data often comes as multiple filesm for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let’s begin by getting more genomes and not only get the nucleotide but also some protein sequences:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download more data </span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM281389v1/GCA_002813895.1_ASM281389v1_genomic.fna.gz <span class="at">-P</span> data</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM281389v1/GCA_002813895.1_ASM281389v1_protein.faa.gz <span class="at">-P</span> data</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/317/675/GCF_000317675.1_ASM31767v1/GCF_000317675.1_ASM31767v1_genomic.fna.gz <span class="at">-P</span> data</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/317/675/GCF_000317675.1_ASM31767v1/GCF_000317675.1_ASM31767v1_protein.faa.gz <span class="at">-P</span> data</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what was done</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download more data </span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM281389v1/GCA_002813895.1_ASM281389v1_genomic.fna.gz <span class="at">-P</span> data</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM281389v1/GCA_002813895.1_ASM281389v1_protein.faa.gz <span class="at">-P</span> data</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/317/675/GCF_000317675.1_ASM31767v1/GCF_000317675.1_ASM31767v1_genomic.fna.gz <span class="at">-P</span> data</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/317/675/GCF_000317675.1_ASM31767v1/GCF_000317675.1_ASM31767v1_protein.faa.gz <span class="at">-P</span> data</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Check what was done</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We now should have 6 files, 5 of which are still compressed. Notice, how there are some slight differences:</p>
+<p>We now should have 6 files, 4 of which are still compressed. Notice, how there are some slight differences:</p>
 <ul>
 <li>The file names start with either GCA or GCF indicating that they come from the GenBank versus RefSeq database</li>
 <li>The file names end with either fna.gz or faa.gz indicating that the contain nucleotide versus protein sequences</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled" title="Hint: Downloading many files with a for loop">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -696,7 +860,7 @@ Important
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Once you understand how to use <code>wget</code>, you can easily scale it up to download multiple files automatically using a simple <strong>for loop</strong>.</p>
 <p>For example, suppose you have a list of NCBI genome URLs stored in a file called <code>urls.txt</code> — one per line:</p>
@@ -704,9 +868,9 @@ Important
 https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM281389v1/GCA_002813895.1_ASM281389v1_protein.faa.gz </code></pre>
 <p>You can then loop through all URLs and download them into the <code>data</code> folder like this:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> url <span class="kw">in</span> <span class="va">$(</span><span class="fu">cat</span> urls.txt<span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">wget</span> <span class="st">"</span><span class="va">$url</span><span class="st">"</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> url <span class="kw">in</span> <span class="va">$(</span><span class="fu">cat</span> urls.txt<span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">wget</span> <span class="st">"</span><span class="va">$url</span><span class="st">"</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here’s what happens:</p>
 <ul>
@@ -722,30 +886,30 @@ https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM2813
 <h3 data-number="3.17.1" class="anchored" data-anchor-id="wildcards-match-multiple-files"><span class="header-section-number">3.17.1</span> Wildcards (<code>*</code>): Match multiple files</h3>
 <p>Imagine we want to uncompress all the new files. Typing every filename can get tedious. <strong>Wildcards</strong> help you work with groups of files using pattern matching.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List all files inside the data folder that end with gz</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data/<span class="pp">*</span>gz</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List all protein fasta files inside the data folder </span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co"># using `*faa*` means we look for filenames that contain a faa inside the name and that we allow for characters before and after</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data/<span class="pp">*</span>faa<span class="pp">*</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co"># If we would not add a asterisk after the faa we do not get any files, because none of the files end with faa</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data/<span class="pp">*</span>faa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># List all files inside the data folder that end with gz</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data/<span class="pp">*</span>gz</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List all protein fasta files inside the data folder </span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># using `*fna*` means we look for filenames that contain a faa inside the name and that we allow for characters before and after</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data/<span class="pp">*</span>fna<span class="pp">*</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co"># If we would not add a asterisk after the faa we do not get any files, because none of the files end with faa</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> data/<span class="pp">*</span>fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We can use Wildcards with every bash command and use it to unzip every file at once with:</p>
+<p>We can use Wildcards with every bash command and use it to unzip every file at once with the following command:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> data/<span class="pp">*</span>gz</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if that worked</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> data/<span class="pp">*</span>gz</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if that worked</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="cat-combining-files" class="level3" data-number="3.17.2">
 <h3 data-number="3.17.2" class="anchored" data-anchor-id="cat-combining-files"><span class="header-section-number">3.17.2</span> <code>cat</code>: Combining files</h3>
-<p>The cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several protein files and want to merge them:</p>
+<p>The cat command doesn’t just print files — it can also concatenate (join) multiple files into one. For example, if you have several genome nucleotide files and want to merge them:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the protein fasta files into one</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> data/<span class="pp">*</span>faa <span class="op">&gt;</span> proteins.faa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the nucleotide fasta files into one</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> data/<span class="pp">*</span>fna <span class="op">&gt;</span> nucleotides.faa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here:</p>
 <ul>
@@ -753,7 +917,7 @@ https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM2813
 <li><code>&gt;</code> tells the shell to write the combined output into a new file called proteins.faa</li>
 </ul>
 <div class="callout callout-style-default callout-caution callout-titled" title="Important: Be careful with >">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -762,7 +926,7 @@ https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM2813
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse show">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <p>The <code>&gt;</code> operator overwrites files without asking. If you want to add (append) to an existing file instead of replacing it, use <code>&gt;&gt;</code>:</p>
 </div>
@@ -770,12 +934,54 @@ https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/002/813/895/GCA_002813895.1_ASM2813
 </div>
 <p>Whenever you modify files it is a good idea to do some sanity checks. Luckily, we already learned about useful ways to do this:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check how many protein files are in the individual faa files </span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> data/<span class="pp">*</span>faa</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check how many protein files are in concatenated file</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Hopefully the numbers add up</span></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> proteins.faa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check how many protein files are in the individual faa files </span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> data/<span class="pp">*</span>fna</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check how many protein files are in concatenated file</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Hopefully the numbers add up</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> nucleotides.faa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Question</span>Question
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Combine the protein files into one</li>
+<li>Count the total number of proteins in the individual and the combined file</li>
+</ol>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> data/<span class="pp">*</span>faa <span class="op">&gt;</span> proteins.faa</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Count </span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> data/<span class="pp">*</span>faa</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span> proteins.faa</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 
