@@ -22,7 +22,7 @@ format:
       - styles.scss
     toc: true
     toc-title: Contents
-    toc-depth: 4
+    toc-expand: 1
   # pdf:
   #   documentclass: scrreprt
   #   geometry: margin=2.5cm

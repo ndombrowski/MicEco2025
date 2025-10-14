@@ -1,6 +1,5 @@
 ---
 engine: knitr
-toc-expand: 2
 ---
 
 # Navigating the command line
