@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; HPC introduction – Microbial Ecology: Introduction into Data Analysis</title>
+<title>6&nbsp; Amplicon long-read analysis – Microbial Ecology: Introduction into Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../source/hpc_howto.html" rel="next">
-<link href="../source/cli.html" rel="prev">
+<link href="../source/hpc_howto.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -83,7 +82,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../source/hpc_intro.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">HPC introduction</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../source/applied_workflow.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Amplicon long-read analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -136,7 +135,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../source/hpc_intro.html" class="sidebar-item-text sidebar-link active">
+  <a href="../source/hpc_intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">HPC introduction</span></span></a>
   </div>
 </li>
@@ -148,7 +147,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../source/applied_workflow.html" class="sidebar-item-text sidebar-link">
+  <a href="../source/applied_workflow.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Amplicon long-read analysis</span></span></a>
   </div>
 </li>
@@ -165,7 +164,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">HPC introduction</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Amplicon long-read analysis</span></h1>
 </div>
 
 
@@ -182,65 +181,10 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>If you work at IBED you can get access to the Crunchomics HPC, the Genomics Compute Environment for SILS and IBED. If you need access to Crunchomics, send an email to Wim de Leeuw <a href="mailto:w.c.deleeuw@uva.nl" class="email">w.c.deleeuw@uva.nl</a> to get an account set up by giving him your UvA netID.</p>
-<p>Using an HPC works a bit differently than running jobs on your computer, below you find a simplified schematic:</p>
-<p><img src="../img/crunchomics1.png" class="img-fluid"></p>
-<p>Very briefly, you can log into an HPC onto a login node. The purpose of a <strong>login node</strong>, sometimes also called head node, is to prepare to run a program (e.g., moving and editing files as well as compiling and preparing a job script). You then submit a job script from the head to the compute nodes via Slurm. The <strong>compute nodes</strong> are used to actually run a program and <strong>Slurm</strong> is an open-source workload manager/scheduler that is used on many big HPCs. Slurm has three key functions:</p>
+<p>Sections that are still in progress:</p>
 <ul>
-<li>provide the users access to the resources on the compute nodes for a certain amount of time to perform any computation</li>
-<li>provide a framework to start, execute, and check the work on the set of allocated compute nodes</li>
-<li>mange the queue of submitted jobs based on the availability of resources</li>
+<li>Work on sections quality cleaning (consider testing fastplong), consensus generation (ngspeciesID), blast for taxonomic assignment and minimap for counts –&gt; will be added to Chapter 6 (From raw reads to results)</li>
 </ul>
-<div class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><strong>Crunchomics etiquette</strong></p>
-<p>You share the HPC with other people, therefore, take care to only ask for the resources you actually use. Some general rules:</p>
-<ul>
-<li>There are no hard limits on resource usage, instead we expect you to keep in mind that you are sharing the system with other users. Some rules of thumb:
-<ul>
-<li>Do NOT run jobs that request many CPUs and lots of memory on the head-node (omics-h0), use the compute nodes (omics-cn001 - omics-cn005) for this</li>
-<li>Do NOT allocate more than 20% (CPU or memory) of the cluster for more than a day. If you have large jobs, contact Wim de Leeuw</li>
-<li>Do not leave allocations unused and set reasonable time limits on you jobs</li>
-</ul></li>
-<li>For large compute jobs a job queuing system (SLURM) is available. Interactive usage is possible but is discouraged for larger jobs. We will learn how to use the queue during this tutorial</li>
-<li>Close applications when not in use, i.e.&nbsp;when running R interactively</li>
-</ul>
-</div>
-</div>
-<p>On crunchomics you:</p>
-<ul>
-<li>Are granted a storage of 500 GB. After the duration of your grant, or when your UvAnetID expires, your data will be removed from the HPC. If you need more storage space, contact the Crunchomics team.</li>
-<li>In your home directory, <code>/home/$USER</code> , you have 25 G quotum</li>
-<li>In your personal directory, <code>/zfs/omics/personal/$USER</code> , you can store up to 500 GB data</li>
-<li>For larger, collaborative projects you can contact the Crunchomics team and ask for a shared folder to which several team members can have access</li>
-<li>You are in charge of backing up your own data and Crunchomics is NOT an archiving system. To learn about data archiving options at UvA visit the <a href="https://ibed.uva.nl/facilities/computational-facilities/ibed-computational-support-team/ibed-computational-support-team.html">website of the computational support team</a></li>
-<li>A manual with more information and documentation about the cluster can be found <a href="https://crunchomics-documentation.readthedocs.io/en/latest">here</a></li>
-</ul>
-<p>Crunchomics gives you access to:</p>
-<ul>
-<li>5 compute nodes</li>
-<li>Each compute node has 512 GB of memory and 64 CPUs</li>
-<li>If you need more resources (or access to GPUs), visit the <a href="https://ibed.uva.nl/facilities/computational-facilities/ibed-computational-support-team/ibed-computational-support-team.html">website of the computational support team</a> for more information</li>
-<li>Access to two directories:
-<ul>
-<li>The home directory with 25 GB of storage</li>
-<li>your personal directory, with 500 GB of storage</li>
-</ul></li>
-</ul>
-<p>Some information about storage:</p>
-<ul>
-<li>Snapshots are made daily at 00.00.00 and kept for 2 weeks. This means that if you accidentally remove a file it can be restored up to 2 weeks after removal. This also means that even if you remove files to make space, these files will still count towards your quota for two weeks</li>
-<li>Data on Crunchomics is stored on multiple disks. Therefore, there is protection against disk failure. However, the data is not replicated and you are responsible for backing up and/or archiving your data.</li>
-</ul>
-<p>On the next page you find a tutorial to move the sequencing data that we worked on during the introduction into bash onto the server and run software to assess the quality of our sequencing data. We will learn to use some pre-installed software and also install software ourselves with conda and we will learn different ways to submit jobs to the compute nodes using SLURM.</p>
 
 
 
@@ -647,14 +591,11 @@ Important
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../source/cli.html" class="pagination-link" aria-label="Navigating the command line">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Navigating the command line</span></span>
+      <a href="../source/hpc_howto.html" class="pagination-link" aria-label="Working on an HPC">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Working on an HPC</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../source/hpc_howto.html" class="pagination-link" aria-label="Working on an HPC">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Working on an HPC</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

@@ -12,6 +12,7 @@ book:
     - source/cli.qmd
     - source/hpc_intro.qmd
     - source/hpc_howto.qmd
+    - source/applied_workflow.qmd
 
 bibliography: source/references.bib
 

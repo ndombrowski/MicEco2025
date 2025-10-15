@@ -1,0 +1,14 @@
+---
+execute:
+  eval: false
+engine: knitr
+
+---
+
+# Amplicon long-read analysis
+
+Sections that are still in progress:
+
+- Work on sections quality cleaning (consider testing fastplong), consensus generation (ngspeciesID), blast for taxonomic assignment and minimap for counts --> will be added to Chapter 6 (From raw reads to results)
+
+

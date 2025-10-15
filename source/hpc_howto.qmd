@@ -5,13 +5,7 @@ engine: knitr
 
 ---
 
-# Using an HPC
-
-Planned:
-
-- Exercise for `srun`: Let student analyse the nanopore data with seqkit
-- Exercise with `sbatch`: Let student analyse the nanopore data with nanoplot to build up the challenge but need to give enough code snippet so they do not get stuck
-
+# Working on an HPC
 
 Now that you are more comfortable with the command line, we will start working on the UVA Crunchomics HPC. In this section, you will go through the following steps:
 
@@ -21,6 +15,8 @@ Now that you are more comfortable with the command line, we will start working o
 - Build consensus sequences from your cleaned reads
 - Compare your sequences to reference databases to identify taxa
 - Align reads to consensus sequences to check coverage and quality
+
+
 
 ## Connecting to the HPC
 
@@ -324,6 +320,71 @@ Remember: over-requesting resources can make jobs wait longer in the queue — a
 :::
 
 
+::: {.callout-question .callout-warning collapse=false}
+# Question 
+
+Now it’s your turn to run an srun job interactively. Follow these steps:
+
+**Question 1: Inspect the data**
+
+Without uncompressing the FASTQ file, view the first few lines of `barcode01_merged.fastq.gz` using `zcat` and `head`. 
+
+You can get the FASTQ file as follows:
+
+1.  If you are following the Microbial Ecology course:
+
+    ```{bash}
+    cp <tba>/barcode01_merged.fastq.gz data
+    ```
+
+1.  If you are following this tutorial independently:
+
+    ```{bash}
+    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz -P data/
+    ```
+
+
+**Question 2: Run seqkit interactively**
+
+Use `srun` to analyze `barcode01_merged.fastq.gz` with `seqkit stats`. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.
+
+**Question 3: Check the results**
+
+Open the output file and answer the following:
+
+- What is the average sequence length (avg_len)? Does it match the expected amplicon size from the lab?
+- How many sequences are in the file (num_seqs)? Does this align with your expectations from the experiment?
+
+> **Reminder**: Run all commands on Crunchomics in your project folder. srun jobs may finish too quickly to appear in squeue.
+
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+```{bash}
+# Question 1
+zcat data/barcode01_merged.fastq.gz | head
+
+# Question 2 
+srun --cpus-per-task=1 --mem=5G seqkit stats data/barcode01_merged.fastq.gz  \
+    -Tao results/seqkit/barcode01_stats.tsv --threads 1
+
+# Question 3
+less -S results/seqkit/barcode01_stats.tsv
+```
+
+Answers:
+
+- Your average sequence length should be ~ 1400 bp and this should correspond to the amplicon size of your PCR reaction.
+- num_seqs should correspond to the number of sequences in your FASTQ file (depends on your library).
+
+> **Tip**: Use `\` to split long commands across lines for readability.
+
+:::
+:::
+
+
+
 ### `sbatch`: submitting a long-running job
 
 While `srun` is great for quick, interactive runs, most analyses on the HPC are submitted with **`sbatch`**, which lets jobs run in the background even after you log out.
@@ -436,4 +497,133 @@ Always cancel jobs that are running incorrectly or stuck in a queue too long. Th
 :::
 
 
+::: {.callout-question .callout-warning collapse=false}
+
+**Exercise: Run NanoPlot with sbatch**
+
+Now you’ll write your own `sbatch` script to generate quality plots from `barcode01_merged.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
+
+Below is a template for a script called `scripts/nanoplot.sh`.  Replace all `...` with the correct code.
+
+In your script, make sure to:
+
+- Give your job, output, and error files meaningful names  
+- Request **2 CPUs**, **10 GB of memory**, and **30 minutes** of runtime  
+- Activate your `nanoplot` conda environment  
+- Create an appropriate **output directory** under `results/`  
+- Use NanoPlot options to:  
+    - Indicate the input is in **FASTQ** format  
+    - Output a **TSV stats file**  
+    - Produce **bivariate dot plots**  
+    - Save all results in the new results folder  
+
+```{bash}
+#!/bin/bash
+#SBATCH --job-name=nanoplot
+#SBATCH --output=logs/nanoplot_%j.out
+#SBATCH --error=logs/nanoplot_%j.err
+...
+
+# Activate the conda environment
+source ~/.bashrc # this is needed so that conda is initialized inside the compute node
+conda activate nanoplot
+
+# Add start date (optional)
+...
+
+# Make an output directory 
+...
+
+# Run Nanoplot
+NanoPlot ...
+
+# Add end date (optional)
+...
+```
+
+Then:
+
+1. Submit your job with sbatch scripts/nanoplot.sh
+2. Use squeue to check whether it’s running
+3. Inspect your log files (logs/nanoplot_*.out and logs/nanoplot_*.err)
+4. Use scp to copy the results folder to your own computer for viewing
+5. In your NanoPlot output, open:
+    - NanoStats.txt (text summary)
+    - LengthvsQualityScatterPlot_dot.html (interactive plot)
+6. Record:
+    - How many reads were processed
+    - The mean read length
+    - The mean read quality
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+The final content of `scripts/nanoplot.sh` should look like this:
+
+```{bash}
+#!/bin/bash
+#SBATCH --job-name=nanoplot
+#SBATCH --output=logs/nanoplot_%j.out
+#SBATCH --error=logs/nanoplot_%j.err
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=10G
+#SBATCH --time=00:30:00
+
+# Activate the conda environment
+source ~/.bashrc # this is needed so that conda is initialized inside the compute node
+conda activate nanoplot
+
+# Add start date (optional)
+echo "Job started: "
+date
+
+# Make an output directory 
+mkdir -p results/nanoplot
+
+# Run Nanoplot
+NanoPlot --fastq data/barcode01_merged.fastq.gz \
+    -t 2 \
+    --tsv_stats \
+    --plots dot \
+    -o results/nanoplot
+
+# Add end date (optional)
+echo "Job ended: "
+date
+```
+
+Check your results:
+
+```{bash}
+# Submit the job 
+sbatch scripts/nanoplot.sh
+
+# Check job status
+squeue
+
+# Explore the log files 
+ls -l logs/nanoplot* 
+tail logs/nanoplot_*.out
+
+# Copy results to your computer
+# Run this command inside the data_analysis folder on my own computer 
+scp -r uvanetid@omics-h0.science.uva.nl:/zfs/omics/personal/ndombro/data_analysis/results/nanoplot results
+
+# Explore the stats file 
+less -S results/nanoplot/NanoStats.txt
+```
+
+What to look for:
+
+- Mean read length ≈ your expected amplicon size
+- Mean sequence quality ≈ 12–15 (depends on sequencing kit)
+- Plots usually show:
+    - A peak around the expected read length
+    - A tail of short, incomplete reads
+    - Fewer, unusually long reads (often chimeras)
+
+Use these plots to guide quality filtering to removing reads that are too short, too long, or low quality, while keeping the majority of good data.
+
+:::
+:::
 

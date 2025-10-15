@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5&nbsp; Using an HPC – Microbial Ecology: Introduction into Data Analysis</title>
+<title>5&nbsp; Working on an HPC – Microbial Ecology: Introduction into Data Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,6 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../source/applied_workflow.html" rel="next">
 <link href="../source/hpc_intro.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -117,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../source/hpc_howto.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Using an HPC</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../source/hpc_howto.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Working on an HPC</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -177,7 +178,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../source/hpc_howto.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Using an HPC</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Working on an HPC</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../source/applied_workflow.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Amplicon long-read analysis</span></span></a>
   </div>
 </li>
     </ul>
@@ -213,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Using an HPC</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Working on an HPC</span></h1>
 </div>
 
 
@@ -243,7 +250,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="5.1" class="anchored" data-anchor-id="connecting-to-the-hpc"><span class="header-section-number">5.1</span> Connecting to the HPC</h2>
 <section id="ssh-connecting-to-a-sever" class="level3" data-number="5.1.1">
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="ssh-connecting-to-a-sever"><span class="header-section-number">5.1.1</span> <code>ssh</code>: Connecting to a sever</h3>
-<p><strong>SSH</strong> (Secure Shell) is a network protocol that allows you to securely connect to a remote computer. On an HPC, you use SSH to log in and run commands on the server. The general command looks like this:</p>
+<p><strong>SSH</strong> (Secure Shell) is a network protocol that allows you to securely connect to a remote computer. On an HPC, you use SSH to log into the HPC to be able to run commands on the server. The general command looks like this:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-X</span> username@server</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -279,7 +286,7 @@ Important
 </section>
 <section id="crunchomics-preparing-your-account" class="level3" data-number="5.1.2">
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="crunchomics-preparing-your-account"><span class="header-section-number">5.1.2</span> Crunchomics: Preparing your account</h3>
-<p>If this is your first time using Crunchomics, you need to run a small Bash script to set up your account. This script will:</p>
+<p>If this is your <strong>first time using Crunchomics</strong>, you need to run a small Bash script to set up your account. This script will:</p>
 <ul>
 <li>Add <code>/zfs/omics/software/bin</code> to your PATH. This basically allows Bash to locate and use the system-wide installed software available on Crunchomic</li>
 <li>Set up a Python 3 environment with some useful Python packages pre-installed</li>
@@ -301,7 +308,7 @@ Important
 </section>
 <section id="conda-setting-up-your-own-software-environment" class="level3" data-number="5.1.3">
 <h3 data-number="5.1.3" class="anchored" data-anchor-id="conda-setting-up-your-own-software-environment"><span class="header-section-number">5.1.3</span> <code>conda</code>: Setting up your own software environment</h3>
-<p>Many bioinformatics tools are already installed on Crunchomics, but sometimes you’ll need additional ones (like NanoPlot for analysing long-read data). To manage and install your own tools, we use conda, a popular environment manager that lets you create isolated environments.</p>
+<p>Many bioinformatics tools are already installed on Crunchomics, but sometimes you’ll need additional ones (like NanoPlot for analysing long-read data). To manage and install your own tools, we use conda/mamba, an environment manager that lets you create isolated environments for different software.</p>
 <section id="install-condamamba" class="level4" data-number="5.1.3.1">
 <h4 data-number="5.1.3.1" class="anchored" data-anchor-id="install-condamamba"><span class="header-section-number">5.1.3.1</span> Install conda/mamba</h4>
 <p>Many systems already include conda or mamba. Before installing a new copy, check if it’s already available:</p>
@@ -312,19 +319,21 @@ Important
 <p>If either command returns a path (not “command not found”), you can skip installation and move on.</p>
 <p>To install Miniforge (which includes conda and mamba by default), run:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-L</span> <span class="at">-O</span> <span class="st">"https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-</span><span class="va">$(</span><span class="fu">uname</span><span class="va">)</span><span class="st">-</span><span class="va">$(</span><span class="fu">uname</span> <span class="at">-m</span><span class="va">)</span><span class="st">.sh"</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> Miniforge3-<span class="va">$(</span><span class="fu">uname</span><span class="va">)</span>-<span class="va">$(</span><span class="fu">uname</span> <span class="at">-m</span><span class="va">)</span>.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the miniforge installation script</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-L</span> <span class="at">-O</span> <span class="st">"https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-</span><span class="va">$(</span><span class="fu">uname</span><span class="va">)</span><span class="st">-</span><span class="va">$(</span><span class="fu">uname</span> <span class="at">-m</span><span class="va">)</span><span class="st">.sh"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Execute the miniforge installation script</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> Miniforge3-<span class="va">$(</span><span class="fu">uname</span><span class="va">)</span>-<span class="va">$(</span><span class="fu">uname</span> <span class="at">-m</span><span class="va">)</span>.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>During installation:</p>
 <ul>
 <li>Read the license (scroll by pressing enter)</li>
 <li>Choose the installation location
 <ul>
-<li>On Crunchomics, your home directory has only ~25 GB. Therefore install everything into the personal folder: <code>/zfs/omics/personal/uvanetID/miniforge3</code></li>
-<li>The default (/home/<username>/miniforge3) is fine for other setups</username></li>
+<li>On Crunchomics, your home directory has only 25 GB of space. Therefore install everything into the personal folder that comes with 500 GB: <code>/zfs/omics/personal/uvanetID/miniforge3</code></li>
 </ul></li>
 <li>Say “yes” when asked if conda should be initialized</li>
-<li>Restart your shell (exit and log back in)</li>
+<li>Restart your shell by typing <code>source ~/.bashrc</code>. You now should see a <code>(base)</code> in front of your prompt indicating that you are now inside conda’s base environment</li>
 <li>Verify the installation:</li>
 </ul>
 <div class="cell">
@@ -334,7 +343,7 @@ Important
 </section>
 <section id="installing-nanoplot" class="level4" data-number="5.1.3.2">
 <h4 data-number="5.1.3.2" class="anchored" data-anchor-id="installing-nanoplot"><span class="header-section-number">5.1.3.2</span> Installing NanoPlot</h4>
-<p><a href="https://github.com/wdecoster/NanoPlot">NanoPlot</a> is a visualization tool for long-read sequencing data. We can easily install it using mamba (or conda if mamba is unavailable).</p>
+<p><a href="https://github.com/wdecoster/NanoPlot">NanoPlot</a> is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable). Th</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if NanoPlot is already available</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="at">-h</span></span>
@@ -349,10 +358,10 @@ Important
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the tool is installed</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="at">-h</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Exit the </span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Exit the environment</span></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Recommendations:</p>
+<p><strong>Recommendations</strong>:</p>
 <ul>
 <li>Whenever possible, use mamba instead of conda, it resolves dependencies faster</li>
 <li>Keep your base environment clean (the base environment is the conda environment you start with when you log into the HPC). Always create new environments for each tool (<code>conda create -n toolname …</code>) instead of installing everything in base</li>
@@ -377,7 +386,7 @@ Important
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure that we are in the right folder </span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>You now have a clean workspace for all your analyses on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.</p>
+<p>You now have a clean workspace for all your analyses that you will run during this tutorial on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.</p>
 </section>
 <section id="scp-transferring-data-fromto-a-server" class="level3" data-number="5.1.5">
 <h3 data-number="5.1.5" class="anchored" data-anchor-id="scp-transferring-data-fromto-a-server"><span class="header-section-number">5.1.5</span> <code>scp</code>: Transferring data from/to a server</h3>
@@ -442,13 +451,13 @@ Important
 <p>This displays all jobs submitted to the system, and might look something like this:</p>
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<p><img src="../img/squeue.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:50.0%"></p>
+<p><img src="../img/squeue.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:70.0%"></p>
 </figure>
 </div>
 <p>Some useful columns to know:</p>
 <ul>
-<li>JOBID – a unique number assigned to each job; you can use it to check or cancel a job later.</li>
-<li>ST – the current state of the job (e.g., R = running, PD = pending).</li>
+<li>JOBID: a unique number assigned to each job; you can use it to check or cancel a job later.</li>
+<li>ST: the current state of the job (e.g., R = running, PD = pending).</li>
 <li>A full list of SLURM job state codes can be found <a href="https://curc.readthedocs.io/en/latest/running-jobs/squeue-status-codes.html">here</a></li>
 </ul>
 <p>If you have already submitted a job, it will appear in this list. To see only your own jobs, you can add the <code>-u</code> flag followed by your username:</p>
@@ -467,18 +476,19 @@ Important
 <blockquote class="blockquote">
 <p><strong>Important:</strong> Jobs started with <code>srun</code> will stop if you disconnect from the HPC (unless you use tools like <code>screen</code> or <code>tmux</code>, which we won’t cover in this tutorial).</p>
 </blockquote>
-<p>Let’s start with a very simple example — a “Hello world” job — just to see how <code>srun</code> works:</p>
+<p>Let’s start with a very simple example to see how <code>srun</code> works:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>1G <span class="at">--time</span><span class="op">=</span>00:10:00 echo <span class="st">"Hello world"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here’s what each part means:</p>
 <ul>
+<li><code>srun</code> → communicate that you want to run something on the compute node</li>
 <li><code>--cpus-per-task=1</code> → request 1 CPU core</li>
 <li><code>--mem=1G</code> → request 1 GB of memory</li>
 <li><code>--time=00:10:00</code> → set a maximum runtime of 10 minutes</li>
 <li><code>echo "Hello world"</code> → the actual command to run (prints text to the screen)</li>
 </ul>
-<p>So the arguments after <code>srun</code> and before <code>echo</code> tell SLURM what resources to allocate on the compute node.</p>
+<p>So the arguments after <code>srun</code> and before <code>echo</code> are where you tell SLURM what resources to allocate on the compute node.</p>
 </section>
 <section id="running-a-analysis-with-seqkit-interactively" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="running-a-analysis-with-seqkit-interactively"><span class="header-section-number">5.2.3</span> Running a analysis with Seqkit interactively</h3>
@@ -534,6 +544,80 @@ Important
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Question</span>Question
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Now it’s your turn to run an srun job interactively. Follow these steps:</p>
+<p><strong>Question 1: Inspect the data</strong></p>
+<p>Without uncompressing the FASTQ file, view the first few lines of <code>barcode01_merged.fastq.gz</code> using <code>zcat</code> and <code>head</code>.</p>
+<p>You can get the FASTQ file as follows:</p>
+<ol type="1">
+<li><p>If you are following the Microbial Ecology course:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="op">&lt;</span>tba<span class="op">&gt;</span>/barcode01_merged.fastq.gz data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></li>
+<li><p>If you are following this tutorial independently:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz <span class="at">-P</span> data/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></li>
+</ol>
+<p><strong>Question 2: Run seqkit interactively</strong></p>
+<p>Use <code>srun</code> to analyze <code>barcode01_merged.fastq.gz</code> with <code>seqkit stats</code>. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.</p>
+<p><strong>Question 3: Check the results</strong></p>
+<p>Open the output file and answer the following:</p>
+<ul>
+<li>What is the average sequence length (avg_len)? Does it match the expected amplicon size from the lab?</li>
+<li>How many sequences are in the file (num_seqs)? Does this align with your expectations from the experiment?</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Reminder</strong>: Run all commands on Crunchomics in your project folder. srun jobs may finish too quickly to appear in squeue.</p>
+</blockquote>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 1</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">zcat</span> data/barcode01_merged.fastq.gz <span class="kw">|</span> <span class="fu">head</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 2 </span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/barcode01_merged.fastq.gz  <span class="dt">\</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">-Tao</span> results/seqkit/barcode01_stats.tsv <span class="at">--threads</span> 1</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 3</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/seqkit/barcode01_stats.tsv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Answers:</p>
+<ul>
+<li>Your average sequence length should be ~ 1400 bp and this should correspond to the amplicon size of your PCR reaction.</li>
+<li>num_seqs should correspond to the number of sequences in your FASTQ file (depends on your library).</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Tip</strong>: Use <code>\</code> to split long commands across lines for readability.</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </section>
 <section id="sbatch-submitting-a-long-running-job" class="level3" data-number="5.2.4">
 <h3 data-number="5.2.4" class="anchored" data-anchor-id="sbatch-submitting-a-long-running-job"><span class="header-section-number">5.2.4</span> <code>sbatch</code>: submitting a long-running job</h3>
@@ -548,32 +632,32 @@ Important
 <h4 data-number="5.2.4.1" class="anchored" data-anchor-id="step-1-create-folders-for-organization"><span class="header-section-number">5.2.4.1</span> Step 1: Create folders for organization</h4>
 <p>We’ll keep our project tidy by creating dedicated folders for scripts and logs:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> scripts logs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> scripts logs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="step-2-write-a-job-script" class="level4" data-number="5.2.4.2">
 <h4 data-number="5.2.4.2" class="anchored" data-anchor-id="step-2-write-a-job-script"><span class="header-section-number">5.2.4.2</span> Step 2: Write a job script</h4>
 <p>Use nano (or another editor) to create a script file:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> scripts/run_seqkit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> scripts/run_seqkit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Then add the following content:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=seqkit</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=logs/seqkit_%j.out</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --error=logs/seqkit_%j.err</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=5G</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=1:00:00</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Seqkit job started on:"</span> </span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/<span class="pp">*</span>fna <span class="at">-Tao</span> results/seqkit/genome_stats_2.tsv <span class="at">--threads</span> 1</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Seqkit job finished on:"</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=seqkit</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=logs/seqkit_%j.out</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --error=logs/seqkit_%j.err</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=5G</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=1:00:00</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Seqkit job started on:"</span> </span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/<span class="pp">*</span>fna <span class="at">-Tao</span> results/seqkit/genome_stats_2.tsv <span class="at">--threads</span> 1</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Seqkit job finished on:"</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Save and exit:</p>
 <ul>
@@ -583,11 +667,11 @@ Important
 <section id="step-3-submit-and-monitor-your-job" class="level4" data-number="5.2.4.3">
 <h4 data-number="5.2.4.3" class="anchored" data-anchor-id="step-3-submit-and-monitor-your-job"><span class="header-section-number">5.2.4.3</span> Step 3: Submit and monitor your job</h4>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Submit </span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> scripts/run_seqkit.sh</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check job status (may run too fast to appear)</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">squeue</span> <span class="at">-u</span> <span class="va">$USER</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Submit </span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> scripts/run_seqkit.sh</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check job status (may run too fast to appear)</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">squeue</span> <span class="at">-u</span> <span class="va">$USER</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>When submitted successfully, you’ll see something like <code>Submitted batch job 754</code> and new log files will appear in your logs folder:</p>
 <ul>
@@ -608,23 +692,37 @@ Important
 <li><code>echo / date</code>: Prints status messages to track job progress</li>
 <li><code>srun ...</code>: The actual analysis command to run on the compute node</li>
 </ul>
-<p>:: {.callout-tip title=“Tip: Debugging your first sbatch jobs” collapse=true}</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Tip: Debugging your first sbatch jobs">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Tip: Debugging your first sbatch jobs
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <p>If your job fails:</p>
 <ul>
-<li>Check your .err/.out file in the logs/ folder, these files usually tell you exactly what went wrong</li>
+<li>Check your .err and .out files in the logs folder, these files usually tell you exactly what went wrong</li>
 <li>Confirm that your input files and paths exist</li>
 <li>Try running the main command interactively with srun first, if it works there, it will work in a script.</li>
 </ul>
+</div>
+</div>
+</div>
 </section>
 <section id="step-5-scancel-cancelling-a-job" class="level4" data-number="5.2.4.5">
 <h4 data-number="5.2.4.5" class="anchored" data-anchor-id="step-5-scancel-cancelling-a-job"><span class="header-section-number">5.2.4.5</span> Step 5: <code>scancel</code>: Cancelling a job</h4>
 <p>Sometimes you realize a job is stuck, misconfigured, or using the wrong resources. You can easily cancel it with:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">scancel</span> <span class="op">&lt;</span>jobID<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">scancel</span> <span class="op">&lt;</span>jobID<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For example, if your job ID was 754:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">scancel</span> 754</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">scancel</span> 754</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Good HPC etiquette">
 <div class="callout-header d-flex align-content-center">
@@ -637,6 +735,164 @@ Important
 </div>
 <div class="callout-body-container callout-body">
 <p>Always cancel jobs that are running incorrectly or stuck in a queue too long. This frees resources for others and avoids unnecessary load on the cluster.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p><strong>Exercise: Run NanoPlot with sbatch</strong></p>
+<p>Now you’ll write your own <code>sbatch</code> script to generate quality plots from <code>barcode01_merged.fastq.gz</code> using <strong>NanoPlot</strong>, which you installed earlier in your conda environment.</p>
+<p>Below is a template for a script called <code>scripts/nanoplot.sh</code>. Replace all <code>...</code> with the correct code.</p>
+<p>In your script, make sure to:</p>
+<ul>
+<li>Give your job, output, and error files meaningful names<br>
+</li>
+<li>Request <strong>2 CPUs</strong>, <strong>10 GB of memory</strong>, and <strong>30 minutes</strong> of runtime<br>
+</li>
+<li>Activate your <code>nanoplot</code> conda environment<br>
+</li>
+<li>Create an appropriate <strong>output directory</strong> under <code>results/</code><br>
+</li>
+<li>Use NanoPlot options to:
+<ul>
+<li>Indicate the input is in <strong>FASTQ</strong> format<br>
+</li>
+<li>Output a <strong>TSV stats file</strong><br>
+</li>
+<li>Produce <strong>bivariate dot plots</strong><br>
+</li>
+<li>Save all results in the new results folder</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=nanoplot</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=logs/nanoplot_%j.out</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --error=logs/nanoplot_%j.err</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the conda environment</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bashrc <span class="co"># this is needed so that conda is initialized inside the compute node</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nanoplot</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Add start date (optional)</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Make an output directory </span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> ...</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Add end date (optional)</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Then:</p>
+<ol type="1">
+<li>Submit your job with sbatch scripts/nanoplot.sh</li>
+<li>Use squeue to check whether it’s running</li>
+<li>Inspect your log files (logs/nanoplot_<em>.out and logs/nanoplot_</em>.err)</li>
+<li>Use scp to copy the results folder to your own computer for viewing</li>
+<li>In your NanoPlot output, open:
+<ul>
+<li>NanoStats.txt (text summary)</li>
+<li>LengthvsQualityScatterPlot_dot.html (interactive plot)</li>
+</ul></li>
+<li>Record:
+<ul>
+<li>How many reads were processed</li>
+<li>The mean read length</li>
+<li>The mean read quality</li>
+</ul></li>
+</ol>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The final content of <code>scripts/nanoplot.sh</code> should look like this:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --job-name=nanoplot</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=logs/nanoplot_%j.out</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --error=logs/nanoplot_%j.err</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=2</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=10G</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:30:00</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the conda environment</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.bashrc <span class="co"># this is needed so that conda is initialized inside the compute node</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nanoplot</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Add start date (optional)</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Job started: "</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Make an output directory </span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> results/nanoplot</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="at">--fastq</span> data/barcode01_merged.fastq.gz <span class="dt">\</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">-t</span> 2 <span class="dt">\</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">--tsv_stats</span> <span class="dt">\</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">--plots</span> dot <span class="dt">\</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> results/nanoplot</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Add end date (optional)</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Job ended: "</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Check your results:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Submit the job </span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> scripts/nanoplot.sh</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check job status</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="ex">squeue</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the log files </span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> logs/nanoplot<span class="pp">*</span> </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span> logs/nanoplot_<span class="pp">*</span>.out</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy results to your computer</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this command inside the data_analysis folder on my own computer </span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> uvanetid@omics-h0.science.uva.nl:/zfs/omics/personal/ndombro/data_analysis/results/nanoplot results</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the stats file </span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/nanoplot/NanoStats.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>What to look for:</p>
+<ul>
+<li>Mean read length ≈ your expected amplicon size</li>
+<li>Mean sequence quality ≈ 12–15 (depends on sequencing kit)</li>
+<li>Plots usually show:
+<ul>
+<li>A peak around the expected read length</li>
+<li>A tail of short, incomplete reads</li>
+<li>Fewer, unusually long reads (often chimeras)</li>
+</ul></li>
+</ul>
+<p>Use these plots to guide quality filtering to removing reads that are too short, too long, or low quality, while keeping the majority of good data.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 
@@ -1053,6 +1309,9 @@ Important
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../source/applied_workflow.html" class="pagination-link" aria-label="Amplicon long-read analysis">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Amplicon long-read analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
