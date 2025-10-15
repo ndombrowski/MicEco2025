@@ -4,7 +4,6 @@ engine: knitr
 
 # HPC introduction
 
-
 If you work at IBED you can get access to the Crunchomics HPC, the Genomics Compute Environment for SILS and IBED. If you need access to Crunchomics, send an email to Wim de Leeuw [w.c.deleeuw\@uva.nl](mailto:w.c.deleeuw@uva.nl){.email} to get an account set up by giving him your UvA netID.
 
 Using an HPC works a bit differently than running jobs on your computer, below you find a simplified schematic:

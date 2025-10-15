@@ -1,0 +1,21 @@
+# Prep course material
+
+## List of nanopore adaptors
+
+For this tutorial I want to test fastplong as alternative to porechop followed by chopper. While fastplong should allow for automatic detection of adapters I also want to try and test it by providing a list of all possible adapter sequences.
+
+```{bash}
+cd /zfs/omics/projects/bioinformatics/scripts
+
+# Get the porechop adapter script to get an input file for fastplong 
+wget https://raw.githubusercontent.com/rrwick/Porechop/refs/heads/master/porechop/adapters.py
+
+# Write script to extract all barcodes but output a fasta file of the full adapters
+mkdir ../files/nanopore 
+python parse_adapters.py
+```
+
+This script produces two files 
+
+- full_adapters.fasta (full adapters including all native and rapid barcodes)
+- barcode_only_adapters.fasta (just barcode sequences)

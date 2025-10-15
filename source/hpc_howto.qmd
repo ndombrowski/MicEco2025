@@ -7,9 +7,13 @@ engine: knitr
 
 # Using an HPC
 
-Now that you are more comfortable with the command line, we will start working on the UVA Crunchomics HPC. In this section, you will learn how to work with sequencing data on a High-Performance Computer.
+Planned:
 
-You will go through the following steps:
+- Exercise for `srun`: Let student analyse the nanopore data with seqkit
+- Exercise with `sbatch`: Let student analyse the nanopore data with nanoplot to build up the challenge but need to give enough code snippet so they do not get stuck
+
+
+Now that you are more comfortable with the command line, we will start working on the UVA Crunchomics HPC. In this section, you will go through the following steps:
 
 - Connect to the HPC and transfer your sequencing files
 - Learn how to run analyses in batch mode using job submission scripts
@@ -22,7 +26,7 @@ You will go through the following steps:
 
 ### `ssh`: Connecting to a sever
 
-**SSH** (Secure Shell) is a network protocol that allows you to securely connect to a remote computer. On an HPC, you use SSH to log in and run commands on the server. The general command looks like this:
+**SSH** (Secure Shell) is a network protocol that allows you to securely connect to a remote computer. On an HPC, you use SSH to log into the HPC to be able to run commands on the server. The general command looks like this:
 
 ```{bash}
 ssh -X username@server
@@ -30,9 +34,9 @@ ssh -X username@server
 
 Here:
 
-- username is your account name on the HPC
-- server is the address of the HPC you want to connect to
-- `-X` enables X11 forwarding, which allows graphical applications from the server (like plotting or viewing images) to appear on your local machine. “Untrusted” X11 forwarding means the server can send graphical output, but it has limited access to your local machine
+- username is your account name on the HPC, i.e. your UvanetID
+- server is the address of the HPC you want to connect to, for Crunchomics this is `omics-h0.science.uva.nl`
+- `-X` enables X11 forwarding, which allows graphical applications from the server (like plotting or viewing images) to appear on your local machine. "Untrusted" X11 forwarding means the server can send graphical output, but it has limited access to your local machine
 
 For Crunchomics at UVA, you would use:
 
@@ -44,15 +48,15 @@ ssh -X uvanetid@omics-h0.science.uva.nl
 
 **Important tips for connecting:**
 
-- If you want to log into Crunchomics while working from UvA use the eduroam network, not the open Amsterdam Science Park network.  
-- If you are connecting from outside UVA, you must be on the VPN. Contact ICT if you have not set it up or encounter issues.
-- Always double-check your username and server address to avoid login errors.
+- If you want to log into Crunchomics while working from UvA use the eduroam network, not the open Amsterdam Science Park network  
+- If you are connecting from outside UVA, you must be on the VPN. Contact ICT if you have not set it up or encounter issues
+- Always double-check your username and server address to avoid login errors
 :::
 
 
 ### Crunchomics: Preparing your account
 
-If this is your first time using Crunchomics, you need to run a small Bash script to set up your account. This script will:
+If this is your **first time using Crunchomics**, you need to run a small Bash script to set up your account. This script will:
 
 -   Add `/zfs/omics/software/bin` to your PATH. This basically allows Bash to locate and use the system-wide installed software available on Crunchomic
 -   Set up a Python 3 environment with some useful Python packages pre-installed
@@ -61,10 +65,95 @@ If this is your first time using Crunchomics, you need to run a small Bash scrip
 To set up your account, run the following command:
 
 ```{bash}
+# First orient yourself by typing 
+pwd 
+ls -lh 
+
+# Run the Crunchomics installation script
 /zfs/omics/software/script/omics_install_script
+
+# Check if something changed
+# You now should see the personal folder inside your home directory 
+ls -lh
 ```
 
-Once the script has completed, you can start organizing your project files. We recommend creating a dedicated project folder inside your personal directory, which provides more storage than the home directory:
+
+### `conda`: Setting up your own software environment
+
+Many bioinformatics tools are already installed on Crunchomics, but sometimes you’ll need additional ones (like NanoPlot for analysing long-read data). To manage and install your own tools, we use conda/mamba, an environment manager that lets you create isolated environments for different software.
+
+#### Install conda/mamba
+
+Many systems already include conda or mamba. Before installing a new copy, check if it’s already available:
+
+```{bash}
+which conda
+which mamba
+```
+
+If either command returns a path (not “command not found”), you can skip installation and move on.
+
+To install Miniforge (which includes conda and mamba by default), run:
+
+```{bash}
+# Download the miniforge installation script
+curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+
+# Execute the miniforge installation script
+bash Miniforge3-$(uname)-$(uname -m).sh
+```
+
+During installation:
+
+- Read the license (scroll by pressing enter)
+- Choose the installation location
+    - On Crunchomics, your home directory has only 25 GB of space. Therefore install everything into the personal folder that comes with 500 GB: `/zfs/omics/personal/uvanetID/miniforge3`
+- Say "yes" when asked if conda should be initialized
+- Restart your shell by typing `source ~/.bashrc`. You now should see a `(base)` in front of your prompt indicating that you are now inside conda's base environment
+- Verify the installation:
+
+```{bash}
+conda -h
+mamba -h
+```
+
+
+#### Installing NanoPlot 
+
+[NanoPlot](https://github.com/wdecoster/NanoPlot) is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable). Th
+
+```{bash}
+# Check if NanoPlot is already available
+NanoPlot -h
+
+# If not installed, create a new environment called nanoplot and install it
+# Press "Y" when prompted about confirming the installation
+mamba create -n nanoplot -c bioconda nanoplot
+
+# Activate the new environment
+conda activate nanoplot 
+
+# Check if the tool is installed
+NanoPlot -h
+
+# Exit the environment
+conda deactivate
+```
+
+**Recommendations**:
+
+- Whenever possible, use mamba instead of conda, it resolves dependencies faster
+- Keep your base environment clean (the base environment is the conda environment you start with when you log into the HPC). Always create new environments for each tool (`conda create -n toolname …`) instead of installing everything in base
+- Check the tool’s documentation for specific installation notes or version requirements
+- You can install specific versions when needed with `mamba create -n nanoplot_v1.42 -c bioconda nanoplot=1.42`
+- You can remove environments you no longer need with `conda env remove -n nanoplot`
+
+
+
+
+### Preparing your working directory
+
+Next, you can start organizing your project files. You always want to generate project folders inside your personal directory, which provides more storage than the home directory:
 
 ```{bash}
 # Go into the personal folder
@@ -79,16 +168,17 @@ cd data_analysis
 pwd
 ```
 
-You now have a clean workspace for all your analyses on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.
+You now have a clean workspace for all your analyses that you will run during this tutorial on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.
 
 
 ### `scp`: Transferring data from/to a server
 
-To start analysing data on Crunchomics, we first need to copy our local `data` folder (from your personal computer) to the HPC. We can do this with the `scp `(Secure Copy Protocol) command, which securely transfers files or directories between your computer and a remote server.
+To learn how to transfer data to Crunchomics, we first want to copy our local `data` folder (from your personal computer) to the HPC. We can do this with the `scp `(Secure Copy Protocol) command, which securely transfers files or directories between your computer and a remote server.
 
 The basic syntax is:
 
-`scp [options] SOURCE DESTINATION`
+- `scp [options] SOURCE DESTINATION`
+- For connecting to any HPC the syntax is `server:file_location`
 
 When transferring data you must **run the command from your own computer**, not from inside the HPC login session.
 
@@ -125,322 +215,225 @@ Here, the `.` at the end means “copy to the current directory” on your local
 
 ## Submitting jobs with SLURM
 
+In the HPC introduction, you learned that there are two main "sections" on an HPC:
+
+- **Login node**: where you log in and do light work, such as moving files, editing scripts, or preparing jobs.
+- **Compute nodes**: where the actual analyses run. These nodes have more CPUs and memory and are managed by a scheduling system.
+
+To use these compute nodes efficiently, we communicate with them through **SLURM**, a workload manager that decides *when*, *where*, and *how* your jobs run based on the available resources.
+
+
 ### `squeue`: View info about jobs in the queue
 
-The following command gives us some information about how busy the HPC is:
+The command below shows you which jobs are currently running or waiting in the queue:
 
 ```{bash}
 squeue
 ```
 
-After running this, you can see all jobs scheduled on the HPC, which might look something like this:
+This displays all jobs submitted to the system, and might look something like this:
 
-![](../img/squeue.png){width="50%" fig-align="left"}
+![](../img/squeue.png){width="70%" fig-align="left"}
 
--   JOBID: every job gets a number and you can manipulate jobs via this number
--   ST: Job state codes that describe the current state of the job. The full list of abbreviations can be found [here](https://curc.readthedocs.io/en/latest/running-jobs/squeue-status-codes.html)
+Some useful columns to know:
 
-If we would have submitted a job, we also should see the job listed there.
+- JOBID: a unique number assigned to each job; you can use it to check or cancel a job later.
+- ST: the current state of the job (e.g., R = running, PD = pending).
+- A full list of SLURM job state codes can be found [here](https://curc.readthedocs.io/en/latest/running-jobs/squeue-status-codes.html)
+
+If you have already submitted a job, it will appear in this list. To see only your own jobs, you can add the `-u` flag followed by your username:
+
+```{bash}
+squeue -u $USER
+```
 
 
 ### `srun`:Submitting a job interactively
 
-`srun` is used when you want to run tasks interactively or want to have more control over the execution of a job. You directly issue `srun` commands in the terminal and you at the same time are able to specify the tasks to be executed and their resource requirements. For example, you might want to run softwareX and request that this job requires 10 CPUs and 5 GB of memory.
+Now that we’ve seen how to check the job queue, let’s learn how to actually run jobs on the compute nodes. There are two main ways to submit jobs: with `srun` and with `sbatch`. We'll start with `srun`, which you typically use when:
 
-Use `srun` when:
+- You want to run tasks **interactively** and see the output directly on your screen
+- You are **testing or debugging** your commands before writing a job script
+- You have **short jobs** (usually less than a few hours)
 
--   You want to run tasks interactively and need immediate feedback printed to the screen
--   You are testing or debugging your commands before incorporating them into a script
--   You need more control over the execution of tasks
--   Typically, you use srun for smaller jobs that do not run for too long, i.e. a few hours
+> **Important:** Jobs started with `srun` will stop if you disconnect from the HPC (unless you use tools like `screen` or `tmux`, which we won’t cover in this tutorial).
 
-Let's submit a very simple example for which we would not even need to submit a job, but just to get you started.
-
-```{bash}
-srun echo "Hello interactively"
-```
-
-You should see the output of echo printed to the screen and if you would run `squeue` you won't even see your job since everything ran so fast. But congrats, you communicated the first time with the compute node.
-
-Now assume you want to run a more complex interactive task with `srun` that might run longer and benefit from using more CPUs. In this case you need to specify the resources your job needs by adding flags, i.e. some of which you see here:
+Let’s start with a very simple example to see how `srun` works:
 
 ```{bash}
-srun --cpus-per-task=1 --mem=1G --time=00:10:00 echo "Hello interactively"
+srun --cpus-per-task=1 --mem=1G --time=00:10:00 echo "Hello world"
 ```
 
-The different flags mean the following:
+Here’s what each part means:
 
--   `--cpus-per-task=1`: Specifies the number of CPUs per task. Adjust this based on the computational requirements of your task
--   `--mem=1G`: Sets the memory requirement for the task. Modify this based on your task's memory needs
--   `--time=00:10:00` Sets the time limit to 10 minutes
--   `echo "Hello interactively`: The actual command you want to run interactively
+- `srun` → communicate that you want to run something on the compute node
+- `--cpus-per-task=1` → request 1 CPU core
+- `--mem=1G` → request 1 GB of memory
+- `--time=00:10:00` → set a maximum runtime of 10 minutes
+- `echo "Hello world"` → the actual command to run (prints text to the screen)
 
-Other flags:
-
--   `--nodes=1`: Specifies the number of nodes. In this case, it's set to 1 and tells slurm that we want to use a full node. Only use this if you make use of all resources on that node, otherwise omit. In our case this definitely is over-kill to request a full node with 64 CPUs to print a single line of text to the screen.
--   `--ntasks=1`: Defines the number of tasks to run. Here, we would set it to 1 since we want to use echo once
+So the arguments after `srun` and before `echo` are where you tell SLURM what resources to allocate on the compute node.
 
 
-### Run FastQC with srun <-- adjust for long-read
+### Running a analysis with Seqkit interactively
 
-[FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) is a quality control tool for high throughput sequence data that is already installed on Crunchomics. This will be the actual software that we now want to run to look more closely at the quality of the sequencing data that we just uploaded to Crunchomics.
+Next, let’s use srun for something more useful. We’ll analyze our genomes using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files.
 
-By the way: Whenever running a software for a first time, it is useful to check the manual, for example with `fastqc -h.`
-
-Let's start by setting up a clean folder structure to keep our files organized. I start with making a folder in which I want to store all results generated in this analysis and by using the `-p` argument I generate a fastqc folder inside the results folder at the same time. Then, we can submit our job using `srun`.
+> **Tip**: Whenever you use a tool for the first time, check its help page (e.g., `seqkit -h`) to see all available options.
 
 ```{bash}
-mkdir -p results/fastqc 
+# Create a results folder
+mkdir -p results/seqkit 
 
-srun --cpus-per-task=1 --mem=5G fastqc data/seq_project/*/*gz -o results/fastqc  --threads 1
+# Run seqkit interactively
+srun --cpus-per-task=1 --mem=5G seqkit stats data/*fna -Tao results/seqkit/genome_stats.tsv --threads 1
 
-ll results/fastqc/*
+# View the results (press 'q' to exit less)
+less -S results/seqkit/genome_stats.tsv 
 ```
 
-Since we work with little data this will run extremely fast despite only using 1 CPU (or thread, in our case these two words can be used interchangeably). However, if you would be logged into Crunchomics via a second window and run `squeue` you should see that your job is actively running (in the example below, the job we submitted is named after the software and got the jobid 746):
+Here:
 
-![](../img/squeue2.png){width="50%" fig-align="left"}
+- `seqkit stats data/*fna` → analyzes all FASTA files in the data folder ending in .fna
+- `-Tao` → output in tabular format (-T), include all stats (-a), and write to file (-o)
+- `--threads 1` → run on one thread (should match `--cpus-per-task=1`)
+- The results are stored in results/seqkit/genome_stats.tsv
 
-Additionally, after the run is completed, you should see that several HTML files were generated in our fastqc folder.
+This job runs very quickly — so fast that it might not even appear in the queue when you type `squeue`.
+
+When you open the results file, you'll see:
+
+- The number of contigs (`num_seqs`), this should match what we saw earlier
+- The total genome size in bp (`sum_len`)
+- Additional metrics such as the minimum, maximum, average sequence length, and N50, a common measure of genome fragmentation.
 
 
 ::: {.callout-tip title="Tip: Choosing the right amount of resources" collapse="true"}
 
-When you're just starting, deciding on the right resources to request for your computational job can be a bit challenging. The resource requirements can vary significantly based on the specific tool or workflow you are using. Here are some general guidelines to help you make informed choices:
+When starting out, choosing the right amount of CPUs, memory, or runtime can be tricky.
+Here are a few rules of thumb:
 
--   Use default settings: Begin by working with the default settings provided by the HPC cluster or recommended by the tool itself. These are often set to provide a balanced resource allocation for a wide range of tasks
--   Check the software documentation: Consult the documentation of the software or tool you are using. Many tools provide recommendations for resource allocation based on the nature of the computation.
--   Test with small datasets: For initial testing and debugging especially when working with large datasets, consider working with a smaller subset of your data. This allows for faster job turnaround times, helping you identify and resolve issues more efficiently.
--   Monitor the resources usage:
-    -   Use `sacct` to check what resources a finished job has used and see whether you can optimize a run if you plan to run similar jobs over and over again. An example command would be `sacct -j 419847 --format=User,JobID,Jobname,state,start,end,elapsed,MaxRss,ncpus.` In the report, look for columns like MaxRSS (maximum resident set size) to check if the amount of memory allocated (--mem) was appropriate.
-    -   Ensuer that the job used the resources you requested. For instance, if you would have used `--cpus-per-task=4 --mem=4G`, you would expect to use a total of 16 GB of memory (4 CPUs \* 4 GB). You can verify this with `sacct` to ensure your job's resource requirements align with its actual usage.
--   Fine-Tuning Resource Requests: If you encounter performance issues or your jobs are not completing successfully, consider iteratively adjusting resource requests. This might involve increasing or decreasing the number of CPUs, memory allocation, or other relevant parameters.
+- Start small, most tools don’t need huge resources for small test runs
+- Check the tool’s documentation, many list recommended resource settings
+- Test on a subset of your data first. It runs faster and helps you debug
+- If your job fails or runs out of memory, increase the resources gradually
+- Once you have a stable workflow, you can scale up
+
+Remember: over-requesting resources can make jobs wait longer in the queue — and can block others from running.
 
 :::
 
 
 ### `sbatch`: submitting a long-running job
 
-`sbatch` is your go-to command when you have a script (i.e. a batch script) that needs to be executed without direct user interaction.
+While `srun` is great for quick, interactive runs, most analyses on the HPC are submitted with **`sbatch`**, which lets jobs run in the background even after you log out.
 
 Use `sbatch` when:
 
--   You have long-running or resource-intensive tasks
--   You want to submit jobs that can run independently without your immediate supervision
--   You want to submit multiple jobs at once
+- You have **long or resource-intensive** analyses
+- You want jobs to run **unattended**
+- You plan to **run multiple jobs** in sequence or parallel
 
-To run a job script, you:
+#### Step 1: Create folders for organization
 
--   create a script that contains all the commands and configurations needed for your job
--   use sbatch to submit this script to the Slurm scheduler, and it takes care of the rest.
-
-Let's start with generating some new folders to keep our project folder organized:
+We'll keep our project tidy by creating dedicated folders for scripts and logs:
 
 ```{bash}
-mkdir scripts 
-mkdir logs
+mkdir -p scripts logs
 ```
 
-To get started, assume we have created a script in the scripts folder named `run_fastqc.sh` with the content that is shown below. Notice, how in this script I added some additional `echo` commands? I just use these to print some information about the progress which could be printed to a log file but if you have several commands that should be executed after each other that is how you would do it.
+#### Step 2: Write a job script
+
+Use nano (or another editor) to create a script file:
+
+```{bash}
+nano scripts/run_seqkit.sh
+```
+
+Then add the following content:
 
 ```{bash}
 #!/bin/bash
+#SBATCH --job-name=seqkit
+#SBATCH --output=logs/seqkit_%j.out
+#SBATCH --error=logs/seqkit_%j.err
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=5G      
+#SBATCH --mem=5G
 #SBATCH --time=1:00:00
 
-echo "Start fastqc"
+echo "Seqkit job started on:" 
+date
 
-fastqc data/seq_project/*/*gz -o results/fastqc  --threads 1
+srun --cpus-per-task=1 --mem=5G seqkit stats data/*fna -Tao results/seqkit/genome_stats_2.tsv --threads 1
 
-echo "fastqc finished"
+echo "Seqkit job finished on:"
+date
 ```
+
+Save and exit:
+
+- Press `Ctrl+X` to exit, then `Y` to confirm that you want to safe the file, then Enter.
+
+
+#### Step 3: Submit and monitor your job
+
+```{bash}
+# Submit 
+sbatch scripts/run_seqkit.sh
+
+# Check job status (may run too fast to appear)
+squeue -u $USER
+```
+
+
+When submitted successfully, you’ll see something like `Submitted batch job 754` and new log files will appear in your logs folder:
+
+- `seqkit_<jobID>.out` → standard output (results and messages)
+- `seqkit_<jobID>.err` → error log (check this if your job fails)
+
+
+#### Step 4: Understanding your job script
 
 In the job script above:
 
--   `#!/bin/bash` . This so-called Shebang line tells the shell to interpret and run the Slurm script using the bash shell. This line should always be added at the very top of your SBATCH/Slurm script.
--   The lines that follow and start with `#` are the lines in which we define the amount of resources required for our job to run. In our case, we request 1 CPU, 5G of memory and 1 hour time limit.
--   If your code needs any dependencies, such as conda environments, you would add these dependencies here. We do not need this for our example here, but you might need to add something like this `conda activate my_env` if you have installed your own software. We will touch upon conda environments and installing software a bit later.
--   The lines afterwards are the actually commands that we want to run on the compute nodes, We also call this the job steps.
+- `#!/bin/bash`:	Runs the script with the Bash shell
+- `#SBATCH --...`	SLURM options: resources, runtime, output names. 
+    - These are the same options that you have used with `srun`
+    - The `%j` variable in your log filenames automatically expands to the job ID, making it easier to keep track of multiple submissions.
+- `echo / date`:	Prints status messages to track job progress
+- `srun ...`: The actual analysis command to run on the compute node
 
-To prepare the script and run it:
 
--   Run `nano scripts/run_fastqc.sh` to generate an empty jobscript file
--   Add the code from above into the file we just opened
--   Press `ctrl+x` to exit nano
--   Type `Y` when prompted if the changes should be saved
--   Confirm that the file name is good by pressing enter
+::: {.callout-tip title="Tip: Debugging your first sbatch jobs" collapse=true}
 
-Afterwards, you can submit `run_fastqc.sh` as follows:
+If your job fails:
 
-```{bash}
-#submit job: 754
-sbatch scripts/run_fastqc.sh
+- Check your .err and .out files in the logs folder, these files usually tell you exactly what went wrong
+- Confirm that your input files and paths exist
+- Try running the main command interactively with srun first, if it works there, it will work in a script.
 
-#check if job is running correctly
-squeue
-```
-
-After running this, you should see that the job was submitted and something like this printed to the screen `Submitted batch job 754`. You will also see that a new file is generated that will look something like this `slurm-754.out`.
-
-When you submit a batch job using sbatch, Slurm redirects the standard output and standard error messages, which you have seen printed to the screen when you used `srun`, to a file named in the format slurm-JOBID.out, where JOBID is the unique identifier assigned to your job.
-
-This file is useful as it:
-
--   Captures the output of our batch scripts and stores them in a file
--   Can be used for debugging, since if something goes wrong with your job, examining the contents of this file can provide valuable insights into the issue. Error messages, warnings, or unexpected outputs are often recorded here
-
-Feel free to explore the content of the log file, do you see how the echo commands are used as well?
-
-::: {.callout-tip title="Tip: sbatch and better log files" collapse="true"}
-We have seen that by default `sbatch` redirects the standard output and error to our working directory and that it decides itself how to name the files. Since file organization is very important especially if you generate lots of files, you find below an example to:
-
--   Store the standard output and error in two separate files
--   Redirect the output into another folder, the logs folder
--   In the code below, the `%j` is replaced with the job allocation number once the log files are generated
-
-```{bash}
-#!/bin/bash
-#SBATCH --job-name=our_fastqc_job
-#SBATCH --output=logs/fastqc_%j.out
-#SBATCH --error=logs/fastqc_%j.err
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=5G
-#SBATCH --time=1:00:00
-
-echo "Start fastqc"
-
-fastqc data/seq_project/*/*gz -o results/fastqc  --threads 1
-
-echo "fastqc finished"
-```
 :::
 
 
-## Installing software
+#### Step 5: `scancel`: Cancelling a job
 
-There might be cases where the software you are interested in is not installed on the HPC you are working with (or on your own computer).
-
-In the majority of cases, you should be able to install software by using a package management system, such as conda or mamba. These systems allow you to find and install packages in their own environment without administrator privileges. Let's have a look at a very brief example:
-
-### Install conda/mamba
-
-A lot of systems already come with conda/mamba installed, however, if possible we recommend working with mamba instead of conda. mamba is a replacement and uses the same commands and configuration options as conda, however, it tends to be much faster. A useful thing is that if you find documentation for conda then you can swap almost all commands between conda & mamba.
-
-If you have conda installed and do not want to install anything else, that is fine. Just replace all instances of mamba with conda below.
-
-This command should work in most cases to setup conda together with mamba:
+Sometimes you realize a job is stuck, misconfigured, or using the wrong resources. You can easily cancel it with:
 
 ```{bash}
-curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-bash Miniforge3-$(uname)-$(uname -m).sh
+scancel <jobID>
 ```
 
-When running the bash command, you get asked a few questions:
-
-1. Read the license and use arrow down to scroll down. Don't scroll too fast, so that you see the next question
-2. Decide where conda gets installed. You can say yes to the default location in your home. But don't forget that for Crunchomics your home only has 25G of space. You could also install the miniforge/mambaforge folder in your personal folder instead.
-3. Say yes, when you get asked whether conda should be initialized during start up
-4. Restart the shell (exit the terminal and use ssh to log back in) for the changes to take effect
-5. Check if conda is accessible by running `conda -h`
-
-
-
-### Setting up an environment
-
-Let's assume we want to install seqkit, a tool that allows us to calculate some statistics for sequencing data such as the number of sequences or average sequence length per sample.
-
-We can install seqkit into a separate environment, which we can give a descriptive name, as follows:
+For example, if your job ID was 754:
 
 ```{bash}
-#check if the tool is installed (should return "command not" found if the software is not installed)
-seqkit -h
-
-#create an empty environment and name it seqkit and we add the version number to the name
-#this basically sets up seqkit separate from our default working environment
-#this is useful whenever software require complicated dependencies allowing us to have a separate install away from software that could conflict with each other
-mamba create -n seqkit_2.6.1
-
-#install seqkit, into the environment we just created
-mamba install -n seqkit_2.6.1 -c bioconda seqkit=2.6.1
-
-#to run seqkit, we need activate the environment first
-mamba activate seqkit_2.6.1
-
-#check if tool is installed, 
-#if installed properly this should return some detailed information on how to run seqkit
-seqkit -h
-
-#run the tool via srun
-mkdir results/seqkit
-srun --cpus-per-task 2 --mem=4G seqkit stats -a -To results/seqkit/seqkit_stats.tsv data/seq_project/*/*.gz --threads 2
-less -S results/seqkit/seqkit_stats.tsv 
-
-#close the environment
-conda deactivate
+scancel 754
 ```
 
-When installing seqkit, we:
+::: {.callout-tip title="Tip: Good HPC etiquette"}
 
--   specify the exact version we want to download with `=2.6.1`. We could also install the newest version that conda/mamba can find by running `mamba install -n seqkit -c bioconda seqkit`.
--   specify that we want to look for seqkit in the bioconda channel with the option `-c`. Channels are the locations where packages are stored. They serve as the base for hosting and managing packages. Conda packages are downloaded from remote channels, which are URLs to directories containing conda packages. If you are unable to find a package it might be that you need to specify a channel.
+Always cancel jobs that are running incorrectly or stuck in a queue too long. This frees resources for others and avoids unnecessary load on the cluster.
 
-Forgot what conda environments you installed in the past? You can run `conda env list` to generate a list of all existing environments.
-
-Unsure if a software can be installed with conda? Google conda together with the software name, which should lead you do a conda web page. This page should inform you whether you need to add a specific channel to install the software as well as the version numbers available.
-
-A full set of mamba/conda commands can be found [here](https://docs.conda.io/projects/conda/en/latest/commands/index.html.).
-
-::: {.callout-caution collapse="false" title="Exercise"}
-1.  Download and view the file `results/seqkit/seqkit_stats.tsv` on your own computer
-2.  Run the seqkit again but this time submit the job via a sbatch script instead of using srun. Notice, that you need to tell SLURM how it can activate the conda environment that has seqkit installed. You might need to google how to do that, since this requires some extra line of code that we have not covered yet but see this as a good exercise for how to handle error messages that you see in the log files for your own analyses
-
-<details>
-
-<summary>Click me to see an answer</summary>
-
-```{bash}
-#question 1
-scp username@omics-h0.science.uva.nl:/home/ndombro/personal/projectX/results/seqkit/seqkit_stats.tsv .
-
-#question 2 
-sbatch scripts/seqkit.sh
-```
-
-Content of `scripts/seqkit.sh`:
-
-```{bash}
-#!/bin/bash
-#SBATCH --job-name=seqkit_job
-#SBATCH --output=logs/seqkit_%j.out
-#SBATCH --error=logs/seqkit_%j.err
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=5G
-
-#activate dependencies
-source ~/.bashrc
-mamba activate seqkit_2.6.1
-
-#run seqkit
-echo "Start seqkit"
-
-seqkit stats -a -To results/seqkit/seqkit_stats.tsv data/seq_project/*/*.gz --threads 2
-
-echo "seqkit finished"
-```
-
-In the script above, we see that we need to add two lines of code to activate the seqkit conda environment:
-
-```         
-source ~/.bashrc
-mamba activate seqkit_2.6.1
-```
-
-When you run a script or a command, it operates in its own environment. The source command is like telling the script to look into another file, in this case, `~/.bashrc`, and execute the commands in that file as if they were written directly into the script.
-
-Here, `source ~/.bashrc` is telling the script to execute the commands in the `~/.bashrc` file. This is typically done to set up environment variables, paths, and activate any software or tools that are required for the script to run successfully. In our case this tells Slurm where we have installed conda and thus enables Slurm to use conda itself.
-
-This allows slurm to, after executing `source ~/.bashrc`, activates a Conda environment using `mamba activate seqkit_2.6.1`. This ensures that the SeqKit tool and its dependencies are available and properly configured for use in the subsequent part of the script.
-
-</details>
 :::
+
+
+
