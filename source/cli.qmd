@@ -6,13 +6,13 @@ engine: knitr
 
 ## `pwd`: Find out where we are
 
-Once your terminal is open, let’s get oriented by typing your first command and then pressing enter: 
+Once your terminal is open, you can get yourself oriented by typing your first command and then pressing enter: 
 
 ```{bash}
 pwd
 ```
 
-The command `pwd` stands for **print working directory**. It tells you where you currently are in the file system, that is, which folder (directory) your shell is operating on right now. You should see something like:
+The command `pwd` stands for *print working directory*. It tells you where you currently are in the file system, that is, which folder (directory) your shell is operating on right now. You should see something like:
 
 ```
 /Users/YourUserName
@@ -30,7 +30,7 @@ Your home directory path varies slightly across operating systems. Here’s how 
 **MobaXterm (Windows)**
 
 -   Your home directory is `/home/mobaxterm`
--   By default, this is temporary and is deleted when you close MobaXterm. To make it permanent:
+-   By default, this directory is temporary and is deleted when you close MobaXterm (when using the portable version). To make it permanent:
     -   Go to Settings --\> Configuration --\> General
     -   Under Persistent home directory, choose a folder of your choice
 -   To open the folder you are currently in the Windows File explorer: `explorer.exe .`
@@ -42,9 +42,7 @@ Your home directory path varies slightly across operating systems. Here’s how 
 -   To open the folder you are currently in the Windows File explorer: `explorer.exe .`
 -   Your Desktop is usually at: `/mnt/c/Users/YourUserName/Desktop` or `/mnt/c/Users/YourUserName/OneDrive/Desktop` (when using OneDrive)
 
-If you want to access the Uva OneDrive folder:
-
-If your OneDrive folder name includes spaces (like OneDrive - UvA), use quotes around the path: 
+If you want to access the Uva OneDrive folder and/or if your OneDrive folder name includes spaces (like OneDrive - UvA), use quotes around the path: 
 
 ```{bash}
 cd "/mnt/c/Users/YourUserName/OneDrive - UvA"
@@ -63,7 +61,7 @@ ls
 
 You should see something like this (your output will vary depending on what’s in your directory):
 
-![](../img/ls.png)
+![](../img/ls.png){width=90%}
 
 The colors and formatting depend on your terminal settings, but typically:
 
@@ -77,11 +75,11 @@ If your directory contains many items, the output can quickly become overwhelmin
 
 A command generally has three parts:
 
-- A command: The program you want to run, i.e. `ls`
+- A command name: The program you want to run, i.e. `ls`
 - An option (or flag): A way to modify how the command behaves, i.e `-l` (long format)
 - An optional argument: The input, i.e. a file or folder
 
-![](../img/unix_command.png){width=80%}
+![](../img/unix_command.png){width=70%}
 
 Try the following command in your current directory to "List (`ls`) the contents of the current folder and show details in long format (`-l`)":
 
@@ -98,7 +96,7 @@ After running this you should see a more detail list of the contents of your fol
 
 Throughout this tutorial, you’ll notice that we use `ls` frequently. There’s a reason for that:
 
-When working with data, sanity checks are essential, because it is easy to make mistakes, overwrite files, or lose track of where things are. Using simple commands like `ls`, `wc`, or `grep` helps you verify what’s happening to your files at every step of an analysis workflow.
+When working with data, sanity checks are essential, because it is easy to make mistakes, overwrite files, or lose track of where things are. Using simple commands like `ls`, `pwd, `wc`, or `grep` helps you verify what’s happening to your files at every step of an analysis workflow.
 
 These habits are not just for beginners, also experienced bioinformaticians rely on them constantly. For newcomers, practicing these checks early will help you build confidence and intuition when working on the command line.
 
@@ -127,9 +125,9 @@ Not all commands come with such a manual. Depending on the program, there are a 
 
 ## `mkdir`: Make a new folder
 
-Before we start moving around, let's first learn how to create new folders (also called directories).This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is `mkdir`, which stands for *make directory*.
+Before we start moving around, let's first learn how to create new folders (also called directories). This is something we will do often, for example, to keep raw data, results, and scripts organized in separate places. The command we use for that is `mkdir`, which stands for *make directory*.
 
-For now, we will use `mkdir` to create a shared working folder with the name `data_analysis` for this tutorial. Don’t worry about how to move into the folder yet, we’ll cover that in the next section.
+For now, we will use `mkdir` to create a project folder with the name `data_analysis` for this tutorial. Don’t worry about how to move into the folder yet, we’ll cover that in the next section.
 
 ```{bash}
 # Move into the home directory (the starting point of your system)
@@ -142,11 +140,11 @@ mkdir data_analysis
 ls
 ```
 
-You should see a new folder called data_analysis appear in the list. We will use this folder as our project space for all exercises in this tutorial. You can easily make a new `data` folder inside the new data_analysis folder by typing the following:
+You should see a new folder called data_analysis appear in the list. We will use this folder as our project folder for all exercises in this tutorial. Next, let's make a new `data` folder inside the new data_analysis folder by typing the following:
 
 ```{bash}
 # Make a data folder inside the data_analysis folder
-# The `-p` option makes the parent directory, if it does not already exist
+# The `-p` option makes the parent directory (here: data), if it does not already exist
 # It is useful to by default add `-p` when generating a folder inside a folder
 mkdir -p data_analysis/data
 
@@ -157,7 +155,7 @@ ls -l data_analysis
 
 
 ::: {.callout-tip title="Tip: Commenting your code" collapse="false"}
-Notice how we added # and some notes above each command?
+Notice how we added `#` and some notes above each command?
 
 Anything written after `#` in Bash is a comment. A comment won't be executed, but it helps you (and others) understand what the command does.
 
@@ -171,7 +169,7 @@ Now that we have our own project folder, let’s learn how to move around the fi
 
 The file system is structured like a tree that starts from a single root directory (that is also denoted as `/` in bash). All other folders branch out from this root directory. For example, we can go from the root directory, to the users folder and from there into the john folder.
 
-![](../img/filesystem.png)
+![](../img/filesystem.png){width=90%}
 
 There are two ways to specify a path to go the the portfolio folder:
 
@@ -196,10 +194,10 @@ We now should see that we are in something like `/Users/Name/data_analysis`. We 
 # Move into the data folder
 cd data
 
-# Move one level up, i.e. go back to the data_analysis folder
+# Move one level up (..), i.e. go back to the data_analysis folder
 cd ..
 
-# Move multiple levels at once
+# Move multiple levels down at once
 cd data_analysis/data
 
 # Move two levels up
@@ -286,10 +284,10 @@ ls -lh LjRoot303.fna.gz
 Let's use `cp` to copy the downloaded file into `data` and to organize the data a bit better:
 
 ```{bash}
-# Copy file into data 
+# Copy the file into data 
 cp LjRoot303.fna.gz data/
 
-# Show content of both locations
+# Show the content of both locations
 ls -l
 ls -l data
 ```
@@ -434,7 +432,7 @@ less -S data/LjRoot303.fna
 
 When we used gzip above, we decompressed the file and that allowed us to read the content of the fasta file. This is perfect for smaller files, but not ideal for sequence data since these files get large and we might not want to decompress these files as they would clutter our system.
 
-Luckily, there is one useful tool in bash to decompress the file and print the content to the screen. `zcat` will print the content of a file to the screen but leave the file as is. Since the file is quite large, we see a lot of content flying across the screen, that is fine, we will see how to improve in a bit.
+Luckily, there is one useful tool in bash to decompress the file and print the content to the screen. `zcat` will print the content of a file to the screen but leave the file as is.
 
 ```{bash}
 # Check the content of the data folder 
@@ -451,8 +449,8 @@ ls data
 
 
 
-::: {.callout-tip title="Tip: Editing text files" collapse="true"}
-You can also edit the content of a text file and there are different programs available to do this on the command line, the most commonly used tool is `nano`, which should come with most command line interpreters. You can open any file as follows:
+::: {.callout-tip title="Tip: Editing text files with `nano`" collapse="true"}
+You can also edit the content of a text file and there are different programs available to do this on the command line, one such tool is `nano`, which should come with most command line interpreters. You can open any file as follows:
 
 ```{bash}
 nano data/LjRoot303.fna
@@ -486,7 +484,7 @@ The `grep` command searches for patterns in a file. We could for example use thi
 grep ">" data/LjRoot303.fna
 ```
 
-This prints all lines that match the pattern. In a fasta file, this means you see all the contig headers. Depending on your terminal, the matches might be highlighted, which makes them easy to spot.. 
+This prints all lines that match the pattern (here: `>`). In a fasta file, `>` is used to label the sequence headers. Depending on your terminal, the matches might be highlighted, which makes them easy to spot. 
 
 If we only care about the number of contigs, we can use the `-c` option:
 
@@ -538,27 +536,9 @@ LjRoot44 appears more fragmented (more contigs) than LjRoot303. A fragmented gen
 :::
 
 
-## Pipes 
-
-So far, we’ve run one command at a time, for example. But often, you might want to combine commands so that the output of one becomes the input of another. That’s what the pipe (`|`) does. It allows us to chain simple commands together to do more complex operations.
-
-```{bash}
-# Example: show only the first 100 lines and then
-# count how often a sequence motif occurs in these lines
-head -n 100 data/LjRoot303.fna | grep -c ">" 
-```
-
-Here:
-
-- `head -n 100 data/GCF_000005845.2_ASM584v2_genomic.fna` prints the first 100 lines
-- The pipe (`|`) sends these 100 lines directly to the `grep` command
-- `grep -c ">"` only counts how many headers are found in the first 100 lines of the fasta file
-
-
-
 ## Working with multiple files
 
-So far, we’ve worked with single files. In practice, sequencing data often comes as multiple filesm for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes and not only get genomes from *Lotus japonicus* (files with Lj prefix) but also some genomes from *Arabidopsis thaliana* (files with Root prefix):
+So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files, for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes and not only download genomes from *Lotus japonicus* (files with Lj prefix) but also from *Arabidopsis thaliana* (files with Root prefix):
 
 **Hint**: If you downloaded one of the genomes in the exercise before, then you don't need to run this wget command.
 
@@ -575,7 +555,7 @@ ls -lh data
 We now should have 5 files, 3 of which are still compressed. 
 
 ::: {.callout-tip title="Hint: Downloading many files with a for loop" collapse="true"}
-Once you understand how to use `wget`, you can easily scale it up to download multiple files automatically using a simple **for loop**.
+Once you understand how to use `wget`, you can easily scale it up to download multiple files automatically using a **for loop**.
 
 For example, suppose you have a list of genome IDs in a file called `genomes.txt`, one ID per line:
 
@@ -622,10 +602,9 @@ You can also format this more nicely if you really want to but this is outside o
 :::
 
 
-
 ### Wildcards (`*`): Match multiple files
 
-Imagine we want to uncompress all the new files. Typing every filename can get tedious. **Wildcards** are another tool that you can use to work with groups of files using pattern matching.
+Imagine we want to uncompress all the new files. Typing every filename can get tedious. **Wildcards** are another tool that you can use to work with groups of files using pattern matching. One of the most useful wildcard is `*`, which is used to search for a particular character(s) for zero or more times. For example, `*.txt` would find all files with the .txt extension.
 
 ```{bash}
 # List all files inside the data folder that end with gz
@@ -634,11 +613,11 @@ ls data/*gz
 
 # List all Lotus fasta files inside the data folder 
 # using `Lj*.fna*` means we look for filenames that 
-# Start with Lj, followed by any number of characters before and ending with .fna
+# start with Lj, are followed by any number of characters and end with .fna
 ls data/Lj*.fna
 ```
 
-We can use Wildcards with every bash command and use it to unzip every file at once with the following command:
+We can use Wildcards with every bash command and, for example, use it to unzip every file at once:
 
 ```{bash}
 gzip -d data/*gz
@@ -650,10 +629,11 @@ ls -lh data
 
 ### `cat` and `>` : Combining and saving files 
 
-The cat command doesn’t just print files, it can also concatenate (join) multiple files into one. For example, we might want to combine all contigs for the Lotus (`Lj`) genome and store the output in a new file called `lotus.fna` in the results folder (a folder you should have generated in an earlier exercise).
+The cat command doesn’t just print files, it can also concatenate (join) multiple files into one. For example, we might want to combine all contigs for the Lotus (`Lj`) genomes and store the output in a new file called `lotus.fna` in the results folder (a folder you should have generated in an earlier exercise).
 
 ```{bash}
-# Combine the Lotus fasta files into one
+# Combine the Lotus fasta files into one 
+# and store the output of the cat command in a new file 
 cat data/Lj*.fna > results/lotus.fna
 ```
 
@@ -668,7 +648,7 @@ The `>` operator overwrites files without asking.
 If you want to add (append) to an existing file instead of replacing it, use `>>`:
 :::
 
-Whenever you modify files it is a good idea to do some sanity checks. Luckily, we already learned about useful ways to do this:
+Whenever you combine or modify files it is a good idea to do some sanity checks. Luckily, we already learned about useful ways to do this:
 
 ```{bash}
 # Check how many protein files are in the individual faa files 
@@ -701,3 +681,23 @@ grep -c ">" results/arabidopsis.fna
 
 :::
 :::
+
+
+## Pipes 
+
+So far, we’ve run one command at a time, for example. But often, you might want to combine commands so that the output of one becomes the input of another. That’s what the pipe (`|`) does. It allows us to chain simple commands together to do more complex operations.
+
+For example, we might want to ask how many contigs all Arabidopsis genomes have together but might not want to store a concatenated file to do so. Here, we could do the following instead:
+
+```{bash}
+# Combine two files and count the total number of contigs
+cat data/Root*.fna | grep -c ">"
+```
+
+Here:
+
+- `cat data/Root*.fna` concatenates both Arabidopsis genomes 
+- The pipe (`|`) sends the combined contigs directly to the `grep` command
+- `grep -c ">"` only counts how many headers are found in the two genomes
+
+

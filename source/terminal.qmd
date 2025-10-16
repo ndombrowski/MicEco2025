@@ -1,3 +1,7 @@
+---
+engine: knitr
+---
+
 
 # Setting up a terminal
 
@@ -50,13 +54,6 @@ Check which shell you’re currently using:
 echo $SHELL
 ```
 
-If the output does not end in `/bash`, you can start Bash manually by typing:
-
-```{bash}
-bash
-```
-
-Then check again with echo `$SHELL`. If you have trouble switching, don’t worry — nearly all commands in this tutorial will also work in Zsh.
 
 
 ### Windows

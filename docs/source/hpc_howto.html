@@ -240,17 +240,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Now that you are more comfortable with the command line, we will start working on the UVA Crunchomics HPC. In this section, you will go through the following steps:</p>
 <ul>
 <li>Connect to the HPC and transfer your sequencing files</li>
-<li>Learn how to run analyses in batch mode using job submission scripts</li>
-<li>Assess sequencing quality and remove low-quality reads</li>
-<li>Build consensus sequences from your cleaned reads</li>
-<li>Compare your sequences to reference databases to identify taxa</li>
-<li>Align reads to consensus sequences to check coverage and quality</li>
+<li>Install software using conda</li>
+<li>Learn how to run analyses using SLURM job submission scripts
+<ul>
+<li><code>srun</code> for shorter interactive analyses</li>
+<li><code>sbatch</code> for longer running, more resource intensive analyses</li>
+</ul></li>
 </ul>
 <section id="connecting-to-the-hpc" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="connecting-to-the-hpc"><span class="header-section-number">5.1</span> Connecting to the HPC</h2>
 <section id="ssh-connecting-to-a-sever" class="level3" data-number="5.1.1">
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="ssh-connecting-to-a-sever"><span class="header-section-number">5.1.1</span> <code>ssh</code>: Connecting to a sever</h3>
-<p><strong>SSH</strong> (Secure Shell) is a network protocol that allows you to securely connect to a remote computer. On an HPC, you use SSH to log into the HPC to be able to run commands on the server. The general command looks like this:</p>
+<p><strong>SSH</strong> (Secure Shell) is a network protocol that allows you to securely connect to a remote computer such as the Crunchomics HPC. The general command looks like this:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-X</span> username@server</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -316,7 +317,7 @@ Important
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> conda</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> mamba</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>If either command returns a path (not “command not found”), you can skip installation and move on.</p>
+<p>If one of these commands returns “command not found”, then you can follow the next steps to install conda/mamba yourself.</p>
 <p>To install Miniforge (which includes conda and mamba by default), run:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download the miniforge installation script</span></span>
@@ -327,7 +328,7 @@ Important
 </div>
 <p>During installation:</p>
 <ul>
-<li>Read the license (scroll by pressing enter)</li>
+<li>Read the license (scroll by pressing enter) and say “Yes” when asking for confirmation</li>
 <li>Choose the installation location
 <ul>
 <li>On Crunchomics, your home directory has only 25 GB of space. Therefore install everything into the personal folder that comes with 500 GB: <code>/zfs/omics/personal/uvanetID/miniforge3</code></li>
@@ -343,7 +344,7 @@ Important
 </section>
 <section id="installing-nanoplot" class="level4" data-number="5.1.3.2">
 <h4 data-number="5.1.3.2" class="anchored" data-anchor-id="installing-nanoplot"><span class="header-section-number">5.1.3.2</span> Installing NanoPlot</h4>
-<p><a href="https://github.com/wdecoster/NanoPlot">NanoPlot</a> is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable). Th</p>
+<p><a href="https://github.com/wdecoster/NanoPlot">NanoPlot</a> is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if NanoPlot is already available</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="at">-h</span></span>
@@ -373,30 +374,29 @@ Important
 </section>
 <section id="preparing-your-working-directory" class="level3" data-number="5.1.4">
 <h3 data-number="5.1.4" class="anchored" data-anchor-id="preparing-your-working-directory"><span class="header-section-number">5.1.4</span> Preparing your working directory</h3>
-<p>Next, you can start organizing your project files. You always want to generate project folders inside your personal directory, which provides more storage than the home directory:</p>
+<p>Next, you can start organizing your project folder. You always want to generate project folders inside your personal directory, which provides more storage than the home directory:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Go into the personal folder</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># You want generally generate data here, since the personal folder comes with more space than the home directory</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> personal </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Make and go into a project folder </span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> data_analysis</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis </span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure that we are in the right folder </span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> personal </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Make and go into a new project folder</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> data_analysis</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> data_analysis </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure that we are in the right folder </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">pwd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>You now have a clean workspace for all your analyses that you will run during this tutorial on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.</p>
+<p>You now have a clean workspace for all the analyses that you will run during this tutorial on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.</p>
 </section>
 <section id="scp-transferring-data-fromto-a-server" class="level3" data-number="5.1.5">
 <h3 data-number="5.1.5" class="anchored" data-anchor-id="scp-transferring-data-fromto-a-server"><span class="header-section-number">5.1.5</span> <code>scp</code>: Transferring data from/to a server</h3>
-<p>To learn how to transfer data to Crunchomics, we first want to copy our local <code>data</code> folder (from your personal computer) to the HPC. We can do this with the <code>scp</code>(Secure Copy Protocol) command, which securely transfers files or directories between your computer and a remote server.</p>
+<p>To learn how to transfer data to Crunchomics, we want to transfer the <code>data</code> folder (the one you have generated in previous part of the tutorial) to the HPC. We can do this with the <code>scp</code>(Secure Copy Protocol) command, which securely transfers files or directories between your computer and a remote server.</p>
 <p>The basic syntax is:</p>
 <ul>
 <li><code>scp [options] SOURCE DESTINATION</code></li>
 <li>For connecting to any HPC the syntax is <code>server:file_location</code></li>
 </ul>
-<p>When transferring data you must <strong>run the command from your own computer</strong>, not from inside the HPC login session.</p>
+<p>When transferring data you must <strong>run the command from a terminal session on your own computer</strong>, not from a terminal session that runs on the HPC.</p>
 <p>To copy the entire data folder into your Crunchomics project folder, use:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this from your local terminal (not while logged into the HPC)</span></span>
@@ -424,7 +424,7 @@ Important
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>You can also move results back to your computer. For example, to copy a single genome file from Crunchomics:</p>
+<p>You can also move results from the HPC to your computer. For example, to copy a single genome file from Crunchomics:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> username@omics-h0.science.uva.nl:/home/username/personal/data_analysis/data/LjRoot303.fna .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -508,7 +508,7 @@ Important
 </div>
 <p>Here:</p>
 <ul>
-<li><code>seqkit stats data/*fna</code> → analyzes all FASTA files in the data folder ending in .fna</li>
+<li><code>seqkit stats data/*fna</code> → analyzes all FASTA files in the data folder ending in fna</li>
 <li><code>-Tao</code> → output in tabular format (-T), include all stats (-a), and write to file (-o)</li>
 <li><code>--threads 1</code> → run on one thread (should match <code>--cpus-per-task=1</code>)</li>
 <li>The results are stored in results/seqkit/genome_stats.tsv</li>
@@ -684,7 +684,7 @@ Important
 <p>In the job script above:</p>
 <ul>
 <li><code>#!/bin/bash</code>: Runs the script with the Bash shell</li>
-<li><code>#SBATCH --...</code> SLURM options: resources, runtime, output names.
+<li><code>#SBATCH --...</code> Define SLURM options: resources, runtime, output names.
 <ul>
 <li>These are the same options that you have used with <code>srun</code></li>
 <li>The <code>%j</code> variable in your log filenames automatically expands to the job ID, making it easier to keep track of multiple submissions.</li>
@@ -693,7 +693,7 @@ Important
 <li><code>srun ...</code>: The actual analysis command to run on the compute node</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Debugging your first sbatch jobs">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -702,7 +702,7 @@ Important
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <p>If your job fails:</p>
 <ul>

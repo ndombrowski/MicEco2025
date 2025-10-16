@@ -18,15 +18,11 @@ format:
 
 # Introduction {.unnumbered} 
 
-Welcome to the *Microbial Ecology Data Analysis Course*!  
-
-In this short tutorial, you will learn how to use the command line and a High-Performance Computing (HPC) environment in order to move from raw 16S nanopore reads to a basic count table of microbial taxa.
+In this tutorial, you will learn how to work on the command line and use a High-Performance Computing (HPC) environment. This will allow you to analyse 16S long-reads and turn this data into a count table of microbial taxa.
 
 This course is designed for students in microbial ecology with little or no prior experience using the command line. During this tutorial, you will learn how to:
 
 1. **Install a Terminal**
-    - How to access the command line 
-    - How to run basic commands
 
 2. **Document your Code**
     - Decide what software to use for code documentation
@@ -35,15 +31,23 @@ This course is designed for students in microbial ecology with little or no prio
 3. **Navigate the Command Line**
     - Navigate the filesystem (`cd`, `ls`, `pwd`)
     - Work with files (`mkdir`, `cp`, `mv`, `rm`, `cat`, `head`, `less`)
-    - Search and filter data (`grep`, `wc`, `cut`)
-    - View and underrstand FASTQ files
+    - Search and filter data (`grep`, `wc`)
+    - View and underrstand FASTQ files (`zcat`, wildcards)
 
-4. **Work with an HPC**
+5. **Understand the setup of an HPC**
+
+6. **Work with an HPC**
     - Connect to an HPC (SSH)
     - Understand job schedulers (e.g., SLURM)
     - Run command-line tools (e.g., `fastqc`, `seqkit`)
     - Set up and activating conda environments
     - Run workflows with Snakemake
+
+7. **Analyse long-read data**
+    - Perform quality control
+    - Cluster individual reads into consensus sequences
+    - Perform taxonomic classification
+    - Generate a count table
 
 
 ::: {.content-hidden}

@@ -231,6 +231,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts. You want to document your code in the same way that you would write a detailed lab notebook.</p>
 <p>For more in-depth guidance, see <a href="https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf">A Guide to Reproducible Code in Ecology and Evolution</a>. While examples are mainly in R, the principles are general and apply across programming languages.</p>
+<p>To see how code documentation looks like in a real-world context, have a look at an example workflow I wrote for a previous analysis. It shows how to describe each analysis step, software dependency, and command used — in a way that allows someone else to reproduce the entire analysis from scratch and for me to remember what I did a month later:</p>
+<ul>
+<li>View the <a href="https://github.com/ndombrowski/example_repo/blob/main/scripts/nanoclass_workflow.qmd">raw code</a></li>
+<li>View the <a href="https://ndombrowski.github.io/example_repo/scripts/nanoclass_workflow.html">rendered HTML version</a></li>
+</ul>
+<p>This workflow documents a 16S rRNA amplicon analysis from Winogradsky columns, including:</p>
+<ul>
+<li>A project description and sample metadata table</li>
+<li>All software dependencies and environment versions</li>
+<li>Reproducible bash commands for data inspection, merging, and quality control</li>
+<li>Comments explaining why a step was done</li>
+<li>A structured layout (headings, subheadings, results summaries)</li>
+</ul>
+<p>Even if you don’t understand all commands yet, notice how it reads almost like a lab notebook for code — each step has context, rationale, and expected results.</p>
 <section id="choosing-your-editor" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="choosing-your-editor"><span class="header-section-number">2.1</span> Choosing your editor</h2>
 <section id="plain-text-editor" class="level3" data-number="2.1.1">
@@ -269,7 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="markdown-for-documentation" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="markdown-for-documentation"><span class="header-section-number">2.2</span> Markdown for Documentation</h2>
-<p>Markdown is a lightweight language for formatting text. You can easily add headers, lists, links, code, images, and tables. You can use markdown inside a plain text editor or inside a Rmarkdown or Quarto document.</p>
+<p>Markdown is a lightweight language for formatting text in your plain text, Rmarkdown or Quarto document. You can easily add headers, lists, links, code, images, and tables. You can use markdown inside a plain text editor or inside a Rmarkdown or Quarto document.</p>
 <p><strong>Headers:</strong></p>
 <p>Use <code>#</code> to add a header and separate different sections of your documentation. The more <code>#</code> symbols you use after each other, the smaller the header will be. When writing a header make sure to always put a space between the <code>#</code> and the header name:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Main Header</span></span>

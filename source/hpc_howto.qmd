@@ -10,19 +10,17 @@ engine: knitr
 Now that you are more comfortable with the command line, we will start working on the UVA Crunchomics HPC. In this section, you will go through the following steps:
 
 - Connect to the HPC and transfer your sequencing files
-- Learn how to run analyses in batch mode using job submission scripts
-- Assess sequencing quality and remove low-quality reads
-- Build consensus sequences from your cleaned reads
-- Compare your sequences to reference databases to identify taxa
-- Align reads to consensus sequences to check coverage and quality
-
+- Install software using conda
+- Learn how to run analyses using SLURM job submission scripts
+    - `srun` for shorter interactive analyses
+    - `sbatch` for longer running, more resource intensive analyses
 
 
 ## Connecting to the HPC
 
 ### `ssh`: Connecting to a sever
 
-**SSH** (Secure Shell) is a network protocol that allows you to securely connect to a remote computer. On an HPC, you use SSH to log into the HPC to be able to run commands on the server. The general command looks like this:
+**SSH** (Secure Shell) is a network protocol that allows you to securely connect to a remote computer such as the Crunchomics HPC. The general command looks like this:
 
 ```{bash}
 ssh -X username@server
@@ -87,7 +85,7 @@ which conda
 which mamba
 ```
 
-If either command returns a path (not “command not found”), you can skip installation and move on.
+If one of these commands returns “command not found”, then you can follow the next steps to install conda/mamba yourself.
 
 To install Miniforge (which includes conda and mamba by default), run:
 
@@ -101,7 +99,7 @@ bash Miniforge3-$(uname)-$(uname -m).sh
 
 During installation:
 
-- Read the license (scroll by pressing enter)
+- Read the license (scroll by pressing enter) and say "Yes" when asking for confirmation
 - Choose the installation location
     - On Crunchomics, your home directory has only 25 GB of space. Therefore install everything into the personal folder that comes with 500 GB: `/zfs/omics/personal/uvanetID/miniforge3`
 - Say "yes" when asked if conda should be initialized
@@ -114,9 +112,10 @@ mamba -h
 ```
 
 
+
 #### Installing NanoPlot 
 
-[NanoPlot](https://github.com/wdecoster/NanoPlot) is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable). Th
+[NanoPlot](https://github.com/wdecoster/NanoPlot) is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable). 
 
 ```{bash}
 # Check if NanoPlot is already available
@@ -145,18 +144,15 @@ conda deactivate
 - You can remove environments you no longer need with `conda env remove -n nanoplot`
 
 
-
-
 ### Preparing your working directory
 
-Next, you can start organizing your project files. You always want to generate project folders inside your personal directory, which provides more storage than the home directory:
+Next, you can start organizing your project folder. You always want to generate project folders inside your personal directory, which provides more storage than the home directory:
 
 ```{bash}
 # Go into the personal folder
-# You want generally generate data here, since the personal folder comes with more space than the home directory
 cd personal 
 
-# Make and go into a project folder 
+# Make and go into a new project folder
 mkdir data_analysis
 cd data_analysis 
 
@@ -164,19 +160,19 @@ cd data_analysis
 pwd
 ```
 
-You now have a clean workspace for all your analyses that you will run during this tutorial on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.
+You now have a clean workspace for all the analyses that you will run during this tutorial on Crunchomics. As in your local machine, it’s good practice to keep your raw data, results, and scripts organized in separate folders.
 
 
 ### `scp`: Transferring data from/to a server
 
-To learn how to transfer data to Crunchomics, we first want to copy our local `data` folder (from your personal computer) to the HPC. We can do this with the `scp `(Secure Copy Protocol) command, which securely transfers files or directories between your computer and a remote server.
+To learn how to transfer data to Crunchomics, we want to transfer the `data` folder (the one you have generated in previous part of the tutorial) to the HPC. We can do this with the `scp `(Secure Copy Protocol) command, which securely transfers files or directories between your computer and a remote server.
 
 The basic syntax is:
 
 - `scp [options] SOURCE DESTINATION`
 - For connecting to any HPC the syntax is `server:file_location`
 
-When transferring data you must **run the command from your own computer**, not from inside the HPC login session.
+When transferring data you must **run the command from a terminal session on your own computer**, not from a terminal session that runs on the HPC.
 
 To copy the entire data folder into your Crunchomics project folder, use:
 
@@ -198,7 +194,7 @@ Notes:
 
 ::: {.callout-tip title="Tip: Moving data from the HPC to our own computer" collapse="true"}
 
-You can also move results back to your computer. For example, to copy a single genome file from Crunchomics:
+You can also move results from the HPC to your computer. For example, to copy a single genome file from Crunchomics:
 
 ```{bash}
 scp username@omics-h0.science.uva.nl:/home/username/personal/data_analysis/data/LjRoot303.fna .
@@ -290,7 +286,7 @@ less -S results/seqkit/genome_stats.tsv
 
 Here:
 
-- `seqkit stats data/*fna` → analyzes all FASTA files in the data folder ending in .fna
+- `seqkit stats data/*fna` → analyzes all FASTA files in the data folder ending in fna
 - `-Tao` → output in tabular format (-T), include all stats (-a), and write to file (-o)
 - `--threads 1` → run on one thread (should match `--cpus-per-task=1`)
 - The results are stored in results/seqkit/genome_stats.tsv
@@ -458,14 +454,14 @@ When submitted successfully, you’ll see something like `Submitted batch job 75
 In the job script above:
 
 - `#!/bin/bash`:	Runs the script with the Bash shell
-- `#SBATCH --...`	SLURM options: resources, runtime, output names. 
+- `#SBATCH --...`	Define SLURM options: resources, runtime, output names. 
     - These are the same options that you have used with `srun`
     - The `%j` variable in your log filenames automatically expands to the job ID, making it easier to keep track of multiple submissions.
 - `echo / date`:	Prints status messages to track job progress
 - `srun ...`: The actual analysis command to run on the compute node
 
 
-::: {.callout-tip title="Tip: Debugging your first sbatch jobs" collapse=true}
+::: {.callout-tip title="Tip: Debugging your first sbatch jobs" collapse=false}
 
 If your job fails:
 
