@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -156,8 +191,14 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#fastplong-quality-cleaning" id="toc-fastplong-quality-cleaning" class="nav-link active" data-scroll-target="#fastplong-quality-cleaning"><span class="header-section-number">6.1</span> <code>fastplong</code>: Quality cleaning</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -185,8 +226,101 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>Work on sections quality cleaning (consider testing fastplong), consensus generation (ngspeciesID), blast for taxonomic assignment and minimap for counts –&gt; will be added to Chapter 6 (From raw reads to results)</li>
 </ul>
+<section id="fastplong-quality-cleaning" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="fastplong-quality-cleaning"><span class="header-section-number">6.1</span> <code>fastplong</code>: Quality cleaning</h2>
+<p>In this section, you will learn how to perform quality filtering and adapter trimming of your amplicon long-read data using fastplong. Quality control is an essential first step to ensure that only high-quality reads are used for downstream analyses such as consensus generation and taxonomic assignment.</p>
+<p>You can install fastplong with mamba:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-p</span> fastplong_0.4.1 <span class="at">-c</span> bioconda fastplong=0.4.1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>In this tutorial, you will always receive example code as a starting point, with sections containing <code>...</code> for you to fill in. If you get stuck, check <a href="https://github.com/OpenGene/fastplong">the tools official documentation</a> or use the built-in help via the CLI (<code>fastplong -h</code>).</p>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Question</span>Task
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Use your NanoPlot quality plots from the previous section and choose some quality and length cutoffs. Specifically, you want to:</p>
+<ul>
+<li>Store the output of fastplong in a separate results folder</li>
+<li>Request 2 CPUs with <code>srun</code>, and ensure fastplong also uses 2 threads</li>
+<li>Discard sequences that are too long or too short</li>
+<li>Discard reads, where the read’s average quality score is lower than a quality score of Q8.</li>
+<li>Move a sliding window from front (5’) to tail, drop the bases in the window if its mean quality &lt; Q8</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate an output folder for the results</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the fastplong conda environment</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run fastplong</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem</span><span class="op">=</span>20G <span class="at">--cpus-per-task</span> 2 fastplong ...</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>After the analysis finished check the output and record:</p>
+<ul>
+<li>The total number of sequences that went into the analysis</li>
+<li>The total number of sequences that passed the quality filtering</li>
+<li>At which step most reads were lost (and how many)</li>
+<li>How many basepairs were lost due to the trimming</li>
+</ul>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate an output folder for the results</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results/fastplong</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the fastplong conda environment</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate fastplong_0.4.1</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run fastplong</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem</span><span class="op">=</span>20G <span class="at">--cpus-per-task</span> 2 fastplong <span class="dt">\</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> data/barcode01_merged.fastq.gz <span class="dt">\</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-l</span> 1400 <span class="at">--length_limit</span> 1700 <span class="dt">\</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--mean_qual</span> 8 <span class="at">--cut_front</span> 8 <span class="dt">\</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--thread</span> 2 <span class="dt">\</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> results/fastplong/barcode01_filtered.fastq.gz</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Parameter overview:</strong> - <code>--mean_qual 8</code>: Removes reads with an average Phred quality below 8 - <code>-l 1400 --length_limit 1700</code>: Keeps reads roughly within the expected amplicon size range - <code>--cut_front 8</code>: Removes low-quality bases using a sliding window approach - <code>--thread 2</code>: Uses two CPU threads for parallel processing</p>
+<p>Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.</p>
+<ul>
+<li>Input: 17,121 reads</li>
+<li>Passed filtering: 8,433 reads (49%). For my data this is reasonable given the left-tail seen in the NanoPlot quality plot</li>
+<li>Most reads were lost because they were too short (4,627) or had low quality (4,084)</li>
+<li>The dataset initially contained 24,089,162 bp, of which 12,339,313 bp (~51%) were retained</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
