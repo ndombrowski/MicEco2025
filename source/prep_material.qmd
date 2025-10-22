@@ -321,3 +321,29 @@ AGTTTGATCATGGCTCAGGATGAACGCTGGCGGCGTACCTAACACATGCAAGTCGAACGGGTACCTTTGACAGAGATTTC
     - Porechop is no longer maintained.
     - Subsequent workflows often require chopper for additional quality trimming.
     - fastplong provides a alternative
+
+
+
+## Organize test files
+
+
+```{bash}
+cd /home/ndombro/personal/data_analysis/data/irathmann
+
+# Path to your base folder
+base_folder="/scratch/transfer_nina/data_Nanopore_Isabel"
+
+# Loop through each barcode folder
+for folder_name in "$base_folder"/barcode*; do
+    # Get the folder name (barcode01, barcode02, etc.)
+    barcode_name=$(basename "$folder_name")
+
+    # Concatenate all .fastq.gz files in that folder into one in the current directory
+    echo "Processing: $barcode_name in $folder_name"
+    
+    #ll "$folder_name"/*.fastq.gz
+    cat "$folder_name"/*.fastq.gz > "${barcode_name}.fastq.gz"
+    
+    echo "Created ${barcode_name}.fastq.gz"
+done
+```
