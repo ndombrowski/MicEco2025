@@ -1,0 +1,725 @@
+---
+engine: knitr
+eval: false
+---
+
+
+# Test clustering 
+
+To develop the workflow I reveived 15 barcodes of fastq data from Isabel Rathmann, each barcode is nanopore reads from a single microbial species. I will combine all these reads into one to see if we ideally can reconstruct up to 15 consensus sequences. I first will integrate the data into the current workflow for quality assessment and cleaning and then start testing tools like NGSpeciesID for clustering.
+
+## Organize test files
+
+```{bash}
+cd /home/ndombro/personal/data_analysis/
+
+# Path to your base folder
+base_folder="/scratch/transfer_nina/data_Nanopore_Isabel"
+
+# Loop through each barcode folder
+for folder_name in "$base_folder"/barcode*; do
+    # Get the folder name (barcode01, barcode02, etc.)
+    barcode_name=$(basename "$folder_name")
+
+    # Concatenate all .fastq.gz files in that folder into one in the current directory
+    echo "Processing: $barcode_name in $folder_name"
+    
+    #ll "$folder_name"/*.fastq.gz
+    cat "$folder_name"/*.fastq.gz > data/irathmann/"${barcode_name}.fastq.gz"
+    
+    echo "Created ${barcode_name}.fastq.gz"
+done
+
+cat data/irathmann/barcode* > data/barcodeX.fastq.gz
+```
+
+
+## Quality cleaning
+
+### Quality of raw reads
+
+```{bash}
+# Check original quality
+srun --cpus-per-task=1 --mem=5G seqkit stats data/barcodeX.fastq.gz  \
+    -Tao results/seqkit/barcodeX_stats.tsv --threads 1
+
+conda activate nanoplot
+
+NanoPlot --fastq data/barcodeX.fastq.gz \
+    -t 2 \
+    --tsv_stats \
+    --plots dot \
+    -o results/nanoplot
+
+conda deactivate
+```
+
+Notes:
+
+- Seqkit:
+    - 43,170 sequences total
+    - 60,246,550 bp
+    - Sequence length: 31 min, 1395.6 mean,  19385 max
+    - Average quality: 16.63
+- Nanoplot
+    - Few reads with a phred score of 10 --> will use 12 to discard sequences
+    - Peak of sequence length goes from 1400 - 1500 (will use this with a 100 bp "grace area")
+
+
+### Quality cleaning 
+
+#### V1
+
+```{bash}
+# Generate an output folder for the results
+mkdir results/fastplong/indiv
+
+# Activate the fastplong conda environment
+conda activate fastplong_0.4.1
+
+# Run fastplong
+# Ran on individual files but using stats from combined analysis
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --mem=20G --cpus-per-task 2 fastplong \
+        -i $file \
+        -l 1300 --length_limit 1600 \
+        --mean_qual 12 --cut_front 12 \
+        --thread 2 \
+        -o results/fastplong/indiv/${barcode}_filtered.fastq.gz \
+        --html results/fastplong/indiv/${barcode}.html \
+        --json results/fastplong/indiv/${barcode}.json
+done
+
+# Deactivate the conda environment 
+conda deactivate
+
+# Summarize data 
+# Output stored in: results/fastplong/indiv/fastplong_summary_v1.csv
+python scripts/parse_fastplong.py
+```
+
+Notice:
+
+This detected barcodes but upon closer investigation (Blastn via the webserver), the identified adapters have 100% identity to microbial strains. I did only find very few known barcode 01 sequences in the raw barcode01 fastq files.
+
+Therefore, I will check with Isabel if the barcodes were already removed and also run fastplong with a Nanopore specific adapter file:
+
+```{bash}
+rm results/fastplong/indiv/*fastq.gz
+rm results/fastplong/indiv/*html
+rm results/fastplong/indiv/*json 
+
+# Activate the fastplong conda environment
+conda activate fastplong_0.4.1
+
+# Run fastplong
+# Ran on individual files but using stats from combined analysis
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --mem=20G --cpus-per-task 5 fastplong \
+        -i $file \
+        -l 1300 --length_limit 1600 \
+        --mean_qual 12 --cut_front 12 \
+        -a /zfs/omics/projects/bioinformatics/files/nanopore/all_sequences_unique.fasta \
+        --thread 5 \
+        -o results/fastplong/indiv/${barcode}_filtered.fastq.gz \
+        --html results/fastplong/indiv/${barcode}.html \
+        --json results/fastplong/indiv/${barcode}.json
+done
+
+# Deactivate the conda environment 
+conda deactivate
+
+# Summarize data 
+# Output stored in: results/fastplong/indiv/fastplong_summary_v1.csv
+python scripts/parse_fastplong.py
+```
+
+This still returns the incorrect adapters.
+
+Tried to run -A with -a:
+
+```{bash}
+rm results/fastplong/indiv/*fastq.gz
+rm results/fastplong/indiv/*html
+rm results/fastplong/indiv/*json 
+
+# Activate the fastplong conda environment
+conda activate fastplong_0.4.1
+
+# Run fastplong
+# Ran on individual files but using stats from combined analysis
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --mem=20G --cpus-per-task 5 fastplong \
+        -i $file \
+        -l 1300 --length_limit 1600 \
+        --mean_qual 12 --cut_front 12 \
+        -A -a /zfs/omics/projects/bioinformatics/files/nanopore/all_sequences_unique.fasta \
+        --thread 5 \
+        -o results/fastplong/indiv/${barcode}_filtered.fastq.gz \
+        --html results/fastplong/indiv/${barcode}.html \
+        --json results/fastplong/indiv/${barcode}.json
+done
+
+# Deactivate the conda environment 
+conda deactivate
+
+# Summarize data 
+# Output stored in: results/fastplong/indiv/fastplong_summary_v3.csv
+python scripts/parse_fastplong.py
+```
+
+This simply removes low quality and short reads but does no adapter trimming. I will check how the data was treated and for now continue working with the data that was just length and quality filtered.
+
+|                         | barcode01 | barcode02 | barcode03 | barcode04 | barcode05 | barcode06 | barcode07 | barcode09 | barcode10 | barcode11 | barcode12 | barcode13 | barcode14 | barcode15 |
+| ----------------------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| before_total_reads      | 3919      | 2555      | 3918      | 2567      | 2261      | 2697      | 2689      | 2573      | 2240      | 2771      | 3722      | 4031      | 2975      | 4252      |
+| before_total_bases      | 5466871   | 3577602   | 5507106   | 3584300   | 3192642   | 3753988   | 3779819   | 3467322   | 3099154   | 3929294   | 5277341   | 5553929   | 4131833   | 5925349   |
+| before_read_mean_length | 1394      | 1400      | 1405      | 1396      | 1412      | 1391      | 1405      | 1347      | 1383      | 1418      | 1417      | 1377      | 1388      | 1393      |
+| before_gc_content       | 0.548902  | 0.521424  | 0.532478  | 0.549224  | 0.499368  | 0.546522  | 0.546717  | 0.553473  | 0.54838   | 0.529229  | 0.529152  | 0.534887  | 0.53684   | 0.536866  |
+| after_total_reads       | 3323      | 2201      | 3402      | 2184      | 2009      | 2340      | 2335      | 2021      | 1996      | 2468      | 3293      | 3336      | 2571      | 3684      |
+| after_total_bases       | 4839376   | 3175418   | 4915549   | 3179512   | 2872882   | 3388062   | 3380558   | 2950583   | 2798809   | 3585071   | 4778778   | 4840158   | 3716183   | 5327234   |
+| after_read_mean_length  | 1456      | 1442      | 1444      | 1455      | 1430      | 1447      | 1447      | 1459      | 1402      | 1452      | 1451      | 1450      | 1445      | 1446      |
+| after_gc_content        | 0.549346  | 0.521657  | 0.532693  | 0.549453  | 0.499533  | 0.546727  | 0.547006  | 0.553425  | 0.548483  | 0.529471  | 0.52941   | 0.535228  | 0.537033  | 0.537187  |
+| passed_filter_reads     | 3323      | 2201      | 3402      | 2184      | 2009      | 2340      | 2335      | 2021      | 1996      | 2468      | 3293      | 3336      | 2571      | 3684      |
+| low_quality_reads       | 122       | 134       | 156       | 82        | 130       | 83        | 97        | 101       | 99        | 106       | 161       | 146       | 75        | 130       |
+| too_many_N_reads        | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| too_short_reads         | 454       | 204       | 338       | 287       | 114       | 263       | 246       | 438       | 139       | 192       | 256       | 531       | 315       | 422       |
+| too_long_reads          | 20        | 16        | 22        | 14        | 8         | 11        | 11        | 13        | 6         | 5         | 12        | 18        | 14        | 16        |
+
+@37c044e5-9534-4c08-b402-1a2f2daef82a runid=be4b9822-4cb8-446f-89bf-a68fd9927d41 ch=119 start_time=2025-09-30T09:13:53.037631+02:00 flow_cell_id=AZI171 basecall_gpu=NVIDIA_GeForce_RTX_3090 protocol_group_id=Thomas_Blankers sample_id=Isabel_CeMbio_1 barcode=barcode02 barcode_alias=barcode02 parent_read_id=37c044e5-9534-4c08-b402-1a2f2daef82a basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v5.0.0
+
+
+## Clustering with NGSpeciesID
+
+Install newest version:
+
+```{bash}
+# Installation
+mamba create -p /zfs/omics/projects/bioinformatics/software/miniconda3/envs/NGSpeciesID_0.3.1  python=3.11 pip
+
+conda activate NGSpeciesID_0.3.1
+
+mamba install --yes -c conda-forge -c bioconda medaka==2.0.1 openblas==0.3.3 spoa racon minimap2  samtools
+
+pip install NGSpeciesID
+
+# Test installation 
+mkdir test_ngspeciesID
+cd test_ngspeciesID
+
+curl -LO https://raw.githubusercontent.com/ksahlin/NGSpeciesID/master/test/sample_h1.fastq
+
+NGSpeciesID --ont --fastq sample_h1.fastq --outfolder ./sample_h1 --consensus --medaka
+
+cd ..
+rm -r test_ngspeciesID
+
+conda deactivate
+
+# Installation vsearch 
+mamba create -p /zfs/omics/projects/bioinformatics/software/miniconda3/envs/vsearch_2.30.1  -c bioconda vsearch==2.30.1
+
+```
+
+
+### Run v1
+
+```{bash}
+# Combine data 
+cat results/fastplong/indiv/*fastq.gz > results/fastplong/barcodeX.fastq.gz
+
+# And uncompress (NGSpeciesID takes not compressed input)
+gzip -d results/fastplong/barcodeX.fastq.gz
+
+conda activate NGSpeciesID_0.3.1 
+
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v1 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.8 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check supporting reads (from 1937 to 9312)
+grep ">" consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+Default thresholds used by the tool:
+
+- `--aligned_threshold` uses 0.4
+- `--abundance_ratio` uses 0.01
+- `--mapped_threshold` uses 0.7
+
+Notes from run:
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 166 clusters formed
+- Finished Consensus creation: 8 created and being supported by 35,521 / 37,163 reads total 
+
+Since some clusters are rather large, this suggest that here species are potentially fused. To test this, I will test different quality thresholds.
+
+
+### Run v2: Increase aligned_threshold
+
+Decisions:
+
+- Increase `-aligned_threshold` to 0.95. This raises the minimum alignment identity used when deciding read similarity, so near-identical but distinct 16S variants are less likely to collapse
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v2 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.95 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v2/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v2/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+Notes from run:
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 9 created and being supported by 30,057 / 37,163 reads total 
+
+WeblastN against 16S db:
+
+- consensus_cl_id_103_total_supporting_reads_3790: Huaxiibacter chinensis 
+- consensus_cl_id_135_total_supporting_reads_4276: Acinetobacter guilloui
+- consensus_cl_id_139_total_supporting_reads_1706: Stenotrophomonas lactitubi
+- consensus_cl_id_182_total_supporting_reads_1722: Sphingobacterium siyangense
+- consensus_cl_id_200_total_supporting_reads_2504 : Comamonas piscis
+- consensus_cl_id_2723_total_supporting_reads_1639: Sphingomonas desiccabilis
+- consensus_cl_id_2_total_supporting_reads_4886: Enterobacter quasihormaechei
+- consensus_cl_id_32_total_supporting_reads_8025: Ectopseudomonas oleovorans
+- consensus_cl_id_713_total_supporting_reads_1509: Chryseobacterium mulctrae
+
+
+Next, I will increase `rc_identity_threshold` (default 0.9) the same or a bit lower (to account for error profiles/uneven trimming) to the value of `aligned_threshold`. `aligned_threshold` should control similarity in reads aligning in the same orientation and `rc_identity_threshold` should control how tolerant NGSpeciesID is when aligning a read in the reverse-complement orientation to an existing cluster representative.
+
+
+### V3: Increase rc_identity_threshold
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v3 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.95 \
+    --rc_identity_threshold 0.95 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v3/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v3/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+Notes from run:
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 14 created and being supported by 30,057 / 37,163 reads total 
+
+We still have one sequences that might consist of 2 taxa (consensus_cl_id_32_total_supporting_reads_4996) since the max 
+
+Next, I will slowly increase `aligned_threshold` but I need to keep in mind that this might split genuine species clusters if intragenomic 16S variants exist --> If we see many new tiny clusters that BLAST to the same species, you have over-split.
+
+
+### Run v4: individual 
+
+Next, I will run the analysis on the individual barcodes to get a better idea what is in each individual file (since we know each barcode = one species):
+
+```{bash}
+conda activate NGSpeciesID_0.3.1 
+
+# Unzip individual files
+gzip -d results/fastplong/indiv/*fastq.gz
+
+for file in results/fastplong/indiv/*fastq; do
+    barcode=`basename $file .fastq | sed 's/_filtered//g'`
+    echo "Now running ${barcode}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder results/ngspeciesid/v4/${barcode} \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.95 \
+        --rc_identity_threshold 0.95 \
+        --abundance_ratio 0.01 \
+        --mapped_threshold 0.7
+done
+
+conda deactivate
+
+# Check identity of split sequences 
+# Low % identify but likely due to indel/deletions which are very typical in nanopore data
+conda activate vsearch_2.30.1
+
+cat results/ngspeciesid/v4/barcode04/medaka_*/consensus.fasta > results/ngspeciesid/v4/bc4_consensus.fasta
+
+# Check identity of split sequences 
+# BC04: Identity:     885/2069 (42.8%), Gaps:         937/2069 (45.3%
+needle -asequence results/ngspeciesid/v4/barcode04/medaka_cl_id_0/consensus.fasta \
+    -bsequence results/ngspeciesid/v4/barcode04/medaka_cl_id_1/consensus.fasta \
+    -gapopen 10 -gapextend 0.5 \
+    -outfile results/ngspeciesid/v4/bc04_needle.txt
+
+vsearch --allpairs_global results/ngspeciesid/v4/bc4_consensus.fasta \
+        --acceptall \
+        --uc results/ngspeciesid/v4//bc04_allpairs.uc \
+        --iddef 1 \
+        --threads 4
+
+conda deactivate
+```
+
+Notes:
+
+- barcode 01: 1 consensus, 2813 supporting reads, Enterobacter quasihormaechei
+- **barcode 02: 2 consensus, 789 + 894 supporting reads, 2x Sphingobacterium siyangens
+- barcode 03: 1 consensus, 2393 supporting reads,  	Comamonas piscis
+- **barcode 04: 2 consensus, 856 +1051 supporting reads, 2x Enterobacter quasihormaechei <-- risk of fusing with barcode 01
+- barcode 05: 1 consensus, 1530 supporting reads, Chryseobacterium mulctrae
+- barcode 06: 1 consensus, 1931 supporting reads, Huaxiibacter chinensis
+- barcode 07: 1 consensus, 1886 supporting reads, Huaxiibacter chinensis <-- risk of fusion with barcode 06
+- barcode 08: does not exist
+- barcode 09: 1 consensus, 1701 supporting reads, Stenotrophomonas lactitubi
+- **barcode 10: 2 consensus, 845 + 825 supporting reads,  2x Sphingomonas desiccabilis
+- barcode 11: 1 consensus, 2077 supporting reads,  	Acinetobacter guillouiae
+- barcode 12: 1 consensus, 2533 supporting reads, 	Acinetobacter guillouiae <-- risk of fusion with bc11
+- barcode 13: 1 consensus, 3048 supporting reads,  	Pseudomonas lurida (not found in v2 blast but there was a potentially fused pseudomonas that also is part of bc14 and 15)
+- barcode 14: 1 consensus, 2139 supporting reads,  	Ectopseudomonas oleovorans
+- barcode 15: 1 consensus, 3083 supporting reads,  	Ectopseudomonas oleovorans
+
+
+Current summary:
+
+- v2 (aligned tres 0.95, rc_identify at 0.9 (default)): 9 taxa, 3-4 consensues likely merged (clusters that likely contain multiple species)
+- v3 (aligned tres 0.95, rc_identify at 0.95): 14 taxa, 1 potentially fused consensus, 4 consensuses likely oversplit, i.e., one species split into multiple consensuses
+- Reduce rc setting to see what this does
+
+
+
+
+### Run v5: individual+lower rc
+
+Next, I will run the analysis on the individual barcodes to get a better idea what is in each individual file (since we know each barcode = one species):
+
+```{bash}
+conda activate NGSpeciesID_0.3.1 
+
+for file in results/fastplong/indiv/*fastq; do
+    barcode=`basename $file .fastq | sed 's/_filtered//g'`
+    echo "Now running ${barcode}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder results/ngspeciesid/v5/${barcode} \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.95 \
+        --rc_identity_threshold 0.94 \
+        --abundance_ratio 0.01 \
+        --mapped_threshold 0.7
+done
+
+conda deactivate
+
+# count forward vs reverse for consensus 0: 1043 fwd, 953 rc
+minimap2 -ax map-ont results/ngspeciesid/v5/barcode10/consensus_reference_1.fasta \
+    results/fastplong/indiv/barcode10_filtered.fastq \
+    | samtools view -F4 - \
+    | awk '{if (and($2,16)) print "RC"; else print "FWD"}' \
+    | sort | uniq -c
+
+# and for consensus 1: 953 FWD, 1043 RC
+minimap2 -ax map-ont results/ngspeciesid/v5/barcode10/consensus_reference_0.fasta \
+    results/fastplong/indiv/barcode10_filtered.fastq \
+    | samtools view -F4 - \
+    | awk '{if (and($2,16)) print "RC"; else print "FWD"}' \
+    | sort | uniq -c
+```
+
+Split barcodes:
+
+- barcode02 --> 1 cluster, 1683 supporting reads (ok now)
+- barcode04: 2 clusters, 49 + 1858 supporting reads (better)
+- barcode 10: 2 clusters, 845 + 825 supporting reads (same)
+
+Minimap numbers suggest a reverse-complement splitting artifact. Each consensus (0 and 1) captures roughly half of the reads, and the read orientation is flipped between them (one is ~1000 FWD / 950 RC, the other the reverse). --> try lowering the rc threshold
+
+```{bash}
+for file in results/fastplong/indiv/*fastq; do
+    barcode=`basename $file .fastq | sed 's/_filtered//g'`
+    echo "Now running ${barcode}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder results/ngspeciesid/v6/${barcode} \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.95 \
+        --rc_identity_threshold 0.93 \
+        --abundance_ratio 0.01 \
+        --mapped_threshold 0.7
+done
+
+python scripts/summarize_ngspecies.py -f results/ngspeciesid/
+```
+
+Split barcodes:
+
+- barcode02: still ok
+- barcode04: 2 clusters, 49 + 1858 supporting reads (better)
+- barcode10: 2 clusters, 845 + 825 supporting reads (same)
+
+
+```{bash}
+for file in results/fastplong/indiv/*fastq; do
+    barcode=`basename $file .fastq | sed 's/_filtered//g'`
+    echo "Now running ${barcode}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder results/ngspeciesid/v7/${barcode} \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.95 \
+        --rc_identity_threshold 0.92 \
+        --abundance_ratio 0.01 \
+        --mapped_threshold 0.7
+done
+
+python scripts/summarize_ngspecies.py -f results/ngspeciesid/
+```
+
+Split barcodes:
+
+- barcode02: still ok
+- barcode04: 2 clusters, 49 + 1858 supporting reads (better)
+- barcode10: 2 clusters, 845 + 825 supporting reads (same)
+
+```{bash}
+for file in results/fastplong/indiv/*fastq; do
+    barcode=`basename $file .fastq | sed 's/_filtered//g'`
+    echo "Now running ${barcode}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder results/ngspeciesid/v8/${barcode} \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.95 \
+        --rc_identity_threshold 0.9 \
+        --abundance_ratio 0.01 \
+        --mapped_threshold 0.7
+done
+
+python scripts/summarize_ngspecies.py -f results/ngspeciesid/
+```
+
+Now each barcodes resolves into one consensus seq:
+
+- v8 barcode01            5              2813    results/ngspeciesid/v8/barcode01/consensus_reference_5.fasta
+- v8 barcode02            1              1683    results/ngspeciesid/v8/barcode02/consensus_reference_1.fasta
+- v8 barcode03            0              2393    results/ngspeciesid/v8/barcode03/consensus_reference_0.fasta
+- v8 barcode04            1              1907    results/ngspeciesid/v8/barcode04/consensus_reference_1.fasta
+- v8 barcode05            0              1530    results/ngspeciesid/v8/barcode05/consensus_reference_0.fasta
+- v8 barcode06           15              1931   results/ngspeciesid/v8/barcode06/consensus_reference_15.fasta
+- v8 barcode07            2              1886    results/ngspeciesid/v8/barcode07/consensus_reference_2.fasta
+- v8 barcode09            3              1701    results/ngspeciesid/v8/barcode09/consensus_reference_3.fasta
+- v8 barcode10            0              1670    results/ngspeciesid/v8/barcode10/consensus_reference_0.fasta
+- v8 barcode11            0              2077    results/ngspeciesid/v8/barcode11/consensus_reference_0.fasta
+- v8 barcode12            5              2553    results/ngspeciesid/v8/barcode12/consensus_reference_5.fasta
+- v8 barcode13            6              3048    results/ngspeciesid/v8/barcode13/consensus_reference_6.fasta
+- v8 barcode14            0              2139    results/ngspeciesid/v8/barcode14/consensus_reference_0.fasta
+-  v8 barcode15            0              3083    results/ngspeciesid/v8/barcode15/consensus_reference_0.fasta
+
+***Important**: lowering `--rc_identity_threshold` from 0.94 to 0.90 collapses those orientation-split consensuses for bc2, bc4 and bc10
+
+
+### Run v9: adjust aln threshold
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v9 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.96 \
+    --rc_identity_threshold 0.90 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v9/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v9/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 9 created and being supported by 30,057 / 37,163 reads total 
+
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v10 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.97 \
+    --rc_identity_threshold 0.90 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v10/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v10/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 9 created and being supported by 30,057 / 37,163 reads total 
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v11 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.98 \
+    --rc_identity_threshold 0.90 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v11/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v11/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 9 created and being supported by 30,057 / 37,163 reads total 
+
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v12 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.99 \
+    --rc_identity_threshold 0.90 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v12/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v12/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 9 created and being supported by 30,057 / 37,163 reads total 
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v13 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.997 \
+    --rc_identity_threshold 0.90 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.7
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v13/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v13/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 696 clusters formed
+- Finished Consensus creation: 9 created and being supported by 30,057 / 37,163 reads total 
+
+**Important**: `--aligned_threshold` 0.95 - 0.997 give the same results. Going from 0.94 to 0.95 changes from 8 to 9 clusters.
+
+
+### v14: test map threshold 
+
+```{bash}
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v14 \
+    --consensus --medaka --t 20 \
+    --aligned_threshold 0.95 \
+    --rc_identity_threshold 0.90 \
+    --abundance_ratio 0.01 \
+    --mapped_threshold 0.55
+
+# Check consensus reads 
+# Still 3 clusters with potentially fusions:
+# i.e. >consensus_cl_id_32_total_supporting_reads_8025
+grep ">" results/ngspeciesid/v14/consensus_reference_*.fasta 
+
+# The reads are supported by 35,521 / 37,163 reads total 
+grep ">" results/ngspeciesid/v14/consensus_reference_*.fasta  | cut -f10 -d "_" | awk '{sum += $1} END {print sum}'
+```
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 54 clusters formed
+- Finished Consensus creation: 8 created and being supported by 36,604 / 37,163 reads total 
+
+
+## Summary thoughts 
+
+NGSpeciesID merges clusters based on `--aligned_threshold`
+
+With nanopore errors (~1–2%), raising --aligned_threshold to >0.995 likely won’t help, because the sequencing errors mask the small differences between closely related taxa.

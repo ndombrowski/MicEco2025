@@ -323,14 +323,15 @@ Now it’s your turn to run an srun job interactively. Follow these steps:
 
 **Question 1: Inspect the data**
 
-Without uncompressing the FASTQ file, view the first few lines of `barcode01_merged.fastq.gz` using `zcat` and `head`. 
+Without uncompressing the FASTQ file, view the first few lines of `barcodeX.fastq.gz` using `zcat` and `head`. 
 
 You can get the FASTQ file as follows:
 
 1.  If you are following the Microbial Ecology course:
 
     ```{bash}
-    cp <tba>/barcode01_merged.fastq.gz data
+    # Replace X with the barcode you used in the practical
+    cp <tba>/barcodeX.fastq.gz data
     ```
 
 1.  If you are following this tutorial independently:
@@ -342,7 +343,7 @@ You can get the FASTQ file as follows:
 
 **Question 2: Run seqkit interactively**
 
-Use `srun` to analyze `barcode01_merged.fastq.gz` with `seqkit stats`. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.
+Use `srun` to analyze `barcodeX.fastq.gz` with `seqkit stats`. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.
 
 **Question 3: Check the results**
 
@@ -359,14 +360,14 @@ Open the output file and answer the following:
 
 ```{bash}
 # Question 1
-zcat data/barcode01_merged.fastq.gz | head
+zcat data/barcodeX.fastq.gz | head
 
 # Question 2 
-srun --cpus-per-task=1 --mem=5G seqkit stats data/barcode01_merged.fastq.gz  \
-    -Tao results/seqkit/barcode01_stats.tsv --threads 1
+srun --cpus-per-task=1 --mem=5G seqkit stats data/barcodeX.fastq.gz  \
+    -Tao results/seqkit/barcodeX_stats.tsv --threads 1
 
 # Question 3
-less -S results/seqkit/barcode01_stats.tsv
+less -S results/seqkit/barcodeX_stats.tsv
 ```
 
 Answers:
@@ -497,7 +498,7 @@ Always cancel jobs that are running incorrectly or stuck in a queue too long. Th
 
 **Exercise: Run NanoPlot with sbatch**
 
-Now you’ll write your own `sbatch` script to generate quality plots from `barcode01_merged.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
+Now you’ll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
 
 Below is a template for a script called `scripts/nanoplot.sh`.  Replace all `...` with the correct code.
 
@@ -577,7 +578,7 @@ date
 mkdir -p results/nanoplot
 
 # Run Nanoplot
-NanoPlot --fastq data/barcode01_merged.fastq.gz \
+NanoPlot --fastq data/barcodeX.fastq.gz \
     -t 2 \
     --tsv_stats \
     --plots dot \
