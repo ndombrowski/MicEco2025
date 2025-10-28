@@ -105,6 +105,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -197,6 +226,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#fastplong-quality-cleaning" id="toc-fastplong-quality-cleaning" class="nav-link active" data-scroll-target="#fastplong-quality-cleaning"><span class="header-section-number">6.1</span> <code>fastplong</code>: Quality cleaning</a></li>
+  <li><a href="#ngspeciesid-read-clustering" id="toc-ngspeciesid-read-clustering" class="nav-link" data-scroll-target="#ngspeciesid-read-clustering"><span class="header-section-number">6.2</span> <code>NGSpeciesID</code>: Read clustering</a></li>
   </ul>
 </nav>
     </div>
@@ -317,6 +347,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+</div>
+</section>
+<section id="ngspeciesid-read-clustering" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="ngspeciesid-read-clustering"><span class="header-section-number">6.2</span> <code>NGSpeciesID</code>: Read clustering</h2>
+<p>Nanopore long-read data generates sequence reads with a relatively high error rate. We have seen before that our data has an average quality of 15 but let’s look a bit closer at what this means. The Phred score (Q) is a value that represents the estimated probability that a base is correct and we can translate the Phred score to a probability with:</p>
+<p><span class="math display">\[P=10^{-Q/10}\]</span></p>
+<p>You could calculate the estimated error in R via:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>P_error <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span>Q<span class="sc">/</span><span class="dv">10</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>percent_error <span class="ot">&lt;-</span> P_error <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Error rate: "</span>, <span class="fu">round</span>(percent_error, <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Error rate: 3.16</code></pre>
+</div>
+</div>
+<p>So, with an average Phred score of 15 we have a 3.2% chance of a base being wrong.</p>
+<p>This is quite a lot of potential error considering that traditionally</p>
+<p>NGSpeciesID is a tool for clustering and consensus forming of long-read amplicon sequencing data.</p>
+<p>You can install NGSpeciesID with mamba:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-p</span> fastplong_0.4.1 <span class="at">-c</span> bioconda fastplong=0.4.1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

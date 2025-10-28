@@ -558,12 +558,13 @@ Important
 <div class="callout-body-container callout-body">
 <p>Now it’s your turn to run an srun job interactively. Follow these steps:</p>
 <p><strong>Question 1: Inspect the data</strong></p>
-<p>Without uncompressing the FASTQ file, view the first few lines of <code>barcode01_merged.fastq.gz</code> using <code>zcat</code> and <code>head</code>.</p>
+<p>Without uncompressing the FASTQ file, view the first few lines of <code>barcodeX.fastq.gz</code> using <code>zcat</code> and <code>head</code>.</p>
 <p>You can get the FASTQ file as follows:</p>
 <ol type="1">
 <li><p>If you are following the Microbial Ecology course:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="op">&lt;</span>tba<span class="op">&gt;</span>/barcode01_merged.fastq.gz data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace X with the barcode you used in the practical</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="op">&lt;</span>tba<span class="op">&gt;</span>/barcodeX.fastq.gz data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></li>
 <li><p>If you are following this tutorial independently:</p>
 <div class="cell">
@@ -571,7 +572,7 @@ Important
 </div></li>
 </ol>
 <p><strong>Question 2: Run seqkit interactively</strong></p>
-<p>Use <code>srun</code> to analyze <code>barcode01_merged.fastq.gz</code> with <code>seqkit stats</code>. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.</p>
+<p>Use <code>srun</code> to analyze <code>barcodeX.fastq.gz</code> with <code>seqkit stats</code>. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.</p>
 <p><strong>Question 3: Check the results</strong></p>
 <p>Open the output file and answer the following:</p>
 <ul>
@@ -595,14 +596,14 @@ Important
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 1</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">zcat</span> data/barcode01_merged.fastq.gz <span class="kw">|</span> <span class="fu">head</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">zcat</span> data/barcodeX.fastq.gz <span class="kw">|</span> <span class="fu">head</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 2 </span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/barcode01_merged.fastq.gz  <span class="dt">\</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">-Tao</span> results/seqkit/barcode01_stats.tsv <span class="at">--threads</span> 1</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/barcodeX.fastq.gz  <span class="dt">\</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">-Tao</span> results/seqkit/barcodeX_stats.tsv <span class="at">--threads</span> 1</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Question 3</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/seqkit/barcode01_stats.tsv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/seqkit/barcodeX_stats.tsv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Answers:</p>
 <ul>
@@ -750,7 +751,7 @@ Question
 <div id="callout-9" class="callout-9-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <p><strong>Exercise: Run NanoPlot with sbatch</strong></p>
-<p>Now you’ll write your own <code>sbatch</code> script to generate quality plots from <code>barcode01_merged.fastq.gz</code> using <strong>NanoPlot</strong>, which you installed earlier in your conda environment.</p>
+<p>Now you’ll write your own <code>sbatch</code> script to generate quality plots from <code>barcodeX.fastq.gz</code> using <strong>NanoPlot</strong>, which you installed earlier in your conda environment.</p>
 <p>Below is a template for a script called <code>scripts/nanoplot.sh</code>. Replace all <code>...</code> with the correct code.</p>
 <p>In your script, make sure to:</p>
 <ul>
@@ -848,7 +849,7 @@ Question
 <span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> results/nanoplot</span>
 <span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot</span></span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="at">--fastq</span> data/barcode01_merged.fastq.gz <span class="dt">\</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="at">--fastq</span> data/barcodeX.fastq.gz <span class="dt">\</span></span>
 <span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">-t</span> 2 <span class="dt">\</span></span>
 <span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">--tsv_stats</span> <span class="dt">\</span></span>
 <span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">--plots</span> dot <span class="dt">\</span></span>

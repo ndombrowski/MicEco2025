@@ -192,7 +192,101 @@ This simply removes low quality and short reads but does no adapter trimming. I 
 | too_short_reads         | 454       | 204       | 338       | 287       | 114       | 263       | 246       | 438       | 139       | 192       | 256       | 531       | 315       | 422       |
 | too_long_reads          | 20        | 16        | 22        | 14        | 8         | 11        | 11        | 13        | 6         | 5         | 12        | 18        | 14        | 16        |
 
-@37c044e5-9534-4c08-b402-1a2f2daef82a runid=be4b9822-4cb8-446f-89bf-a68fd9927d41 ch=119 start_time=2025-09-30T09:13:53.037631+02:00 flow_cell_id=AZI171 basecall_gpu=NVIDIA_GeForce_RTX_3090 protocol_group_id=Thomas_Blankers sample_id=Isabel_CeMbio_1 barcode=barcode02 barcode_alias=barcode02 parent_read_id=37c044e5-9534-4c08-b402-1a2f2daef82a basecall_model_version_id=dna_r10.4.1_e8.2_400bps_sup@v5.0.0
+
+
+Additionally, I want to create a more stringent dataset to see how this affects the filtering. Note this was done after testing NGSpecies ID from v0-v14.
+
+```{bash}
+# Run fastplong
+# Ran on individual files but using stats from combined analysis
+conda activate fastplong_0.4.1
+
+mkdir results/fastplong/indiv/p15/
+
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --mem=20G --cpus-per-task 5 fastplong \
+        -i $file \
+        -l 1300 --length_limit 1600 \
+        --mean_qual 15 \
+        -A -a /zfs/omics/projects/bioinformatics/files/nanopore/all_sequences_unique.fasta \
+        --thread 5 \
+        -o results/fastplong/indiv/p15/${barcode}_filtered.fastq.gz \
+        --html results/fastplong/indiv/p15/${barcode}.html \
+        --json results/fastplong/indiv/p15/${barcode}.json
+done
+
+# Deactivate the conda environment 
+conda deactivate
+
+seqkit stats results/fastplong/indiv/p15/barcode15_filtered.fastq.gz \
+    -Tao results/seqkit/barcode15_test.tsv
+
+conda activate nanoplot
+
+NanoPlot --fastq results/fastplong/indiv/p15/barcode15_filtered.fastq.gz \
+    -t 2 \
+    --tsv_stats \
+    --plots dot \
+    -o results/nanoplot/testing
+
+# Summarize data 
+# Output stored in: results/fastplong/indiv/fastplong_summary_v4.csv
+python scripts/parse_fastplong.py
+```
+
+This somehow removes less reads than expected, so lets test chopper:
+
+```{bash}
+conda activate chopper0.8.0
+
+results/chopper
+
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    gunzip -c $file |\
+        srun --cpus-per-task 20 --mem=50G chopper \
+        -q 16 \
+        -l 1300 --maxlength 1600 \
+        --threads 20 |\
+        gzip > results/chopper/${barcode}.fastq.gz
+done
+```
+
+Kept 2894 reads out of 4252 reads, white this was 3674 with fastplong. 
+
+I did some reading on how average quality scores are calculated and I think the discrepancy comes from fastplong likely using the arithmetic mean and tools like Nanoplot converting PHRED scores to error probabilities, averaging those, and converting back to a PHRED score ([code](https://github.com/wdecoster/NanoPlot/blob/master/scripts/fastq_to_tsv.py), [discussion](https://gigabaseorgigabyte.wordpress.com/2017/06/26/averaging-basecall-quality-scores-the-right-way/)).
+
+I tried to mimick this in two python scripts and this indeed shows differences:
+
+```{bash}
+# Mean quality over all reads: 18.57
+python scripts/my_math_nanoplot.py data/irathmann/barcode15.fastq.gz
+
+# Mean quality over all reads: 34.71
+python scripts/my_math_fastplong.py data/irathmann/barcode15.fastq.gz
+
+# seqkit gives 16.83
+seqkit stats data/irathmann/barcode15.fastq.gz -Tao results/test.txt
+
+# gives mean 16.8 and median 19.0
+conda activate nanoplot
+
+NanoPlot --fastq data/irathmann/barcode15.fastq.gz \
+    -t 5 \
+    --tsv_stats \
+    --plots dot \
+    -o results/nanoplot/testing
+
+conda deactivate
+```
+
+The first gives a mean quality over all reads of 18.57, the second of 34.71 (checking the HTMLs of the fastplong output also seems to confirm the unusually high mean quality scores).
+
+I added my observations in a currently open [fastplong issue](https://github.com/OpenGene/fastplong/issues/27).
+
 
 
 ## Clustering with NGSpeciesID
@@ -227,8 +321,7 @@ mamba create -p /zfs/omics/projects/bioinformatics/software/miniconda3/envs/vsea
 
 ```
 
-
-### Run v1
+### Run v0 defaults
 
 ```{bash}
 # Combine data 
@@ -237,6 +330,44 @@ cat results/fastplong/indiv/*fastq.gz > results/fastplong/barcodeX.fastq.gz
 # And uncompress (NGSpeciesID takes not compressed input)
 gzip -d results/fastplong/barcodeX.fastq.gz
 
+conda activate NGSpeciesID_0.3.1 
+
+# defaults aligned thres of 0.4, abundance ratio of 0.1, mapped thres of 0.7, rc identity of 0.9
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v0  \
+    --consensus --medaka --t 20
+
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid/v0b  \
+    --consensus --medaka --t 20 \
+    --abundance_ratio 0.01
+
+grep ">" results/ngspeciesid/v0b/consensus_reference_*.fasta 
+
+```
+
+v0:
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 11 clusters formed
+- Finished Consensus creation: 1 created
+
+v0b:
+
+- Starting Clustering: 37163 reads
+- Finished Clustering: 11 clusters formed
+- Finished Consensus creation: 5 created (one super cluster with 29090 reads)
+
+Conclusion: Balance abundance_ratio based on the number of reads generated per barcod. I.e. Considering a min. barcode sequencing depth of 2,500 reads and combining all barcodes gives ~37,000 reads --> using a 0.01 cutoff should ensure that such a cluster still is found
+
+
+### Run v1
+
+```{bash}
 conda activate NGSpeciesID_0.3.1 
 
 srun --cpus-per-task 20 --mem=50G NGSpeciesID \
@@ -718,8 +849,17 @@ grep ">" results/ngspeciesid/v14/consensus_reference_*.fasta  | cut -f10 -d "_" 
 - Finished Consensus creation: 8 created and being supported by 36,604 / 37,163 reads total 
 
 
+
+
 ## Summary thoughts 
 
 NGSpeciesID merges clusters based on `--aligned_threshold`
 
 With nanopore errors (~1–2%), raising --aligned_threshold to >0.995 likely won’t help, because the sequencing errors mask the small differences between closely related taxa.
+
+```{r}
+Q <- 15
+P_error <- 10^(-Q/10)
+percent_error <- P_error * 100
+percent_error
+```

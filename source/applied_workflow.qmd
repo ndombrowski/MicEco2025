@@ -95,3 +95,119 @@ Below are example results from one of my analyses. These numbers will be differe
 
 :::
 :::
+
+
+
+## `NGSpeciesID`: Read clustering 
+
+Nanopore long-read data generates sequence reads that are almost as long as the 16S rRNA gene sequence, which is great for identifying species. However, long reads come with a tradeoff: the have a much higher error rate. 
+
+In our dataset the average read quality is Q15. The phred score (Q) is a measure of the probability that a base is called correctly. We can calculate this with:
+
+$$P=10^{-Q/10}$$
+
+In R we can compute this with:
+
+```{r}
+#| eval: true
+Q <- 16
+P_error <- 10^(-Q/10)
+percent_error <- P_error * 100
+message("Error rate: ", round(percent_error, 2), "%")
+```
+
+With Q15, each base has a ~3.2% chance of being incorrect. In a 1,500 bp amplicon that would mean 48 bases would be incorrect and this can make it difficult to directly assign sequences to a species.
+
+To deal with this we can cluster similar reads together in groups of sequences that likely come from the same species. Tools like NGSpeciesID build consensus sequences from each cluster in order to correct these randomly occurring errors by comparing all the reads in a cluster.
+
+You can install NGSpeciesID with mamba:
+
+```{bash}
+# Installation a base environment
+mamba create -n NGSpeciesID_0.3.1  python=3.11 pip
+
+# Inside the base environment install all required tools
+conda activate NGSpeciesID_0.3.1
+mamba install --yes -c conda-forge -c bioconda medaka==2.0.1 openblas==0.3.3 spoa racon minimap2  samtools
+pip install NGSpeciesID
+
+conda deactivate
+```
+
+
+::: {.callout-question .callout-warning collapse=false}
+# Task 
+
+Familiarize yourself with the [NGSpeciesID documentation] and finish the following sbatch script that you can store in `scripts/ngspeciesid.sh`. 
+
+Inside the script do the following:
+
+- Run the script with 5 CPUs, 50G of memory for 1 hour
+- For NGSpeciesID:
+    - Provide the path to the fastplong cleaned FASTQ file
+    - Ensure that NGSpeciesID runs with 5 cores 
+    - Ensure that the output is stored in a separate new folder
+    - Tell that you work with ONT data
+    - Tell that you want to cluster the data with `--consensus` and clean the data further with `--medaka`
+    - Lower the abundance ratio to 0.01 to detect potential contamination with few reads
+    - Increase the minimum aligned fraction of read to be included in cluster to 0.95 so that highly similar reads align. I.e. 95% identity is needed to merge reads into a cluster 
+
+
+Submit the job and then answer the following:
+
+- 
+
+
+```{bash}
+#!/bin/bash
+#SBATCH --job-name=ngspeciesid
+#SBATCH --output=logs/ngspeciesid_%j.out
+#SBATCH --error=logs/ngspeciesid_%j.err
+#SBATCH --cpus-per-task=...
+#SBATCH --mem=...
+#SBATCH --time=...
+
+# Activate the conda environment
+source ~/.bashrc 
+conda activate NGSpeciesID_0.3.1
+
+# Run NGSpeciesID
+NGSpeciesID ...
+```
+
+::: {.callout-answer .callout-warning collapse=true}
+# Click to see the answer 
+
+The `scripts/ngspeciesid.sh` should look as follows:
+
+```{bash}
+#!/bin/bash
+#SBATCH --job-name=ngspeciesid
+#SBATCH --output=logs/ngspeciesid_%j.out
+#SBATCH --error=logs/ngspeciesid_%j.err
+#SBATCH --cpus-per-task=5
+#SBATCH --mem=50G
+#SBATCH --time=1:00:00
+
+# Activate the conda environment
+source ~/.bashrc # this is needed so that conda is initialized inside the compute node
+conda activate NGSpeciesID_0.3.1
+
+echo "Job started: "
+date
+
+NGSpeciesID \
+    --ont \
+    --fastq results/fastplong/barcodeX.fastq \
+    --outfolder results/ngspeciesid \
+    --consensus --medaka --t 5 \
+    --aligned_threshold 0.95 \
+    --abundance_ratio 0.01 
+
+echo "Job ended: "
+date
+```
+
+
+:::
+:::
