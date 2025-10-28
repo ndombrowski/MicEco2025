@@ -287,7 +287,106 @@ The first gives a mean quality over all reads of 18.57, the second of 34.71 (che
 
 I added my observations in a currently open [fastplong issue](https://github.com/OpenGene/fastplong/issues/27).
 
+Minimal R example:
 
+```{r}
+#| eval: true
+#| message: false
+#| warning: false
+library(tidyverse)
+
+# Function to convert FASTQ quality line (ASCII) to numeric Phred scores
+fastq_to_phred <- function(qual_line, offset = 33) {
+    # as.integer() converts the raw hex value to decimal
+    # offset = 33 for Sanger/Illumina 1.8+ format
+    as.integer(charToRaw(qual_line)) - offset
+}
+
+# Calculate Arithmetic Mean
+arith_mean <- function(q) mean(q)
+
+# Calculate Phred-aware Mean
+# arithmetic averaging of Q scores is inappropriate because Q is logarithmic
+# here: transform Q to linear probabilities before calculating the mean
+phred_mean <- function(q) {
+    error_prop <- 10^(-q / 10)
+    avg_error <- mean(error_prop)
+    avg_phred <- -10 * log10(avg_error)
+    return(avg_phred)
+}
+
+# Generate quality lines for three random reads representing Illumina/Nanopore data
+qual_lines <- c("IGD", "I5E", "II&", "&&?", "?0+")
+read_names <- paste0("read", seq_along(qual_lines))
+reads <- setNames(lapply(qual_lines, fastq_to_phred), read_names)
+
+# Df with all results 
+df <- map_dfr(names(reads), function(i) {
+    q <- reads[[i]]
+    error_prop <- 10^(-q / 10) 
+
+    data.frame(
+        read = i,
+        raw_read = paste(q, collapse = ","),
+        error_per_base = paste( round(error_prop*100, 2) , collapse = ","),
+        true_mean_error = round(mean(error_prop) * 100, 2),
+        arithmetic_Q = round(arith_mean(q), 2),
+        expected_error_arith = round( 10^(-arith_mean(q) / 10) * 100, 2),
+        phred_aware_Q = round(phred_mean(q), 2),
+        diff_Q = round(arith_mean(q) - phred_mean(q), 2)
+    )
+})
+
+print(df, row.names = F)
+```
+
+
+Example 2:
+
+```{r}
+# Read 1: 140 x Q35 + 10 x Q2
+read1 <- c(rep(35, 140), rep(2, 10))
+
+# Read 2: 150 x Q25
+read2 <- rep(25, 150)
+
+# Arithmetic mean
+arith_mean <- function(q) mean(q)
+
+# Phred-aware mean
+phred_mean <- function(q) {
+    mean_error <- mean(10^(-q / 10))
+    phred_aware_q = -10 * log10(mean_error)
+    return(phred_aware_q)
+}
+
+# True expected errors
+true_expected_errors <- function(q) sum(10^(-q / 10))
+
+# Expected errors from arithmetic Q
+expected_errors_from_arith <- function(q) length(q) * 10^(-arith_mean(q) / 10)
+
+compact_scores <- function(q) {
+    r <- rle(q)
+    paste0(r$lengths, "xQ", r$values, collapse = "+")
+}
+
+reads <- list(read1 = read1, read2 = read2)
+
+df <- map_dfr(names(reads), function(name) {
+        q <- reads[[name]]
+        data.frame(
+        Read = name,
+        Scores = compact_scores(q), 
+        Avg_Q_arithmetic = round(arith_mean(q), 2),
+        Phred_aware_Q = round(phred_mean(q), 2),
+        Expected_errors_from_arith = round(expected_errors_from_arith(q), 2),
+        True_expected_errors = round(true_expected_errors(q), 2)
+    )
+})
+
+df
+```
 
 ## Clustering with NGSpeciesID
 
