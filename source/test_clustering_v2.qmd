@@ -1,0 +1,260 @@
+---
+engine: knitr
+eval: false
+---
+
+
+# Test clustering 2
+
+This is a workflow based on `source/test_clustering_v1.qmd`. In the first test Nanopore FASTQ files were quality cleaned and used for testing different NGSpeciesID settings. When increasing the stringency settings for fastplongs I noticed an incorrect filtering behavior since the mean quality scores are calculated incorrectly by the tool.
+
+To proceed with the workflow I will here replace fastplong with chopper. Adapter trimming won't be necessary since barcodes/adapters were already removed with Dorado by the Molecular Lab Team.
+
+For the start of the analysis the `results` folder was deleted.
+
+
+## Quality cleaning 
+
+### Installation
+
+```{bash}
+mamba create -p /zfs/omics/projects/bioinformatics/software/miniconda3/envs/chopper_0.11.0 -c bioconda chopper=0.11.0
+```
+
+### Quality cleaning
+
+```{bash}
+conda activate chopper_0.11.0
+
+mkdir -p results/chopper/q12/indiv
+mkdir -p results/chopper/q16/indiv
+mkdir -p results/chopper/q20/indiv
+
+# Default thresholds
+## Clean (q12 = ~6% error; q16 = ~ 2.5% error, q20 = 1% error)
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --cpus-per-task 20 --mem=50G chopper -i $file \
+        -q 12 \
+        -l 1300 --maxlength 1600 \
+        --threads 20 |\
+        gzip > results/chopper/q12/indiv/${barcode}.fastq.gz
+done
+
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --cpus-per-task 20 --mem=50G chopper -i $file \
+        -q 16 \
+        -l 1300 --maxlength 1600 \
+        --threads 20 |\
+        gzip > results/chopper/q16/indiv/${barcode}.fastq.gz
+done
+
+for file in data/irathmann/barcode*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    
+    srun --cpus-per-task 20 --mem=50G chopper -i $file \
+        -q 20 \
+        -l 1300 --maxlength 1600 \
+        --threads 20 |\
+        gzip > results/chopper/q20/indiv/${barcode}.fastq.gz
+done
+
+## Combine 
+cat results/chopper/q12/indiv/barcode*.fastq.gz > results/chopper/q12/barcodeX.fastq.gz
+cat results/chopper/q16/indiv/barcode*.fastq.gz > results/chopper/q16/barcodeX.fastq.gz
+cat results/chopper/q20/indiv/barcode*.fastq.gz > results/chopper/q20/barcodeX.fastq.gz
+
+# Uncompress for NGSpeciesID 
+gzip -d results/chopper/q*/barcodeX.fastq.gz 
+
+conda deactivate
+```
+
+Filter numbers (taken from stdout):
+
+| Original | q12  | Q12_perc | q16  | q16_perc | q20  | q20_perc |
+| -------- | ---- | -------- | ---- | -------- | ---- | -------- |
+| 3919     | 3228 | 82.37    | 2739 | 69.89    | 1566 | 39.96    |
+| 2555     | 2144 | 83.91    | 1574 | 61.60    | 466  | 18.24    |
+| 3918     | 3317 | 84.66    | 2481 | 63.32    | 829  | 21.16    |
+| 2567     | 2124 | 82.74    | 1765 | 68.76    | 1009 | 39.31    |
+| 2261     | 1967 | 87.00    | 1434 | 63.42    | 470  | 20.79    |
+| 2697     | 2287 | 84.80    | 1889 | 70.04    | 1066 | 39.53    |
+| 2689     | 2282 | 84.86    | 1872 | 69.62    | 1032 | 38.38    |
+| 2573     | 1975 | 76.76    | 1530 | 59.46    | 585  | 22.74    |
+| 2240     | 1956 | 87.32    | 1458 | 65.09    | 566  | 25.27    |
+| 2771     | 2417 | 87.22    | 1865 | 67.30    | 732  | 26.42    |
+| 3722     | 3221 | 86.54    | 2511 | 67.46    | 1000 | 26.87    |
+| 4031     | 3275 | 81.25    | 2645 | 65.62    | 1314 | 32.60    |
+| 2975     | 2502 | 84.10    | 2008 | 67.50    | 1003 | 33.71    |
+| 4252     | 3601 | 84.69    | 2894 | 68.06    | 1474 | 34.67    |
+
+Note: *_l_perc is the % of retained reads with the respective quality filter
+
+## Clustering
+
+### V1
+
+Here, I:
+
+- Used most of the default cutoffs that worked well as based on the prior testing
+- Decided to dynamically adjust the abundance_ratio to better deal with varying total read numbers 
+    - desired_reads was set to 300 considering that with q20 barcode05 only has 470 reads, this should allow that a cluster is still formed from this species
+- Test if different clusters are formed with q12, q16 and q20
+
+```{bash}
+conda activate NGSpeciesID_0.3.1 
+
+for file in results/chopper/q*/*fastq; do
+    desired_reads=300 # Change as needed!
+    qual=$(echo $file | cut -f3 -d "/")
+    outdir="results/ngspeciesid/v1/${qual}" 
+
+    # Dynamically adjust abundance ratio by total read nr
+    total_reads=$(($(wc -l < "$file") / 4))
+
+    # Calculate abundance ratio to allow cluster for a desired read number
+    ratio=$(awk -v total="$total_reads" -v desired="$desired_reads" 'BEGIN {printf "%.6f", desired/total}')
+
+    echo "Running ${file}: total_reads=${total_reads}, abundance_ratio=${ratio}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder ${outdir}  \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.95 \
+        --rc_identity_threshold 0.90 \
+        --abundance_ratio ${ratio} \
+        --mapped_threshold 0.7        
+done
+
+# Check numbers 
+bash scripts/summary_consensus.sh
+
+# Cleanup 
+rm results/ngspeciesid/v1/q*/*fastq
+rm results/ngspeciesid/v1/q*/medaka*/*bam
+
+conda deactivate
+```
+
+Results:
+
+|                  | q12      | q16   | q20     |
+| ---------------- | -------- | ----- | ------- |
+| Initial_reads    | 36296    | 28665 | 13112   |
+| Abundance_ratio  | 0.008265 | 0.01  | 0.02288 |
+| Initial_clusters | 549      | 56    | 21      |
+| Consensus_seqs   | 10       | 10    | 5       |
+
+|version|qscore|cluster_id|supporting_reads|
+|-------|------|----------|----------------|
+|v1     |q12   |0         |5691            | ***
+|v1     |q12   |139       |1717            |
+|v1     |q12   |14963     |619             |
+|v1     |q12   |185       |1711            |
+|v1     |q12   |247       |2523            |
+|v1     |q12   |25        |7825            | ***
+|v1     |q12   |2665      |1601            |
+|v1     |q12   |4         |2491            |
+|v1     |q12   |54        |4716            | ***
+|v1     |q12   |725       |1493            |
+|v1     |q16   |0         |5579            | ***
+|v1     |q16   |139       |1497            |
+|v1     |q16   |185       |1478            |
+|v1     |q16   |247       |2252            |
+|v1     |q16   |25        |4621            | ***
+|v1     |q16   |2665      |1371            |
+|v1     |q16   |47        |2625            |
+|v1     |q16   |4         |2277            |
+|v1     |q16   |54        |4203            | ***
+|v1     |q16   |725       |1331            |
+|v1     |q20   |25        |3789            |
+|v1     |q20   |33        |303             |
+|v1     |q20   |4         |4666            |
+|v1     |q20   |54        |1732            |
+|v1     |q20   |77        |829             |
+
+
+Interestingly, with q20 we now have more super clusters. Thought: if our species are closely related (i.e. ≥ 98–99 % identity in the 16S region), the residual sequencing errors at q12–q16 may have exaggerated small differences, making species look more distinct. At q20, those errors vanish — and now the true biological differences might be smaller than the --aligned_threshold (0.95) or --rc_identity_threshold (0.90), so NGSpeciesID merges them.
+
+If true, then using a higher cutoff should result in more clusters for q20.
+
+
+### V2
+
+```{bash}
+conda activate NGSpeciesID_0.3.1 
+
+for file in results/chopper/q*/*fastq; do
+    desired_reads=300 # Change as needed!
+    qual=$(echo $file | cut -f3 -d "/")
+    outdir="results/ngspeciesid/v2/${qual}" 
+
+    # Dynamically adjust abundance ratio by total read nr
+    total_reads=$(($(wc -l < "$file") / 4))
+
+    # Calculate abundance ratio to allow cluster for a desired read number
+    ratio=$(awk -v total="$total_reads" -v desired="$desired_reads" 'BEGIN {printf "%.6f", desired/total}')
+
+    echo "Running ${file}: total_reads=${total_reads}, abundance_ratio=${ratio}"
+    
+    srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq $file \
+        --outfolder ${outdir}  \
+        --consensus --medaka --t 20 \
+        --aligned_threshold 0.99 \
+        --rc_identity_threshold 0.90 \
+        --abundance_ratio ${ratio} \
+        --mapped_threshold 0.7        
+done
+
+# Check numbers 
+bash scripts/summary_consensus.sh
+
+# Cleanup 
+rm results/ngspeciesid/v1/q*/*fastq
+rm results/ngspeciesid/v1/q*/medaka*/*bam
+
+conda deactivate
+```
+
+| Initial_reads    | 36296    | 28665    | 13112   |
+| ---------------- | -------- | -------- | ------- |
+| Abundance_ratio  | 0.008265 | 0.010466 | 0.02288 |
+| Initial_clusters | 549      | 56       | 22      |
+| Consensus_seqs   | 10       | 10       | 5       |
+
+|version|qscore|cluster_id|supporting_reads|
+|-------|------|----------|----------------|
+|v2     |q12   |0         |5690            |
+|v2     |q12   |139       |1717            |
+|v2     |q12   |14963     |619             |
+|v2     |q12   |185       |1711            |
+|v2     |q12   |247       |2523            |
+|v2     |q12   |25        |7824            |
+|v2     |q12   |2665      |1601            |
+|v2     |q12   |4         |2491            |
+|v2     |q12   |54        |4716            |
+|v2     |q12   |725       |1493            |
+|v2     |q16   |0         |5579            |
+|v2     |q16   |139       |1497            |
+|v2     |q16   |185       |1478            |
+|v2     |q16   |247       |2252            |
+|v2     |q16   |25        |4620            |
+|v2     |q16   |2665      |1371            |
+|v2     |q16   |47        |2625            |
+|v2     |q16   |4         |2277            |
+|v2     |q16   |54        |4203            |
+|v2     |q16   |725       |1331            |
+|v2     |q20   |25        |3789            |
+|v2     |q20   |33        |303             |
+|v2     |q20   |4         |4654            |
+|v2     |q20   |54        |1732            |
+|v2     |q20   |77        |829             |
+
