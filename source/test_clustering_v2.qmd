@@ -128,12 +128,12 @@ conda deactivate
 
 Results:
 
-|                  | q12      | q16   | q20     |
-| ---------------- | -------- | ----- | ------- |
-| Initial_reads    | 36296    | 28665 | 13112   |
-| Abundance_ratio  | 0.008265 | 0.01  | 0.02288 |
-| Initial_clusters | 549      | 56    | 21      |
-| Consensus_seqs   | 10       | 10    | 5       |
+|                  | q12      | q16      | q20     |
+| ---------------- | -------- | -------- | ------- |
+| Initial_reads    | 36296    | 28665    | 13112   |
+| Abundance_ratio  | 0.008265 | 0.010466 | 0.02288 |
+| Initial_clusters | 549      | 56       | 21      |
+| Consensus_seqs   | 10       | 10       | 5       |
 
 |version|qscore|cluster_id|supporting_reads|
 |-------|------|----------|----------------|
@@ -244,3 +244,17 @@ conda deactivate
 
 
 Thoughts: This does not change the clusters compared to v1. This suggests that the species that get merged in the 3 superclusters likely have very closely related 16S sequences. Will see if I can get the original amplicon sequences to calculate the % identity but for the tutorial will proceed with the current cut-offs.
+
+Note: When translating the findings from this exercise into the tutorial and running chopper with q15 (but otherwise keeping the arguments the same) I noticed that only 9 not 10 consensus sequences are formed. I know there is some stochasticity in clustering tools when, for example, different threads are used. So the difference might be linked to that and is something to keep in mind
+
+I.e. using 20 cpus:
+
+- Starting Clustering: 28665 reads
+- Finished Clustering: 56 clusters formed
+- Finished Consensus creation: 10 created
+
+And using 5 cpus:
+
+- Starting Clustering: 28665 reads
+- Finished Clustering: 76 clusters formed
+- 

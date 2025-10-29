@@ -225,7 +225,7 @@ window.Quarto = {
     <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#fastplong-quality-cleaning" id="toc-fastplong-quality-cleaning" class="nav-link active" data-scroll-target="#fastplong-quality-cleaning"><span class="header-section-number">6.1</span> <code>fastplong</code>: Quality cleaning</a></li>
+  <li><a href="#chopper-quality-cleaning" id="toc-chopper-quality-cleaning" class="nav-link active" data-scroll-target="#chopper-quality-cleaning"><span class="header-section-number">6.1</span> <code>chopper</code>: Quality cleaning</a></li>
   <li><a href="#ngspeciesid-read-clustering" id="toc-ngspeciesid-read-clustering" class="nav-link" data-scroll-target="#ngspeciesid-read-clustering"><span class="header-section-number">6.2</span> <code>NGSpeciesID</code>: Read clustering</a></li>
   </ul>
 </nav>
@@ -256,54 +256,70 @@ window.Quarto = {
 <ul>
 <li>Work on sections quality cleaning (consider testing fastplong), consensus generation (ngspeciesID), blast for taxonomic assignment and minimap for counts –&gt; will be added to Chapter 6 (From raw reads to results)</li>
 </ul>
-<section id="fastplong-quality-cleaning" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="fastplong-quality-cleaning"><span class="header-section-number">6.1</span> <code>fastplong</code>: Quality cleaning</h2>
-<p>In this section, you will learn how to perform quality filtering and adapter trimming of your amplicon long-read data using fastplong. Quality control is an essential first step to ensure that only high-quality reads are used for downstream analyses such as consensus generation and taxonomic assignment.</p>
-<p>You can install fastplong with mamba:</p>
+<section id="chopper-quality-cleaning" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="chopper-quality-cleaning"><span class="header-section-number">6.1</span> <code>chopper</code>: Quality cleaning</h2>
+<p>In this section, you will learn how to perform quality filtering of your amplicon long-read data using chopper. Quality control is an essential first step to remove low quality reads that introduce errors in downstream analyses such as consensus generation and taxonomic assignment. Typical things you want to do are:</p>
+<ul>
+<li>Removing sequence adapters, barcodes, primer sequences. This already has been done for your data.</li>
+<li>Removing reads with a too low quality score</li>
+<li>Removing reads that are too long or too short</li>
+<li>Trimming read ends if they have low quality scores</li>
+</ul>
+<p><code>chopper</code> is designed for filtering and trimming of long-read data and you can install <code>chopper</code> with mamba:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-p</span> fastplong_0.4.1 <span class="at">-c</span> bioconda fastplong=0.4.1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-n</span> chopper_0.11.0 <span class="at">-c</span> bioconda chopper=0.11.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>In this tutorial, you will always receive example code as a starting point, with sections containing <code>...</code> for you to fill in. If you get stuck, check <a href="https://github.com/OpenGene/fastplong">the tools official documentation</a> or use the built-in help via the CLI (<code>fastplong -h</code>).</p>
+<p>In this tutorial, you will always receive example code as a starting point, with sections containing <code>...</code> for you to fill in. If you get stuck, check <a href="https://github.com/wdecoster/chopper">chopper’s documentation</a> or use the built-in help via the CLI (<code>chopper -h</code>).</p>
 <div class="callout callout-style-default callout-question callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Question</span>Task
+<span class="screen-reader-only">Question</span>Tasks
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <p>Use your NanoPlot quality plots from the previous section and choose some quality and length cutoffs. Specifically, you want to:</p>
+<ol type="1">
+<li>Perform quality filtering with chopper:
 <ul>
-<li>Store the output of fastplong in a separate results folder</li>
-<li>Request 2 CPUs with <code>srun</code>, and ensure fastplong also uses 2 threads</li>
+<li>Store the output of chopper in a separate results folder</li>
+<li>Request 2 CPUs and 20G of memory with <code>srun</code>, and ensure chopper itself also uses 2 threads</li>
 <li>Discard sequences that are too long or too short</li>
-<li>Discard reads, where the read’s average quality score is lower than a quality score of Q8.</li>
-<li>Move a sliding window from front (5’) to tail, drop the bases in the window if its mean quality &lt; Q8</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate an output folder for the results</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span> </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the fastplong conda environment</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run fastplong</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem</span><span class="op">=</span>20G <span class="at">--cpus-per-task</span> 2 fastplong ...</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>After the analysis finished check the output and record:</p>
+<li>Discard reads, where the read’s average quality score is lower than a quality score of Q15</li>
+<li>Check the <a href="https://github.com/wdecoster/chopper">tools manual</a> carefully with how to deal with <code>.gz</code> files. Hint: Closely check the example section</li>
+</ul></li>
+<li>Investigate the quality of the filtered FASTQ file with NanoPlot
+<ul>
+<li>use srun, 2 CPUs and 10G of memory</li>
+</ul></li>
+<li>afterwards open NanoPlots LengthvsQualityScatterPlot_dot.html and NanoStats.txt outputs and answer:
 <ul>
 <li>The total number of sequences that went into the analysis</li>
 <li>The total number of sequences that passed the quality filtering</li>
 <li>At which step most reads were lost (and how many)</li>
 <li>How many basepairs were lost due to the trimming</li>
-</ul>
+</ul></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate an output folder for the results</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the chopper conda environment</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chopper</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G chopper ...</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a folder for the Nanoplot results and run Nanoplot</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <div class="callout callout-style-default callout-answer callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -318,29 +334,40 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate an output folder for the results</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results/fastplong</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results/chopper</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the fastplong conda environment</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate fastplong_0.4.1</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the chopper conda environment</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate chopper_0.11.0</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run fastplong</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem</span><span class="op">=</span>20G <span class="at">--cpus-per-task</span> 2 fastplong <span class="dt">\</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> data/barcode01_merged.fastq.gz <span class="dt">\</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-l</span> 1400 <span class="at">--length_limit</span> 1700 <span class="dt">\</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--mean_qual</span> 8 <span class="at">--cut_front</span> 8 <span class="dt">\</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--thread</span> 2 <span class="dt">\</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> results/fastplong/barcode01_filtered.fastq.gz</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chopper</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G chopper <span class="dt">\</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> data/barcodeX.fastq.gz <span class="dt">\</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-q</span> 15 <span class="dt">\</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--minlength</span> 1300 <span class="at">--maxlength</span> 1600 <span class="dt">\</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--threads</span> 2 <span class="kw">|</span> <span class="fu">gzip</span> <span class="dt">\</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> results/chopper/barcodeX_filtered.fastq.gz</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nanoplot</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> results/nanoplot/cleaned</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>10G NanoPlot <span class="dt">\</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">--fastq</span> results/chopper/barcodeX_filtered.fastq.gz <span class="dt">\</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">-t</span> 2 <span class="dt">\</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">--tsv_stats</span> <span class="dt">\</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">--plots</span> dot <span class="dt">\</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> results/nanoplot/cleaned</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Parameter overview:</strong> - <code>--mean_qual 8</code>: Removes reads with an average Phred quality below 8 - <code>-l 1400 --length_limit 1700</code>: Keeps reads roughly within the expected amplicon size range - <code>--cut_front 8</code>: Removes low-quality bases using a sliding window approach - <code>--thread 2</code>: Uses two CPU threads for parallel processing</p>
 <p>Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.</p>
 <ul>
-<li>Input: 17,121 reads</li>
-<li>Passed filtering: 8,433 reads (49%). For my data this is reasonable given the left-tail seen in the NanoPlot quality plot</li>
-<li>Most reads were lost because they were too short (4,627) or had low quality (4,084)</li>
-<li>The dataset initially contained 24,089,162 bp, of which 12,339,313 bp (~51%) were retained</li>
+<li>Input: 43,170 reads</li>
+<li>Passed filtering: 31,102 reads (72%). For this data this is reasonable given the relatively high Phred score we use for quality filtering</li>
 </ul>
 </div>
 </div>
@@ -351,24 +378,135 @@ window.Quarto = {
 </section>
 <section id="ngspeciesid-read-clustering" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="ngspeciesid-read-clustering"><span class="header-section-number">6.2</span> <code>NGSpeciesID</code>: Read clustering</h2>
-<p>Nanopore long-read data generates sequence reads with a relatively high error rate. We have seen before that our data has an average quality of 15 but let’s look a bit closer at what this means. The Phred score (Q) is a value that represents the estimated probability that a base is correct and we can translate the Phred score to a probability with:</p>
+<p>Nanopore long-read sequencing can produce reads that span nearly the entire 16S rRNA gene, making it powerful for identifying microbial species. However, these long reads come with a trade-off: they have a higher error rate compared to short-read technologies.</p>
+<p>In our dataset, the average read quality is Q15. The Phred score (Q) is a measure of how confident the sequencer is in each base call. The probability of a base being called incorrectly can be calculated as:</p>
 <p><span class="math display">\[P=10^{-Q/10}\]</span></p>
-<p>You could calculate the estimated error in R via:</p>
+<p>In R we can compute this with:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="dv">15</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="dv">16</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>P_error <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span>Q<span class="sc">/</span><span class="dv">10</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>percent_error <span class="ot">&lt;-</span> P_error <span class="sc">*</span> <span class="dv">100</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Error rate: "</span>, <span class="fu">round</span>(percent_error, <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Error rate: "</span>, <span class="fu">round</span>(percent_error, <span class="dv">2</span>), <span class="st">"%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Error rate: 3.16</code></pre>
+<pre><code>Error rate: 2.51%</code></pre>
 </div>
 </div>
-<p>So, with an average Phred score of 15 we have a 3.2% chance of a base being wrong.</p>
-<p>This is quite a lot of potential error considering that traditionally</p>
-<p>NGSpeciesID is a tool for clustering and consensus forming of long-read amplicon sequencing data.</p>
+<p>This shows that with a mean Phred quality of 15, each base has roughly a 2.5% chance of being incorrect. Across a 1,500 bp amplicon, that’s about 38 errors per sequence, which can be too many for accurate species-level identification.</p>
+<p>To address this, we can cluster similar reads together, meaning we group sequences that likely come from the same species. Tools like NGSpeciesID cluster reads and then build a consensus sequence for each cluster, correcting random sequencing errors by comparing all reads within a cluster.</p>
 <p>You can install NGSpeciesID with mamba:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-p</span> fastplong_0.4.1 <span class="at">-c</span> bioconda fastplong=0.4.1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a base environment</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-n</span> NGSpeciesID_0.3.1  python=3.11 pip</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate and install dependencies</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">--yes</span> <span class="at">-c</span> conda-forge <span class="at">-c</span> bioconda medaka==2.0.1 openblas==0.3.3 spoa racon minimap2  samtools</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install NGSpeciesID</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-question callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Question</span>Task
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Familiarize yourself with the <a href="https://github.com/ksahlin/NGSpeciesID">NGSpeciesID documentation</a> and finish the code below:</p>
+<p><strong>Step1</strong>: Prepare the input files as NGSpecies ID can not work with compressed FASTQ files.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress the chopper output</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step2</strong>: Run NGSpeciesID</p>
+<p>Here, you want to:</p>
+<ul>
+<li>Use srun with with 5 CPUs, 50G of memory</li>
+<li>Specify that you’re working with ONT data</li>
+<li>Use the cleaned uncompressed FASTQ file as input</li>
+<li>Output results to a new results folder</li>
+<li>Enable consensus generation (<code>--consensus</code>) and further polishing (<code>--medaka</code>)</li>
+<li>Lower the abundance ratio to 0.01 (captures low-abundance sequences)</li>
+<li>Require reads to align at least 95% (<code>--aligned_threshold 0.95</code>)</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the conda environment</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run NGSpeciesID</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> ... NGSpeciesID ...</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Step3</strong>: Explore the output</p>
+<p>In your results folder, you should find multiple subfolders (e.g., <code>medaka_cl_id_*</code>). Each folder contains a consensus.fasta file representing a consensus sequence.</p>
+<p>Answer the following:</p>
+<ul>
+<li>How many consensus sequences were formed?</li>
+<li>Is this number higher or lower than what you expected based on your experimental design (number of microbial species)?</li>
+<li>If it differs, what could explain this discrepancy? Hint: Think about sequencing errors, read depth, and 16S sequence similarity.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># How many consensus sequences are formed?</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="callout callout-style-default callout-answer callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Answer</span>Click to see the answer
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The <code>scripts/ngspeciesid.sh</code> should look as follows:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress the chopper output as NGSPeciesID only works with uncompressed files </span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> results/chopper/barcodeX_filtered.fastq.gz</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the conda environment</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run NGSpeciesID</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 5 <span class="at">--mem</span><span class="op">=</span>50G NGSpeciesID <span class="dt">\</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">--ont</span> <span class="dt">\</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">--fastq</span> results/chopper/barcodeX_filtered.fastq <span class="dt">\</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">--outfolder</span> results/ngspeciesid  <span class="dt">\</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">--consensus</span> <span class="at">--medaka</span> <span class="dt">\</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">--t</span> 5 <span class="dt">\</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">--aligned_threshold</span> 0.95 <span class="dt">\</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">--abundance_ratio</span> 0.01 </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Count how many consensus sequences we work with</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="st">"&gt;"</span> results/ngspeciesid/medaka<span class="pp">*</span>/<span class="pp">*</span>fasta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Answer:</p>
+<ul>
+<li>Number of consensus sequences formed: 9</li>
+<li>Expected number: 14 (based on 14 bacterial strains used)</li>
+<li>Possible reasons for less consensus sequences:
+<ul>
+<li>The high Nanopore error rate can blur true biological differences</li>
+<li>Highly similar 16S rRNA genes (95–99.9% identity) may have merged into a single cluster</li>
+<li>Lower-abundance taxa may not have had enough reads to form a distinct cluster</li>
+</ul></li>
+<li>If you observe more consensus sequences than expected, it could indicate incomplete clustering due to sequencing errors or uneven read coverage</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 

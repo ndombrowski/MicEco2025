@@ -79,7 +79,7 @@ conda activate chopper_0.11.0
 # Run chopper
 srun --cpus-per-task 2 --mem=20G chopper \
     -i data/barcodeX.fastq.gz \
-    -q 15 \
+    -q 16 \
     --minlength 1300 --maxlength 1600 \
     --threads 2 | gzip \
     > results/chopper/barcodeX_filtered.fastq.gz
@@ -105,7 +105,7 @@ conda deactivate
 Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.
 
 - Input: 43,170 reads
-- Passed filtering: 31,102 reads (72%). For this data this is reasonable given the relatively high Phred score we use for quality filtering
+- Passed filtering: 28665 reads (66%). For this data this is reasonable given the relatively high Phred score we use for quality filtering
 
 
 :::
@@ -115,9 +115,9 @@ Below are example results from one of my analyses. These numbers will be differe
 
 ## `NGSpeciesID`: Read clustering 
 
-Nanopore long-read data generates sequence reads that are almost as long as the 16S rRNA gene sequence, which is great for identifying species. However, long reads come with a tradeoff: the have a much higher error rate. 
+Nanopore long-read sequencing can produce reads that span nearly the entire 16S rRNA gene, making it powerful for identifying microbial species. However, these long reads come with a trade-off: they have a higher error rate compared to short-read technologies.
 
-In our dataset the average read quality is Q15. The phred score (Q) is a measure of the probability that a base is called correctly. We can calculate this with:
+In our dataset, the average read quality is Q15. The Phred score (Q) is a measure of how confident the sequencer is in each base call. The probability of a base being called incorrectly can be calculated as:
 
 $$P=10^{-Q/10}$$
 
@@ -131,21 +131,20 @@ percent_error <- P_error * 100
 message("Error rate: ", round(percent_error, 2), "%")
 ```
 
-With Q15, each base has a ~3.2% chance of being incorrect. In a 1,500 bp amplicon that would mean 48 bases would be incorrect and this can make it difficult to directly assign sequences to a species.
+This shows that with a mean Phred quality of 15, each base has roughly a 2.5% chance of being incorrect. Across a 1,500 bp amplicon, that’s about 38 errors per sequence, which can be too many for accurate species-level identification.
 
-To deal with this we can cluster similar reads together in groups of sequences that likely come from the same species. Tools like NGSpeciesID build consensus sequences from each cluster in order to correct these randomly occurring errors by comparing all the reads in a cluster.
+To address this, we can cluster similar reads together, meaning we group sequences that likely come from the same species. Tools like NGSpeciesID cluster reads and then build a consensus sequence for each cluster, correcting random sequencing errors by comparing all reads within a cluster. 
 
 You can install NGSpeciesID with mamba:
 
 ```{bash}
-# Installation a base environment
+# Create a base environment
 mamba create -n NGSpeciesID_0.3.1  python=3.11 pip
 
-# Inside the base environment install all required tools
+# Activate and install dependencies
 conda activate NGSpeciesID_0.3.1
 mamba install --yes -c conda-forge -c bioconda medaka==2.0.1 openblas==0.3.3 spoa racon minimap2  samtools
 pip install NGSpeciesID
-
 conda deactivate
 ```
 
@@ -153,42 +152,54 @@ conda deactivate
 ::: {.callout-question .callout-warning collapse=false}
 # Task 
 
-Familiarize yourself with the [NGSpeciesID documentation] and finish the following sbatch script that you can store in `scripts/ngspeciesid.sh`. 
+Familiarize yourself with the [NGSpeciesID documentation](https://github.com/ksahlin/NGSpeciesID) and finish the code below:
 
-Inside the script do the following:
-
-- Run the script with 5 CPUs, 50G of memory for 1 hour
-- For NGSpeciesID:
-    - Provide the path to the fastplong cleaned FASTQ file
-    - Ensure that NGSpeciesID runs with 5 cores 
-    - Ensure that the output is stored in a separate new folder
-    - Tell that you work with ONT data
-    - Tell that you want to cluster the data with `--consensus` and clean the data further with `--medaka`
-    - Lower the abundance ratio to 0.01 to detect potential contamination with few reads
-    - Increase the minimum aligned fraction of read to be included in cluster to 0.95 so that highly similar reads align. I.e. 95% identity is needed to merge reads into a cluster 
-
-
-Submit the job and then answer the following:
-
-- 
-
+**Step1**: Prepare the input files as NGSpecies ID can not work with compressed FASTQ files.
 
 ```{bash}
-#!/bin/bash
-#SBATCH --job-name=ngspeciesid
-#SBATCH --output=logs/ngspeciesid_%j.out
-#SBATCH --error=logs/ngspeciesid_%j.err
-#SBATCH --cpus-per-task=...
-#SBATCH --mem=...
-#SBATCH --time=...
+# Uncompress the chopper output
+...
+```
 
+**Step2**: Run NGSpeciesID
+
+Here, you want to:
+
+- Use srun with with 5 CPUs, 50G of memory
+- Specify that you’re working with ONT data 
+- Use the cleaned uncompressed FASTQ file as input
+- Output results to a new results folder
+- Enable consensus generation (`--consensus`) and further polishing (`--medaka`)
+- Lower the abundance ratio to 0.01 (captures low-abundance sequences)
+- Require reads to align at least 95% (`--aligned_threshold 0.95`)
+
+```{bash}
 # Activate the conda environment
-source ~/.bashrc 
 conda activate NGSpeciesID_0.3.1
 
 # Run NGSpeciesID
-NGSpeciesID ...
+srun ... NGSpeciesID ...
+
+# Deactivate the conda environment 
+...
 ```
+
+**Step3**: Explore the output
+
+In your results folder, you should find multiple subfolders (e.g., `medaka_cl_id_*`). Each folder contains a consensus.fasta file representing a consensus sequence.
+
+Answer the following:
+
+- How many consensus sequences were formed?
+- Is this number higher or lower than what you expected based on your experimental design (number of microbial species)?
+- If it differs, what could explain this discrepancy? Hint: Think about sequencing errors, read depth, and 16S sequence similarity.
+
+```{bash}
+# How many consensus sequences are formed?
+grep ...
+```
+
+
 
 ::: {.callout-answer .callout-warning collapse=true}
 # Click to see the answer 
@@ -196,33 +207,37 @@ NGSpeciesID ...
 The `scripts/ngspeciesid.sh` should look as follows:
 
 ```{bash}
-#!/bin/bash
-#SBATCH --job-name=ngspeciesid
-#SBATCH --output=logs/ngspeciesid_%j.out
-#SBATCH --error=logs/ngspeciesid_%j.err
-#SBATCH --cpus-per-task=5
-#SBATCH --mem=50G
-#SBATCH --time=1:00:00
+# Uncompress the chopper output as NGSPeciesID only works with uncompressed files 
+gzip -d results/chopper/barcodeX_filtered.fastq.gz
 
 # Activate the conda environment
-source ~/.bashrc # this is needed so that conda is initialized inside the compute node
 conda activate NGSpeciesID_0.3.1
 
-echo "Job started: "
-date
+# Run NGSpeciesID
+srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+        --ont \
+        --fastq results/chopper/barcodeX_filtered.fastq \
+        --outfolder results/ngspeciesid  \
+        --consensus --medaka \
+        --t 20 \
+        --aligned_threshold 0.95 \
+        --abundance_ratio 0.01 
 
-NGSpeciesID \
-    --ont \
-    --fastq results/fastplong/barcodeX.fastq \
-    --outfolder results/ngspeciesid \
-    --consensus --medaka --t 5 \
-    --aligned_threshold 0.95 \
-    --abundance_ratio 0.01 
+conda deactivate
 
-echo "Job ended: "
-date
+# Count how many consensus sequences we work with
+grep ">" results/ngspeciesid/medaka*/*fasta
 ```
 
+Answer:
+
+- Number of consensus sequences formed: 9
+- Expected number: 14 (based on 14 bacterial strains used)
+- Possible reasons for less consensus sequences:
+    - The high Nanopore error rate can blur true biological differences
+    - Highly similar 16S rRNA genes (95–99.9% identity) may have merged into a single cluster
+    - Lower-abundance taxa may not have had enough reads to form a distinct cluster
+- If you observe more consensus sequences than expected, it could indicate incomplete clustering due to sequencing errors or uneven read coverage
 
 :::
 :::
