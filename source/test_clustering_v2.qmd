@@ -32,34 +32,18 @@ mkdir -p results/chopper/q20/indiv
 
 # Default thresholds
 ## Clean (q12 = ~6% error; q16 = ~ 2.5% error, q20 = 1% error)
-for file in data/irathmann/barcode*fastq.gz; do
-    barcode=$(basename $file .fastq.gz)
-    
-    srun --cpus-per-task 20 --mem=50G chopper -i $file \
-        -q 12 \
-        -l 1300 --maxlength 1600 \
-        --threads 20 |\
-        gzip > results/chopper/q12/indiv/${barcode}.fastq.gz
-done
+for q in 12 16 20; do
+    for file in data/irathmann/barcode*fastq.gz; do
+        barcode=$(basename "$file" .fastq.gz)
+        outdir="results/chopper/q${q}/indiv"
+        mkdir -p "$outdir"
 
-for file in data/irathmann/barcode*fastq.gz; do
-    barcode=$(basename $file .fastq.gz)
-    
-    srun --cpus-per-task 20 --mem=50G chopper -i $file \
-        -q 16 \
-        -l 1300 --maxlength 1600 \
-        --threads 20 |\
-        gzip > results/chopper/q16/indiv/${barcode}.fastq.gz
-done
-
-for file in data/irathmann/barcode*fastq.gz; do
-    barcode=$(basename $file .fastq.gz)
-    
-    srun --cpus-per-task 20 --mem=50G chopper -i $file \
-        -q 20 \
-        -l 1300 --maxlength 1600 \
-        --threads 20 |\
-        gzip > results/chopper/q20/indiv/${barcode}.fastq.gz
+        echo "Start analysis for q${q}"
+        srun --cpus-per-task 20 --mem=50G chopper -i "$file" \
+            -q "$q" \
+            -l 1300 --maxlength 1600 \
+            --threads 20 | gzip > "${outdir}/${barcode}.fastq.gz"
+    done
 done
 
 ## Combine 
@@ -258,3 +242,5 @@ conda deactivate
 |v2     |q20   |54        |1732            |
 |v2     |q20   |77        |829             |
 
+
+Thoughts: This does not change the clusters compared to v1. This suggests that the species that get merged in the 3 superclusters likely have very closely related 16S sequences. Will see if I can get the original amplicon sequences to calculate the % identity but for the tutorial will proceed with the current cut-offs.
