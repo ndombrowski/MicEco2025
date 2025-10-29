@@ -575,14 +575,14 @@ echo "Job started: "
 date
 
 # Make an output directory 
-mkdir -p results/nanoplot
+mkdir -p results/nanoplot/raw
 
 # Run Nanoplot
 NanoPlot --fastq data/barcodeX.fastq.gz \
     -t 2 \
     --tsv_stats \
     --plots dot \
-    -o results/nanoplot
+    -o results/nanoplot/raw
 
 # Add end date (optional)
 echo "Job ended: "

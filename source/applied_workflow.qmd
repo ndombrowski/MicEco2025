@@ -12,49 +12,58 @@ Sections that are still in progress:
 - Work on sections quality cleaning (consider testing fastplong), consensus generation (ngspeciesID), blast for taxonomic assignment and minimap for counts --> will be added to Chapter 6 (From raw reads to results)
 
 
-## `fastplong`: Quality cleaning 
+## `chopper`: Quality cleaning 
 
-In this section, you will learn how to perform quality filtering and adapter trimming of your amplicon long-read data using fastplong. Quality control is an essential first step to ensure that only high-quality reads are used for downstream analyses such as consensus generation and taxonomic assignment.
+In this section, you will learn how to perform quality filtering of your amplicon long-read data using chopper. Quality control is an essential first step to remove low quality reads that introduce errors in downstream analyses such as consensus generation and taxonomic assignment. Typical things you want to do are:
 
-You can install fastplong with mamba:
+- Removing sequence adapters, barcodes, primer sequences. This already has been done for your data.
+- Removing reads with a too low quality score
+- Removing reads that are too long or too short
+- Trimming read ends if they have low quality scores
+
+`chopper` is designed for filtering and trimming of long-read data and you can install `chopper` with mamba:
 
 ```{bash}
-mamba create -p fastplong_0.4.1 -c bioconda fastplong=0.4.1
+mamba create -n chopper_0.11.0 -c bioconda chopper=0.11.0
 ```
 
-In this tutorial, you will always receive example code as a starting point, with sections containing `...` for you to fill in. If you get stuck, check [the tools official documentation](https://github.com/OpenGene/fastplong) or use the built-in help via the CLI (`fastplong -h`).
+In this tutorial, you will always receive example code as a starting point, with sections containing `...` for you to fill in. If you get stuck, check [chopper's documentation](https://github.com/wdecoster/chopper) or use the built-in help via the CLI (`chopper -h`).
 
 ::: {.callout-question .callout-warning collapse=false}
-# Task 
+# Tasks 
 
 Use your NanoPlot quality plots from the previous section and choose some quality and length cutoffs. Specifically, you want to:
 
-- Store the output of fastplong in a separate results folder 
-- Request 2 CPUs with `srun`, and ensure fastplong also uses 2 threads
-- Discard sequences that are too long or too short
-- Discard reads, where the read's average quality score is lower than a quality score of Q8.
-- Move a sliding window from front (5') to tail, drop the bases in the window if its mean quality < Q8
+1. Perform quality filtering with chopper:
+    - Store the output of chopper in a separate results folder
+    - Request 2 CPUs and 20G of memory with `srun`, and ensure chopper itself also uses 2 threads
+    - Discard sequences that are too long or too short
+    - Discard reads, where the read's average quality score is lower than a quality score of Q15
+    - Check the [tools manual](https://github.com/wdecoster/chopper) carefully with how to deal with `.gz` files. Hint: Closely check the example section
+2. Investigate the quality of the filtered FASTQ file with NanoPlot 
+    - use srun, 2 CPUs and 10G of memory
+3. afterwards open NanoPlots LengthvsQualityScatterPlot_dot.html and NanoStats.txt outputs and answer:
+    - The total number of sequences that went into the analysis
+    - The total number of sequences that passed the quality filtering
+    - At which step most reads were lost (and how many)
+    - How many basepairs were lost due to the trimming
 
 ```{bash}
 # Generate an output folder for the results
 ... 
 
-# Activate the fastplong conda environment
+# Activate the chopper conda environment
 ...
 
-# Run fastplong
-srun --mem=20G --cpus-per-task 2 fastplong ...
+# Run chopper
+srun --cpus-per-task 2 --mem=20G chopper ...
 
 # Deactivate the conda environment 
 ...
+
+# Make a folder for the Nanoplot results and run Nanoplot
+...
 ```
-
-After the analysis finished check the output and record:
-
-- The total number of sequences that went into the analysis
-- The total number of sequences that passed the quality filtering
-- At which step most reads were lost (and how many)
-- How many basepairs were lost due to the trimming
 
 
 ::: {.callout-answer .callout-warning collapse=true}
@@ -62,36 +71,42 @@ After the analysis finished check the output and record:
 
 ```{bash}
 # Generate an output folder for the results
-mkdir results/fastplong
+mkdir results/chopper
 
-# Activate the fastplong conda environment
-conda activate fastplong_0.4.1
+# Activate the chopper conda environment
+conda activate chopper_0.11.0
 
-# Run fastplong
-srun --mem=20G --cpus-per-task 2 fastplong \
-    -i data/barcode01_merged.fastq.gz \
-    -l 1400 --length_limit 1700 \
-    --mean_qual 8 --cut_front 8 \
-    --thread 2 \
-    -o results/fastplong/barcode01_filtered.fastq.gz
+# Run chopper
+srun --cpus-per-task 2 --mem=20G chopper \
+    -i data/barcodeX.fastq.gz \
+    -q 15 \
+    --minlength 1300 --maxlength 1600 \
+    --threads 2 | gzip \
+    > results/chopper/barcodeX_filtered.fastq.gz
 
 # Deactivate the conda environment 
 conda deactivate
+
+# Run Nanoplot
+conda activate nanoplot
+
+mkdir -p results/nanoplot/cleaned
+
+srun --cpus-per-task 2 --mem=10G NanoPlot \
+    --fastq results/chopper/barcodeX_filtered.fastq.gz \
+    -t 2 \
+    --tsv_stats \
+    --plots dot \
+    -o results/nanoplot/cleaned
+
+conda deactivate
 ```
-
-**Parameter overview:**
-- `--mean_qual 8`: Removes reads with an average Phred quality below 8
-- `-l 1400 --length_limit 1700`: Keeps reads roughly within the expected amplicon size range
-- `--cut_front 8`: Removes low-quality bases using a sliding window approach
-- `--thread 2`: Uses two CPU threads for parallel processing
-
 
 Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.
 
-- Input: 17,121 reads
-- Passed filtering: 8,433 reads (49%). For my data this is reasonable given the left-tail seen in the NanoPlot quality plot
-- Most reads were lost because they were too short (4,627) or had low quality (4,084)
-- The dataset initially contained 24,089,162 bp, of which 12,339,313 bp (~51%) were retained
+- Input: 43,170 reads
+- Passed filtering: 31,102 reads (72%). For this data this is reasonable given the relatively high Phred score we use for quality filtering
+
 
 :::
 :::
