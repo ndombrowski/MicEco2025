@@ -257,4 +257,4 @@ And using 5 cpus:
 
 - Starting Clustering: 28665 reads
 - Finished Clustering: 76 clusters formed
-- 
+- Finished Consensus creation: 9 created

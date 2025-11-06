@@ -165,7 +165,7 @@ Familiarize yourself with the [NGSpeciesID documentation](https://github.com/ksa
 
 Here, you want to:
 
-- Use srun with with 5 CPUs, 50G of memory
+- Use srun with with 6 CPUs, 50G of memory
 - Specify that you’re working with ONT data 
 - Use the cleaned uncompressed FASTQ file as input
 - Output results to a new results folder
@@ -214,12 +214,12 @@ gzip -d results/chopper/barcodeX_filtered.fastq.gz
 conda activate NGSpeciesID_0.3.1
 
 # Run NGSpeciesID
-srun --cpus-per-task 20 --mem=50G NGSpeciesID \
+srun --cpus-per-task 6 --mem=50G NGSpeciesID \
         --ont \
         --fastq results/chopper/barcodeX_filtered.fastq \
         --outfolder results/ngspeciesid  \
         --consensus --medaka \
-        --t 20 \
+        --t 6 \
         --aligned_threshold 0.95 \
         --abundance_ratio 0.01 
 
