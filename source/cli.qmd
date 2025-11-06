@@ -253,16 +253,16 @@ ls
 
 ## `wget`: Download data
 
-Next, let’s download a genome fasta file to go through some other useful commands. We can use the `wget` command to fetch a genome fasta from an online website as follows:
+Next, let’s download a fasta file that contains a 16S sequence to go through some other useful commands. We can use the `wget` command to fetch a fasta file from an online website as follows:
 
 ```{bash}
 # Download the example fasta file into the current directory
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fna.gz
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz
 ```
 
 ::: {.callout-tip title="Tip: Where does our data come from?" collapse="true"}
 
-The genome comes from the [Plant-associated bacterial culture collections database](https://www.at-sphere.com/). This database contains information from microbial strains isolated from the roots and leaves of *Arabidopsis thaliana* and from roots and nodules from *Lotus japonicus*. Some of these strains are also used in your lab practicals. 
+The files comes from the [Plant-associated bacterial culture collections database](https://www.at-sphere.com/). This database contains information from microbial strains isolated from the roots and leaves of *Arabidopsis thaliana* and from roots and nodules from *Lotus japonicus*. Some of these strains are also used in your lab practicals. 
 
 For convenience (and security reasons) you will for this tutorial will download the data from Github. However, in practice you will often download data from institutional websites such as the one above. 
 
@@ -273,7 +273,7 @@ After you download data, it is always a good idea to do some sanity check to see
 ```{bash}
 # List files in long (-l) and human-readable (-h) format
 # combining these two commands becomes -lh
-ls -lh LjRoot303.fna.gz
+ls -lh LjRoot303.fasta.gz
 ```
 
 
@@ -285,14 +285,14 @@ Let's use `cp` to copy the downloaded file into `data` and to organize the data 
 
 ```{bash}
 # Copy the file into data 
-cp LjRoot303.fna.gz data/
+cp LjRoot303.fasta.gz data/
 
 # Show the content of both locations
 ls -l
 ls -l data
 ```
 
-When running the two `ls` commands, we see that we now have two copies of `LjRoot303.fna.gz`, one file is in our working directory and the other one is in our data folder. Having large files in multiple locations is not ideal since we will use unneccassary space. However, we can use another command to move the file into our data folder instead of copying it.
+When running the two `ls` commands, we see that we now have two copies of `LjRoot303.fasta.gz`, one file is in our working directory and the other one is in our data folder. Having large files in multiple locations is not ideal since we will use unnecessary space. However, we can use another command to move the file into our data folder instead of copying it.
 
 
 ## `mv`: Move (or rename) files
@@ -301,7 +301,7 @@ When running the two `ls` commands, we see that we now have two copies of `LjRoo
 
 ```{bash}
 # Move the file into data
-mv LjRoot303.fna.gz data/
+mv LjRoot303.fasta.gz data/
 
 # Verify
 ls -l
@@ -314,11 +314,11 @@ Notice that `mv` will move a file and, without asking, overwrite the existing fi
 
 ## `rm`: Remove files and directories
 
-To remove files and folders, we use the `rm` command. For example we could remove the `LjRoot303.fna.gz` in case we don't need it anymore:
+To remove files and folders, we use the `rm` command. For example we could remove the `LjRoot303.fasta.gz` in case we don't need it anymore:
 
 ```{bash}
-# Remove the genome file from the data folder
-rm data/LjRoot303.fna.gz
+# Remove the fasta file from the data folder
+rm data/LjRoot303.fasta.gz
 
 # Check if that worked
 ls -l data
@@ -339,7 +339,7 @@ Also, NEVER run `rm -r` or `rm -rf` on the root `/` folder or any important path
 
 Download another genome:
 
-- Download another genome (not LjRoot303) from this url: https://github.com/ndombrowski/MicEco2025/tree/main/data. To get the link, 
+- Download another fasta file (not LjRoot303) from this url: https://github.com/ndombrowski/MicEco2025/tree/main/data. To get the link, 
     - Click on the genome you want to download
     - Right click on `view raw` and select `copy link`
     - Use wget to download that file
@@ -350,11 +350,11 @@ Download another genome:
 # Click to see the answer 
 
 ```{bash}
-# Download the genome
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot44.fna.gz
+# Download the file
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000714595.fasta.gz
 
-# Move the genome file to the data folder
-mv LjRoot44.fna.gz data
+# Move the file to the data folder
+mv GCF_000714595.fasta.gz data
 
 # Check the file size
 ls -lh data/
@@ -371,16 +371,16 @@ You might have noticed that the file we downloaded ends with `.gz`. This extensi
 ```{bash}
 # Download another genome  
 # Here, we use the -P option to directly download the file into the data folder 
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fna.gz -P data
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz -P data
 
 # Check that this worked 
-# You now should see two genomes
+# You now should see two files
 ls data
 
 # Uncompress the file with gzip 
 # Here, we use -d to decompress the file 
 # (by default gzip will compress a file)
-gzip -d data/LjRoot303.fna.gz 
+gzip -d data/LjRoot303.fasta.gz 
 
 # Check that this worked 
 # We now should see that one file is uncompressed (i.e. it lost the gz extension)
@@ -395,10 +395,10 @@ Now that we have the uncompressed file we can use different ways to explore the 
 
 ### `cat`: Print the full file
 
-We can use `cat` print the entire file to the screen, this is fine for short files, but overwhelming for long ones, which for our file is the case as we will see the nucleotides just running across the screen.
+We can use `cat` print the entire file to the screen, this is fine for short files, but overwhelming for long ones where we would see hundreds of line just flying over the screen.
 
 ```{bash}
-cat data/LjRoot303.fna
+cat data/LjRoot303.fasta
 ```
 
 
@@ -408,11 +408,11 @@ To only print the first few or last few lines we can use the `head` and `tail` c
 
 ```{bash}
 # Show the first 10 lines
-head data/LjRoot303.fna
+head data/LjRoot303.fasta
 
 # Show the last 5 lines
 # Here, the option -n allows us to control how many lines get printed
-tail -n 5 data/LjRoot303.fna
+tail -n 5 data/LjRoot303.fasta
 ```
 
 
@@ -421,7 +421,7 @@ tail -n 5 data/LjRoot303.fna
 `less` let's you view a file's contents one screen at a time. This is useful when dealing with a large text file (such as a sequence data file) because it doesn't load the entire file but accesses it page by page, resulting in fast loading speeds.
 
 ```{bash}
-less -S data/LjRoot303.fna
+less -S data/LjRoot303.fasta
 ```
 
 -   You can use the arrow Up and Page arrow keys to move through the text file
@@ -440,7 +440,7 @@ Luckily, there is one useful tool in bash to decompress the file and print the c
 ls data
 
 # Use zcat on the compressed file 
-zcat data/LjRoot44.fna.gz
+zcat data/GCF_000714595.fasta.gz
 
 # Check the content of the data folder 
 # We still should have one compressed and one uncompressed file 
@@ -453,7 +453,7 @@ ls data
 You can also edit the content of a text file and there are different programs available to do this on the command line, one such tool is `nano`, which should come with most command line interpreters. You can open any file as follows:
 
 ```{bash}
-nano data/LjRoot303.fna
+nano data/LjRoot303.fasta
 ```
 
 Once the document is open you can edit it however you want and then
@@ -469,19 +469,19 @@ Once the document is open you can edit it however you want and then
 Another useful tool is the `wc` (short for *wordcount*) command that allows us to count the number of lines via `-l` in a file. It is an useful tool for sanity checking.
 
 ```{bash}
-wc -l data/LjRoot303.fna
+wc -l data/LjRoot303.fasta
 ```
 
-We see that this file does contain 112,262 lines of text. For fasta files this is not very informative, but if you for example work with a dataframe with rows and columns where you filter rows using certain conditions this can become very useful for sanity checking.
+We see that this file does contain 20 lines of text. For fasta files this is not very informative, but if you for example work with a dataframe with rows and columns where you filter rows using certain conditions this can become very useful for sanity checking.
 
 
 
 ## `grep` : print lines that match patterns
 
-The `grep` command searches for patterns in a file. We could for example use this to ask how many contigs are in our fasta file by searching for the fasta header that always starts with a `>`. The basic grep syntax is `grep "pattern" file`. Here, "pattern" is the text you want to search for, and file is the file you want to search in. The double quotes allow us to include special characters (like `>`) safely.
+The `grep` command searches for patterns in a file. We could for example use this to ask how many 16S rRNA gene sequences are in our fasta file by searching for the fasta header that always starts with a `>`. The basic grep syntax is `grep "pattern" file`. Here, "pattern" is the text you want to search for, and file is the file you want to search in. The double quotes allow us to include special characters (like `>`) safely.
 
 ```{bash}
-grep ">" data/LjRoot303.fna
+grep ">" data/LjRoot303.fasta
 ```
 
 This prints all lines that match the pattern (here: `>`). In a fasta file, `>` is used to label the sequence headers. Depending on your terminal, the matches might be highlighted, which makes them easy to spot. 
@@ -489,8 +489,8 @@ This prints all lines that match the pattern (here: `>`). In a fasta file, `>` i
 If we only care about the number of contigs, we can use the `-c` option:
 
 ```{bash}
-# Root303 contains 85 contigs
-grep -c ">" data/LjRoot303.fna
+# Root303 contains 1 16S rRNA gene sequence
+grep -c ">" data/LjRoot303.fasta
 ```
 
 
@@ -502,7 +502,7 @@ A sequence FASTA file is a text based format to store DNA or peptide sequences. 
 
 The header always starts with a `>` followed by descriptive information. In a new line the sequence data gets stored in either a single line or multiple lines. A fasta file can continue single sequence or multiple sequences.
 
-By convention the extensions `.fna` is used to store fasta sequences from nucleotides and `.faa` is used to store fasta sequences from proteins.
+By convention the extension `.fna` is used to store fasta sequences from nucleotides and `.faa` is used to store fasta sequences from proteins. The extension `.fasta` can contain either nucleotide or protein sequences.
 
 :::
 
@@ -511,26 +511,31 @@ By convention the extensions `.fna` is used to store fasta sequences from nucleo
 ::: {.callout-question .callout-warning collapse=false}
 # Question 
 
-1. Uncompress the file for LjRoot44
-2. Compare the number of contigs for the LjRoot44 and LjRoot303 genomes
-3. What does it mean if one genome has more contigs than another? Should this raise any concerns when analyzing the genome?
+1. Uncompress the file for GCF_000714595
+2. Compare the number of 16S rRNA gene sequences for GCF_000714595 and LjRoot303
+3. What does it mean if one genome has more 16S rRNA gene sequences than another? 
 
 ::: {.callout-answer .callout-warning collapse=true}
 # Click to see the answer 
 
 ```{bash}
 # Uncompress 
-gzip -d data/LjRoot44.fna.gz
+gzip -d data/GCF_000714595.fasta.gz
 
 # Count the number of contigs 
-# We work with genomes with 85 and 12 contigs
-grep -c ">" data/LjRoot303.fna
-grep -c ">" data/LjRoot44.fna
+# We work with genomes with 1 and 9 16S rRNA gene sequences
+grep -c ">" data/LjRoot303.fasta
+grep -c ">" data/GCF_000714595.fasta
 ```
 
 Answer for question 3:
 
-LjRoot44 appears more fragmented (more contigs) than LjRoot303. A fragmented genome can split interesting genes across contigs making them harder to find and annotate. When evaluating genomes, consider not just contig counts but also file size, genome size, and completeness.  
+Many bacteria carry multiple copies of the rRNA operon (16S–23S–5S). A higher copy number is often associated with fast-responding, fast-growing life strategies (more ribosomes → faster protein synthesis under rich conditions).
+
+This can cause problems in, for example, 16S amplicon analyses: 
+
+- a single organism may produce multiple distinct 16S sequences, inflating apparent diversity
+- species with higher 16S copy number will produce more amplicon reads per cell. So raw read counts overestimate their true cell abundance unless you correct for copy number
 
 :::
 :::
@@ -538,15 +543,15 @@ LjRoot44 appears more fragmented (more contigs) than LjRoot303. A fragmented gen
 
 ## Working with multiple files
 
-So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files, for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes and not only download genomes from *Lotus japonicus* (files with Lj prefix) but also from *Arabidopsis thaliana* (files with Root prefix):
+So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files, for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes and not only download genomes from human-background(files with Lj prefix) but also from a human background (files with GCF prefix):
 
 **Hint**: If you downloaded one of the genomes in the exercise before, then you don't need to run this wget command.
 
 ```{bash}
 # Download some more data 
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/Root401.fna.gz -P data
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/Root68.fna.gz -P data
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot59.fna.gz -P data
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000009425.fasta.gz -P data
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000253315.fasta.gz -P data
+wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot59.fasta.gz -P data
 
 # Check what was done
 ls -lh data
@@ -561,11 +566,11 @@ For example, suppose you have a list of genome IDs in a file called `genomes.txt
 
 ```
 LjRoot303
-LjRoot44
+GCF_000714595
 LjRoot59
 LjRoot60
-Root401
-Root68
+GCF_000009425
+GCF_000253315
 Root935
 ```
 
@@ -577,7 +582,7 @@ mkdir playground
 
 # Download all genomes at once
 for genome in $(cat genomes.txt); do
-    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/${genome}.fna.gz -P playground
+    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/${genome}.fasta.gz -P playground
 done
 ```
 
@@ -585,7 +590,7 @@ Here’s what happens:
 
 - `$(cat genomes.txt)` reads all lines from the file
 - `for genome in ...` goes through each line one by one
-- `wget github_path/${genome}.fna.gz -P playground` downloads each genome into the playground folder. Here, the `${genome}` will get replaced with one line in `genomes.txt`
+- `wget github_path/${genome}.fasta.gz -P playground` downloads each genome into the playground folder. Here, the `${genome}` will get replaced with one line in `genomes.txt`
 
 You can use this same loop structure to run any command on multiple files automatically. This is one of the main reasons the CLI is so powerful. For example, you could in one command count the number of contigs in all your genomes:
 
@@ -593,7 +598,7 @@ You can use this same loop structure to run any command on multiple files automa
 # Download all genomes at once
 for genome in $(cat genomes.txt); do
     echo $genome
-    zcat playground/${genome}.fna.gz | grep -c ">"
+    zcat playground/${genome}.fasta.gz | grep -c ">"
 done
 ```
 
@@ -611,10 +616,10 @@ Imagine we want to uncompress all the new files. Typing every filename can get t
 # We should see only 3 files
 ls data/*gz
 
-# List all Lotus fasta files inside the data folder 
-# using `Lj*.fna*` means we look for filenames that 
-# start with Lj, are followed by any number of characters and end with .fna
-ls data/Lj*.fna
+# List all uncompressed Lotus fasta files inside the data folder 
+# using `Lj*.fasta*` means we look for filenames that 
+# start with Lj, are followed by any number of characters and end with .fasta
+ls data/Lj*.fasta
 ```
 
 We can use Wildcards with every bash command and, for example, use it to unzip every file at once:
@@ -629,18 +634,18 @@ ls -lh data
 
 ### `cat` and `>` : Combining and saving files 
 
-The cat command doesn’t just print files, it can also concatenate (join) multiple files into one. For example, we might want to combine all contigs for the Lotus (`Lj`) genomes and store the output in a new file called `lotus.fna` in the results folder (a folder you should have generated in an earlier exercise).
+The cat command doesn’t just print files, it can also concatenate (join) multiple files into one. For example, we might want to combine all contigs for the Lotus (`Lj`) genomes and store the output in a new file called `lotus.fasta` in the results folder (a folder you should have generated in an earlier exercise).
 
 ```{bash}
 # Combine the Lotus fasta files into one 
 # and store the output of the cat command in a new file 
-cat data/Lj*.fna > results/lotus.fna
+cat data/Lj*.fasta > results/lotus.fasta
 ```
 
 Here:
 
-- `cat data/Lj*` selects all files in the data folder that start with `Lj` and end with `.fna`. 
-- `>` tells the shell to write the combined output into a new file called lotus.fna
+- `cat data/Lj*` selects all files in the data folder that start with `Lj` and end with `.fasta`. 
+- `>` tells the shell to write the combined output into a new file called lotus.fasta
 
 
 ::: {.callout-caution title="Important: Be careful with >" collapse="false"}
@@ -656,7 +661,7 @@ grep -c ">" data/Lj*
 
 # Check how many protein files are in concatenated file
 # Hopefully the numbers add up
-grep -c ">" results/lotus.fna
+grep -c ">" results/lotus.fasta
 ```
 
 
@@ -664,7 +669,7 @@ grep -c ">" results/lotus.fna
 ::: {.callout-question .callout-warning collapse=false}
 # Question 
 
-1. Combine the Arabidopsis contigs (Root Prefix) into a new file that should be stored in the results folder
+1. Combine the 16S rRNA gene sequences from human-associated strains (GCF Prefix) into a new file that should be stored in the results folder
 2. Count the total number of contigs in the individual and the combined file
 
 ::: {.callout-answer .callout-warning collapse=true}
@@ -672,11 +677,11 @@ grep -c ">" results/lotus.fna
 
 ```{bash}
 # Combine
-cat data/Root*.fna > results/arabidopsis.fna
+cat data/GCF*.fasta > results/human.fasta
 
 # Count 
-grep -c ">" data/Root*.fna 
-grep -c ">" results/arabidopsis.fna
+grep -c ">" data/GCF*.fasta 
+grep -c ">" results/human.fasta
 ```
 
 :::
@@ -687,16 +692,16 @@ grep -c ">" results/arabidopsis.fna
 
 So far, we’ve run one command at a time, for example. But often, you might want to combine commands so that the output of one becomes the input of another. That’s what the pipe (`|`) does. It allows us to chain simple commands together to do more complex operations.
 
-For example, we might want to ask how many contigs all Arabidopsis genomes have together but might not want to store a concatenated file to do so. Here, we could do the following instead:
+For example, we might want to ask how many sequences all human-associated strains have together but might not want to store a concatenated file to do so. Here, we could do the following instead:
 
 ```{bash}
 # Combine two files and count the total number of contigs
-cat data/Root*.fna | grep -c ">"
+cat data/GCF*.fasta | grep -c ">"
 ```
 
 Here:
 
-- `cat data/Root*.fna` concatenates both Arabidopsis genomes 
+- `cat data/GCF*.fasta` concatenates fasta files from all human-associated strains
 - The pipe (`|`) sends the combined contigs directly to the `grep` command
 - `grep -c ">"` only counts how many headers are found in the two genomes
 

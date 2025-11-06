@@ -342,7 +342,7 @@ window.Quarto = {
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chopper</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G chopper <span class="dt">\</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> data/barcodeX.fastq.gz <span class="dt">\</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-q</span> 15 <span class="dt">\</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-q</span> 16 <span class="dt">\</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--minlength</span> 1300 <span class="at">--maxlength</span> 1600 <span class="dt">\</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--threads</span> 2 <span class="kw">|</span> <span class="fu">gzip</span> <span class="dt">\</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> results/chopper/barcodeX_filtered.fastq.gz</span>
@@ -367,7 +367,7 @@ window.Quarto = {
 <p>Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.</p>
 <ul>
 <li>Input: 43,170 reads</li>
-<li>Passed filtering: 31,102 reads (72%). For this data this is reasonable given the relatively high Phred score we use for quality filtering</li>
+<li>Passed filtering: 28665 reads (66%). For this data this is reasonable given the relatively high Phred score we use for quality filtering</li>
 </ul>
 </div>
 </div>
@@ -425,7 +425,7 @@ window.Quarto = {
 <p><strong>Step2</strong>: Run NGSpeciesID</p>
 <p>Here, you want to:</p>
 <ul>
-<li>Use srun with with 5 CPUs, 50G of memory</li>
+<li>Use srun with with 6 CPUs, 50G of memory</li>
 <li>Specify that you’re working with ONT data</li>
 <li>Use the cleaned uncompressed FASTQ file as input</li>
 <li>Output results to a new results folder</li>
@@ -476,12 +476,12 @@ window.Quarto = {
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run NGSpeciesID</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 5 <span class="at">--mem</span><span class="op">=</span>50G NGSpeciesID <span class="dt">\</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 6 <span class="at">--mem</span><span class="op">=</span>50G NGSpeciesID <span class="dt">\</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">--ont</span> <span class="dt">\</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">--fastq</span> results/chopper/barcodeX_filtered.fastq <span class="dt">\</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">--outfolder</span> results/ngspeciesid  <span class="dt">\</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">--consensus</span> <span class="at">--medaka</span> <span class="dt">\</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">--t</span> 5 <span class="dt">\</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">--t</span> 6 <span class="dt">\</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">--aligned_threshold</span> 0.95 <span class="dt">\</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">--abundance_ratio</span> 0.01 </span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
