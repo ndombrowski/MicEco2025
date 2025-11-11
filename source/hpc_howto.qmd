@@ -182,7 +182,7 @@ To copy the entire data folder into your Crunchomics project folder, use:
 scp -r data username@omics-h0.science.uva.nl:/home/username/personal/data_analysis
 
 # Then check on the HPC that the files arrived:
-ll data/*.fna
+ll data/*.fasta
 ```
 
 Notes:
@@ -197,7 +197,7 @@ Notes:
 You can also move results from the HPC to your computer. For example, to copy a single genome file from Crunchomics:
 
 ```{bash}
-scp username@omics-h0.science.uva.nl:/home/username/personal/data_analysis/data/LjRoot303.fna .
+scp username@omics-h0.science.uva.nl:/home/username/personal/data_analysis/data/LjRoot303.fasta .
 ```
 
 Here, the `.` at the end means “copy to the current directory” on your local machine. If you want to copy to another location, replace `.` with a path.
@@ -269,7 +269,7 @@ So the arguments after `srun` and before `echo` are where you tell SLURM what re
 
 ### Running a analysis with Seqkit interactively
 
-Next, let’s use srun for something more useful. We’ll analyze our genomes using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files.
+Next, let’s use srun for something more useful. Well analyze our genomes using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files.
 
 > **Tip**: Whenever you use a tool for the first time, check its help page (e.g., `seqkit -h`) to see all available options.
 
@@ -278,15 +278,15 @@ Next, let’s use srun for something more useful. We’ll analyze our genomes us
 mkdir -p results/seqkit 
 
 # Run seqkit interactively
-srun --cpus-per-task=1 --mem=5G seqkit stats data/*fna -Tao results/seqkit/genome_stats.tsv --threads 1
+srun --cpus-per-task=1 --mem=5G seqkit stats data/*fasta -Tao results/seqkit/16s_stats.tsv --threads 1
 
 # View the results (press 'q' to exit less)
-less -S results/seqkit/genome_stats.tsv 
+less -S results/seqkit/16s_stats.tsv 
 ```
 
 Here:
 
-- `seqkit stats data/*fna` → analyzes all FASTA files in the data folder ending in fna
+- `seqkit stats data/*fasta` → analyzes all FASTA files in the data folder ending in fna
 - `-Tao` → output in tabular format (-T), include all stats (-a), and write to file (-o)
 - `--threads 1` → run on one thread (should match `--cpus-per-task=1`)
 - The results are stored in results/seqkit/genome_stats.tsv
@@ -295,9 +295,9 @@ This job runs very quickly — so fast that it might not even appear in the queu
 
 When you open the results file, you'll see:
 
-- The number of contigs (`num_seqs`), this should match what we saw earlier
-- The total genome size in bp (`sum_len`)
-- Additional metrics such as the minimum, maximum, average sequence length, and N50, a common measure of genome fragmentation.
+- The number of sequences (`num_seqs`), this should match what we saw earlier
+- The average length of the sequences in bp (`avg_len`)
+- Additional metrics such as the minimum, maximum or total sequence length
 
 
 ::: {.callout-tip title="Tip: Choosing the right amount of resources" collapse="true"}
@@ -305,13 +305,13 @@ When you open the results file, you'll see:
 When starting out, choosing the right amount of CPUs, memory, or runtime can be tricky.
 Here are a few rules of thumb:
 
-- Start small, most tools don’t need huge resources for small test runs
-- Check the tool’s documentation, many list recommended resource settings
+- Start small, a lot of tools don't need huge resources for small test runs
+- Check the tool's documentation, many list recommended resource settings
 - Test on a subset of your data first. It runs faster and helps you debug
 - If your job fails or runs out of memory, increase the resources gradually
 - Once you have a stable workflow, you can scale up
 
-Remember: over-requesting resources can make jobs wait longer in the queue — and can block others from running.
+Remember: Over-requesting resources can make jobs wait longer in the queue — and can block others from running.
 
 :::
 
@@ -334,10 +334,10 @@ You can get the FASTQ file as follows:
     cp <tba>/barcodeX.fastq.gz data
     ```
 
-1.  If you are following this tutorial independently:
+1.  If you are following this tutorial independently you can get an example file as follows:
 
     ```{bash}
-    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz -P data/
+    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode07.fastq.gz -P data/
     ```
 
 
@@ -373,7 +373,7 @@ less -S results/seqkit/barcodeX_stats.tsv
 Answers:
 
 - Your average sequence length should be ~ 1400 bp and this should correspond to the amplicon size of your PCR reaction.
-- num_seqs should correspond to the number of sequences in your FASTQ file (depends on your library).
+- num_seqs should correspond to the number of sequences in your FASTQ file and will be around 2000-10000 reads. The actual number will depend on how the sequencing went.
 
 > **Tip**: Use `\` to split long commands across lines for readability.
 
@@ -422,7 +422,7 @@ Then add the following content:
 echo "Seqkit job started on:" 
 date
 
-srun --cpus-per-task=1 --mem=5G seqkit stats data/*fna -Tao results/seqkit/genome_stats_2.tsv --threads 1
+srun --cpus-per-task=1 --mem=5G seqkit stats data/*fasta -Tao results/seqkit/genome_stats_2.tsv --threads 1
 
 echo "Seqkit job finished on:"
 date
@@ -498,7 +498,7 @@ Always cancel jobs that are running incorrectly or stuck in a queue too long. Th
 
 **Exercise: Run NanoPlot with sbatch**
 
-Now you’ll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
+Now you'll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
 
 Below is a template for a script called `scripts/nanoplot.sh`.  Replace all `...` with the correct code.
 
@@ -574,7 +574,7 @@ conda activate nanoplot
 echo "Job started: "
 date
 
-# Make an output directory 
+# Make an output directory
 mkdir -p results/nanoplot/raw
 
 # Run Nanoplot
@@ -604,7 +604,7 @@ tail logs/nanoplot_*.out
 
 # Copy results to your computer
 # Run this command inside the data_analysis folder on my own computer 
-scp -r uvanetid@omics-h0.science.uva.nl:/zfs/omics/personal/ndombro/data_analysis/results/nanoplot results
+scp -r uvanetid@omics-h0.science.uva.nl:/home/uvanetid/personal/data_analysis/results/nanoplot results
 
 # Explore the stats file 
 less -S results/nanoplot/NanoStats.txt
@@ -613,7 +613,7 @@ less -S results/nanoplot/NanoStats.txt
 What to look for:
 
 - Mean read length ≈ your expected amplicon size
-- Mean sequence quality ≈ 12–15 (depends on sequencing kit)
+- Mean sequence quality ≈ 12–15 (depends on sequencing kit, the higher the better)
 - Plots usually show:
     - A peak around the expected read length
     - A tail of short, incomplete reads

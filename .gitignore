@@ -1,5 +1,5 @@
 _freeze
 .quarto
-
+data_analysis/
 /.quarto/
 **/*.quarto_ipynb

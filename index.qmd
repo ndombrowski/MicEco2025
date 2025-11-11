@@ -32,7 +32,7 @@ This course is designed for students in microbial ecology with little or no prio
     - Navigate the filesystem (`cd`, `ls`, `pwd`)
     - Work with files (`mkdir`, `cp`, `mv`, `rm`, `cat`, `head`, `less`)
     - Search and filter data (`grep`, `wc`)
-    - View and underrstand FASTQ files (`zcat`, wildcards)
+    - View and understand FASTQ files (`zcat`, wildcards)
 
 5. **Understand the setup of an HPC**
 
@@ -41,12 +41,10 @@ This course is designed for students in microbial ecology with little or no prio
     - Understand job schedulers (e.g., SLURM)
     - Run command-line tools (e.g., `fastqc`, `seqkit`)
     - Set up and activating conda environments
-    - Run workflows with Snakemake
 
 7. **Analyse long-read data**
     - Perform quality control
-    - Cluster individual reads into consensus sequences
-    - Perform taxonomic classification
+    - Align quality-filtered reads to reference database 
     - Generate a count table
 
 

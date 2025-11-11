@@ -404,7 +404,7 @@ Important
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> data username@omics-h0.science.uva.nl:/home/username/personal/data_analysis</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Then check on the HPC that the files arrived:</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ll</span> data/<span class="pp">*</span>.fna</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ll</span> data/<span class="pp">*</span>.fasta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Notes:</p>
 <ul>
@@ -426,7 +426,7 @@ Important
 <div class="callout-body-container callout-body">
 <p>You can also move results from the HPC to your computer. For example, to copy a single genome file from Crunchomics:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> username@omics-h0.science.uva.nl:/home/username/personal/data_analysis/data/LjRoot303.fna .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> username@omics-h0.science.uva.nl:/home/username/personal/data_analysis/data/LjRoot303.fasta .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here, the <code>.</code> at the end means “copy to the current directory” on your local machine. If you want to copy to another location, replace <code>.</code> with a path.</p>
 </div>
@@ -492,7 +492,7 @@ Important
 </section>
 <section id="running-a-analysis-with-seqkit-interactively" class="level3" data-number="5.2.3">
 <h3 data-number="5.2.3" class="anchored" data-anchor-id="running-a-analysis-with-seqkit-interactively"><span class="header-section-number">5.2.3</span> Running a analysis with Seqkit interactively</h3>
-<p>Next, let’s use srun for something more useful. We’ll analyze our genomes using <a href="https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html"><code>seqkit</code></a>, a fast toolkit for inspecting FASTA/FASTQ files.</p>
+<p>Next, let’s use srun for something more useful. Well analyze our genomes using <a href="https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html"><code>seqkit</code></a>, a fast toolkit for inspecting FASTA/FASTQ files.</p>
 <blockquote class="blockquote">
 <p><strong>Tip</strong>: Whenever you use a tool for the first time, check its help page (e.g., <code>seqkit -h</code>) to see all available options.</p>
 </blockquote>
@@ -501,14 +501,14 @@ Important
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> results/seqkit </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run seqkit interactively</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/<span class="pp">*</span>fna <span class="at">-Tao</span> results/seqkit/genome_stats.tsv <span class="at">--threads</span> 1</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/<span class="pp">*</span>fasta <span class="at">-Tao</span> results/seqkit/16s_stats.tsv <span class="at">--threads</span> 1</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># View the results (press 'q' to exit less)</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/seqkit/genome_stats.tsv </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/seqkit/16s_stats.tsv </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Here:</p>
 <ul>
-<li><code>seqkit stats data/*fna</code> → analyzes all FASTA files in the data folder ending in fna</li>
+<li><code>seqkit stats data/*fasta</code> → analyzes all FASTA files in the data folder ending in fna</li>
 <li><code>-Tao</code> → output in tabular format (-T), include all stats (-a), and write to file (-o)</li>
 <li><code>--threads 1</code> → run on one thread (should match <code>--cpus-per-task=1</code>)</li>
 <li>The results are stored in results/seqkit/genome_stats.tsv</li>
@@ -516,9 +516,9 @@ Important
 <p>This job runs very quickly — so fast that it might not even appear in the queue when you type <code>squeue</code>.</p>
 <p>When you open the results file, you’ll see:</p>
 <ul>
-<li>The number of contigs (<code>num_seqs</code>), this should match what we saw earlier</li>
-<li>The total genome size in bp (<code>sum_len</code>)</li>
-<li>Additional metrics such as the minimum, maximum, average sequence length, and N50, a common measure of genome fragmentation.</li>
+<li>The number of sequences (<code>num_seqs</code>), this should match what we saw earlier</li>
+<li>The average length of the sequences in bp (<code>avg_len</code>)</li>
+<li>Additional metrics such as the minimum, maximum or total sequence length</li>
 </ul>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Choosing the right amount of resources">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -534,13 +534,13 @@ Important
 <div class="callout-body-container callout-body">
 <p>When starting out, choosing the right amount of CPUs, memory, or runtime can be tricky. Here are a few rules of thumb:</p>
 <ul>
-<li>Start small, most tools don’t need huge resources for small test runs</li>
+<li>Start small, a lot of tools don’t need huge resources for small test runs</li>
 <li>Check the tool’s documentation, many list recommended resource settings</li>
 <li>Test on a subset of your data first. It runs faster and helps you debug</li>
 <li>If your job fails or runs out of memory, increase the resources gradually</li>
 <li>Once you have a stable workflow, you can scale up</li>
 </ul>
-<p>Remember: over-requesting resources can make jobs wait longer in the queue — and can block others from running.</p>
+<p>Remember: Over-requesting resources can make jobs wait longer in the queue — and can block others from running.</p>
 </div>
 </div>
 </div>
@@ -566,9 +566,9 @@ Important
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace X with the barcode you used in the practical</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="op">&lt;</span>tba<span class="op">&gt;</span>/barcodeX.fastq.gz data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></li>
-<li><p>If you are following this tutorial independently:</p>
+<li><p>If you are following this tutorial independently you can get an example file as follows:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode01_merged.fastq.gz <span class="at">-P</span> data/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode07.fastq.gz <span class="at">-P</span> data/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></li>
 </ol>
 <p><strong>Question 2: Run seqkit interactively</strong></p>
@@ -608,7 +608,7 @@ Important
 <p>Answers:</p>
 <ul>
 <li>Your average sequence length should be ~ 1400 bp and this should correspond to the amplicon size of your PCR reaction.</li>
-<li>num_seqs should correspond to the number of sequences in your FASTQ file (depends on your library).</li>
+<li>num_seqs should correspond to the number of sequences in your FASTQ file and will be around 2000-10000 reads. The actual number will depend on how the sequencing went.</li>
 </ul>
 <blockquote class="blockquote">
 <p><strong>Tip</strong>: Use <code>\</code> to split long commands across lines for readability.</p>
@@ -655,7 +655,7 @@ Important
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Seqkit job started on:"</span> </span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/<span class="pp">*</span>fna <span class="at">-Tao</span> results/seqkit/genome_stats_2.tsv <span class="at">--threads</span> 1</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats data/<span class="pp">*</span>fasta <span class="at">-Tao</span> results/seqkit/genome_stats_2.tsv <span class="at">--threads</span> 1</span>
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Seqkit job finished on:"</span></span>
 <span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -845,7 +845,7 @@ Question
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Job started: "</span></span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span></span>
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Make an output directory </span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Make an output directory</span></span>
 <span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> results/nanoplot/raw</span>
 <span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot</span></span>
@@ -873,7 +873,7 @@ Question
 <span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy results to your computer</span></span>
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this command inside the data_analysis folder on my own computer </span></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> uvanetid@omics-h0.science.uva.nl:/zfs/omics/personal/ndombro/data_analysis/results/nanoplot results</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> <span class="at">-r</span> uvanetid@omics-h0.science.uva.nl:/home/uvanetid/personal/data_analysis/results/nanoplot results</span>
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the stats file </span></span>
 <span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/nanoplot/NanoStats.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -881,7 +881,7 @@ Question
 <p>What to look for:</p>
 <ul>
 <li>Mean read length ≈ your expected amplicon size</li>
-<li>Mean sequence quality ≈ 12–15 (depends on sequencing kit)</li>
+<li>Mean sequence quality ≈ 12–15 (depends on sequencing kit, the higher the better)</li>
 <li>Plots usually show:
 <ul>
 <li>A peak around the expected read length</li>

@@ -226,7 +226,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#chopper-quality-cleaning" id="toc-chopper-quality-cleaning" class="nav-link active" data-scroll-target="#chopper-quality-cleaning"><span class="header-section-number">6.1</span> <code>chopper</code>: Quality cleaning</a></li>
-  <li><a href="#ngspeciesid-read-clustering" id="toc-ngspeciesid-read-clustering" class="nav-link" data-scroll-target="#ngspeciesid-read-clustering"><span class="header-section-number">6.2</span> <code>NGSpeciesID</code>: Read clustering</a></li>
+  <li><a href="#minimap2-map-reads-to-reference-database" id="toc-minimap2-map-reads-to-reference-database" class="nav-link" data-scroll-target="#minimap2-map-reads-to-reference-database"><span class="header-section-number">6.2</span> <code>Minimap2</code>: Map reads to reference database</a></li>
   </ul>
 </nav>
     </div>
@@ -284,24 +284,26 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>Use your NanoPlot quality plots from the previous section and choose some quality and length cutoffs. Specifically, you want to:</p>
 <ol type="1">
-<li>Perform quality filtering with chopper:
+<li>Perform quality filtering with chopper using srun:
 <ul>
 <li>Store the output of chopper in a separate results folder</li>
 <li>Request 2 CPUs and 20G of memory with <code>srun</code>, and ensure chopper itself also uses 2 threads</li>
+<li>Investigate the Nanoplot LengthvsQualityScatterPlot and
+<ul>
 <li>Discard sequences that are too long or too short</li>
-<li>Discard reads, where the read’s average quality score is lower than a quality score of Q15</li>
+<li>Discard reads with a too low phred score</li>
+</ul></li>
 <li>Check the <a href="https://github.com/wdecoster/chopper">tools manual</a> carefully with how to deal with <code>.gz</code> files. Hint: Closely check the example section</li>
+<li><strong>IMPORTANT</strong>: After chopper finished you will see something like “Kept 133 reads out of 3785 read”. If you see less than 50% of the reads remaining use less strict length and quality filters. You need enough reads for the next steps.</li>
 </ul></li>
 <li>Investigate the quality of the filtered FASTQ file with NanoPlot
 <ul>
 <li>use srun, 2 CPUs and 10G of memory</li>
 </ul></li>
-<li>afterwards open NanoPlots LengthvsQualityScatterPlot_dot.html and NanoStats.txt outputs and answer:
+<li>Afterwards open NanoPlots and seqkit. Investigate the outputs and answer:
 <ul>
 <li>The total number of sequences that went into the analysis</li>
 <li>The total number of sequences that passed the quality filtering</li>
-<li>At which step most reads were lost (and how many)</li>
-<li>How many basepairs were lost due to the trimming</li>
 </ul></li>
 </ol>
 <div class="cell">
@@ -318,7 +320,10 @@ window.Quarto = {
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a folder for the Nanoplot results and run Nanoplot</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Run seqkit</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-answer callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -342,8 +347,8 @@ window.Quarto = {
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chopper</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G chopper <span class="dt">\</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> data/barcodeX.fastq.gz <span class="dt">\</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-q</span> 16 <span class="dt">\</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--minlength</span> 1300 <span class="at">--maxlength</span> 1600 <span class="dt">\</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-q</span> 12 <span class="dt">\</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--minlength</span> 1300 <span class="at">--maxlength</span> 1650 <span class="dt">\</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--threads</span> 2 <span class="kw">|</span> <span class="fu">gzip</span> <span class="dt">\</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> results/chopper/barcodeX_filtered.fastq.gz</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
@@ -362,12 +367,16 @@ window.Quarto = {
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">--plots</span> dot <span class="dt">\</span></span>
 <span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> results/nanoplot/cleaned</span>
 <span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Run seqkit </span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats results/chopper/barcodeX_filtered.fastq.gz  <span class="dt">\</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">-Tao</span> results/seqkit/fastq_filtered.tsv <span class="at">--threads</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.</p>
 <ul>
-<li>Input: 43,170 reads</li>
-<li>Passed filtering: 28665 reads (66%). For this data this is reasonable given the relatively high Phred score we use for quality filtering</li>
+<li>Input: 3785 reads</li>
+<li>Passed filtering: 2976 reads (~80%).</li>
 </ul>
 </div>
 </div>
@@ -376,84 +385,80 @@ window.Quarto = {
 </div>
 </div>
 </section>
-<section id="ngspeciesid-read-clustering" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="ngspeciesid-read-clustering"><span class="header-section-number">6.2</span> <code>NGSpeciesID</code>: Read clustering</h2>
-<p>Nanopore long-read sequencing can produce reads that span nearly the entire 16S rRNA gene, making it powerful for identifying microbial species. However, these long reads come with a trade-off: they have a higher error rate compared to short-read technologies.</p>
-<p>In our dataset, the average read quality is Q15. The Phred score (Q) is a measure of how confident the sequencer is in each base call. The probability of a base being called incorrectly can be calculated as:</p>
+<section id="minimap2-map-reads-to-reference-database" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="minimap2-map-reads-to-reference-database"><span class="header-section-number">6.2</span> <code>Minimap2</code>: Map reads to reference database</h2>
+<p>Nanopore long-read sequencing can produce reads that span nearly the entire 16S rRNA gene, making it useful for identifying microbial species. However, these long reads come with a trade-off: they have a higher error rate compared to short-read technologies.</p>
+<p>In our dataset, the average read quality is <strong>Q10</strong>. The Phred score (Q) is a measure of how confident the sequencer is in each base call. The probability of a base being called incorrectly can be calculated as:</p>
 <p><span class="math display">\[P=10^{-Q/10}\]</span></p>
 <p>In R we can compute this with:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="dv">16</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Q <span class="ot">&lt;-</span> <span class="dv">10</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>P_error <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span>(<span class="sc">-</span>Q<span class="sc">/</span><span class="dv">10</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>percent_error <span class="ot">&lt;-</span> P_error <span class="sc">*</span> <span class="dv">100</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">message</span>(<span class="st">"Error rate: "</span>, <span class="fu">round</span>(percent_error, <span class="dv">2</span>), <span class="st">"%"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Error rate: 2.51%</code></pre>
+<pre><code>Error rate: 10%</code></pre>
 </div>
 </div>
-<p>This shows that with a mean Phred quality of 15, each base has roughly a 2.5% chance of being incorrect. Across a 1,500 bp amplicon, that’s about 38 errors per sequence, which can be too many for accurate species-level identification.</p>
-<p>To address this, we can cluster similar reads together, meaning we group sequences that likely come from the same species. Tools like NGSpeciesID cluster reads and then build a consensus sequence for each cluster, correcting random sequencing errors by comparing all reads within a cluster.</p>
-<p>You can install NGSpeciesID with mamba:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a base environment</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-n</span> NGSpeciesID_0.3.1  python=3.11 pip</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate and install dependencies</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> install <span class="at">--yes</span> <span class="at">-c</span> conda-forge <span class="at">-c</span> bioconda medaka==2.0.1 openblas==0.3.3 spoa racon minimap2  samtools</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install NGSpeciesID</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
+<p>This shows that with a mean Phred quality of 10, each base has roughly a 10% chance of being incorrect. For a 1,500 bp 16S amplicon we expect 150 errors per sequence with such a quality score. While Nanopore long reads are useful because they capture the full 16S gene, a high level of errors can make species-level identification unreliable.</p>
+<p>To classify our filtered Nanopore reads, we use <strong>Minimap2</strong> to align each read against a reference database containing the 16S rRNA sequences from all the strains used in our lab experiments. In other words, each read is compared to every reference sequence, and one or more alignments may be recorded depending on how well the read matches the references,</p>
+<p>Alignment-based tools like Minimap2 are well-suited for Nanopore data because they tolerate mismatches and small insertions or deletions, which are common in error-prone long reads. The output of Minimap2 is a PAF (Pairwise mApping Format) file, which contains information about how each read aligns to the reference sequences.</p>
+<p>Some reads may align equally well to multiple reference sequences (‘multi-mappers’), particularly if the strains have highly similar 16S sequences (for example the different Pseudomonas strains you worked with in the lab). These multi-mapping reads are important to keep in mind when summarizing taxonomic abundances.</p>
+<p>Minimap2 is installed by default on Crunchomics.</p>
 <div class="callout callout-style-default callout-question callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Question</span>Task
+<span class="screen-reader-only">Question</span>Tasks
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Familiarize yourself with the <a href="https://github.com/ksahlin/NGSpeciesID">NGSpeciesID documentation</a> and finish the code below:</p>
-<p><strong>Step1</strong>: Prepare the input files as NGSpecies ID can not work with compressed FASTQ files.</p>
+<p><strong>Task 1: Get the reference database</strong></p>
+<p>We have already prepared a non-redundant database of 16S rRNA gene sequences. Download it to your <code>data/</code> folder using:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress the chopper output</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wget https<span class="sc">:</span><span class="er">//</span>raw.githubusercontent.com<span class="sc">/</span>ndombrowski<span class="sc">/</span>MicEco2025<span class="sc">/</span>refs<span class="sc">/</span>heads<span class="sc">/</span>main<span class="sc">/</span>data<span class="sc">/</span>amplicons_nr.fasta <span class="sc">-</span>P data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Step2</strong>: Run NGSpeciesID</p>
-<p>Here, you want to:</p>
+<p>This file (<code>amplicons_nr.fasta</code>) contains one representative 16S rRNA sequence per strain used in the lab.</p>
+<p><strong>Task 2: Run minimap2</strong></p>
+<p>Now you will align your filtered reads against the reference database.</p>
+<p>Before running, make sure to check all the available options with <code>minimap2 -h</code> and to:</p>
 <ul>
-<li>Use srun with with 6 CPUs, 50G of memory</li>
-<li>Specify that you’re working with ONT data</li>
-<li>Use the cleaned uncompressed FASTQ file as input</li>
-<li>Output results to a new results folder</li>
-<li>Enable consensus generation (<code>--consensus</code>) and further polishing (<code>--medaka</code>)</li>
-<li>Lower the abundance ratio to 0.01 (captures low-abundance sequences)</li>
-<li>Require reads to align at least 95% (<code>--aligned_threshold 0.95</code>)</li>
-</ul>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the conda environment</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run NGSpeciesID</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> ... NGSpeciesID ...</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p><strong>Step3</strong>: Explore the output</p>
-<p>In your results folder, you should find multiple subfolders (e.g., <code>medaka_cl_id_*</code>). Each folder contains a consensus.fasta file representing a consensus sequence.</p>
-<p>Answer the following:</p>
+<li>Create a folder to store your results.</li>
+<li>Use srun with 2 CPUs and 20G of memory</li>
+<li>Use the <code>-x</code> preset for Nanopore vs reference mapping</li>
+<li>Ensure that the output is in PAF format</li>
+<li>Provide both
 <ul>
-<li>How many consensus sequences were formed?</li>
-<li>Is this number higher or lower than what you expected based on your experimental design (number of microbial species)?</li>
-<li>If it differs, what could explain this discrepancy? Hint: Think about sequencing errors, read depth, and 16S sequence similarity.</li>
+<li><code>data/amplicons_nr.fasta</code> (the reference)</li>
+<li><code>barcodeX_filtered.fastq.gz</code> (the cleaned fastq squences)</li>
+</ul></li>
+<li>Use <code>&gt; results/minimap2/barcodeX.paf</code> to store the output</li>
 </ul>
+<p><strong>Task 3: Explore the output</strong></p>
+<p>After the alignment finishes:</p>
+<ul>
+<li>Count the number of alignments with <code>wc</code></li>
+<li>View the file with <code>less</code> and scroll through the first few lines to inspect the structure.</li>
+<li>Check the <a href="https://lh3.github.io/minimap2/minimap2.html">minimap2 manual</a> to find out what the different columns mean.</li>
+</ul>
+<p>Answer the following questions:</p>
+<ol type="1">
+<li>How many alignments are there? Is this number higher or lower than your total number of input reads? Why might that be?</li>
+<li>Look at the first 12 columns of the PAF file. Which of these could help you filter unreliable alignments or identify multi-mapping reads?</li>
+</ol>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># How many consensus sequences are formed?</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a suitable output folder </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap2 </span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of alignments</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-answer callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -467,41 +472,93 @@ window.Quarto = {
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>The <code>scripts/ngspeciesid.sh</code> should look as follows:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncompress the chopper output as NGSPeciesID only works with uncompressed files </span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gzip</span> <span class="at">-d</span> results/chopper/barcodeX_filtered.fastq.gz</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Activate the conda environment</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate NGSpeciesID_0.3.1</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run NGSpeciesID</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 6 <span class="at">--mem</span><span class="op">=</span>50G NGSpeciesID <span class="dt">\</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">--ont</span> <span class="dt">\</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">--fastq</span> results/chopper/barcodeX_filtered.fastq <span class="dt">\</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">--outfolder</span> results/ngspeciesid  <span class="dt">\</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">--consensus</span> <span class="at">--medaka</span> <span class="dt">\</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">--t</span> 6 <span class="dt">\</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">--aligned_threshold</span> 0.95 <span class="dt">\</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">--abundance_ratio</span> 0.01 </span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Count how many consensus sequences we work with</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="st">"&gt;"</span> results/ngspeciesid/medaka<span class="pp">*</span>/<span class="pp">*</span>fasta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a suitable output folder </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results/minimap2</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap2 </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G minimap2 <span class="dt">\</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">-x</span> map-ont <span class="at">-t</span> 2 <span class="dt">\</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        data/amplicons_nr.fasta <span class="dt">\</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        results/chopper/barcodeX_filtered.fastq.gz <span class="dt">\</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;</span> results/minimap2/barcodeX.paf</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Count number of alignments: 3076 (-1 because of the header)</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> results/minimap2/barcodeX.paf</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the file itself</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/minimap2/barcodeX.paf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Answer:</p>
+<ol type="1">
+<li>There are 3076 alignments for 2976 reads. If your experiment included Pseudomonas strains you likely will have more alignments than reads. The higher number of alignments occurs because some reads (especially from Pseudomonas species) align equally well to multiple reference 16S sequences, these are multi-mapping reads.</li>
+<li>Useful PAF columns for assessing alignment reliability include:
 <ul>
-<li>Number of consensus sequences formed: 9</li>
-<li>Expected number: 14 (based on 14 bacterial strains used)</li>
-<li>Possible reasons for less consensus sequences:
-<ul>
-<li>The high Nanopore error rate can blur true biological differences</li>
-<li>Highly similar 16S rRNA genes (95–99.9% identity) may have merged into a single cluster</li>
-<li>Lower-abundance taxa may not have had enough reads to form a distinct cluster</li>
+<li>Column 10: number of matching bases (can be use to calculate % identity)</li>
+<li>Column 11: total length of the alignment (including gaps; can be use to calculate % identity)</li>
+<li>Column 12: mapping quality. 0 is used to mark and thereby identify multi-mappers</li>
+<li>Columns 3–4: read start and end positions (can be used to calculate how much of the read aligned)</li>
 </ul></li>
-<li>If you observe more consensus sequences than expected, it could indicate incomplete clustering due to sequencing errors or uneven read coverage</li>
-</ul>
+</ol>
+<p>Information on the PAF output:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Col</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Query sequence name</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Query sequence length</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Query start coordinate (0-based)</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Query end coordinate (0-based)</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>‘+’ if query/target on the same strand; ‘-’ if opposite</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Target sequence name</td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Target sequence length</td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>Target start coordinate on the original strand</td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>Target end coordinate on the original strand</td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>Number of matching bases in the mapping</td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>Number bases, including gaps, in the mapping</td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>Mapping quality (0-255 with 255 for missing)</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>

@@ -34,19 +34,20 @@ In this tutorial, you will always receive example code as a starting point, with
 
 Use your NanoPlot quality plots from the previous section and choose some quality and length cutoffs. Specifically, you want to:
 
-1. Perform quality filtering with chopper:
+1. Perform quality filtering with chopper using srun:
     - Store the output of chopper in a separate results folder
     - Request 2 CPUs and 20G of memory with `srun`, and ensure chopper itself also uses 2 threads
-    - Discard sequences that are too long or too short
-    - Discard reads, where the read's average quality score is lower than a quality score of Q15
+    - Investigate the Nanoplot LengthvsQualityScatterPlot and
+      - Discard sequences that are too long or too short
+      - Discard reads with a too low phred score 
     - Check the [tools manual](https://github.com/wdecoster/chopper) carefully with how to deal with `.gz` files. Hint: Closely check the example section
+    - **IMPORTANT**: After chopper finished you will see something like "Kept 133 reads out of 3785 read". If you see less than 50% of the reads remaining use less strict length and quality filters. You need enough reads for the next steps.
 2. Investigate the quality of the filtered FASTQ file with NanoPlot 
     - use srun, 2 CPUs and 10G of memory
-3. afterwards open NanoPlots LengthvsQualityScatterPlot_dot.html and NanoStats.txt outputs and answer:
+3. Afterwards open NanoPlots and seqkit. Investigate the outputs and answer:
     - The total number of sequences that went into the analysis
     - The total number of sequences that passed the quality filtering
-    - At which step most reads were lost (and how many)
-    - How many basepairs were lost due to the trimming
+
 
 ```{bash}
 # Generate an output folder for the results
@@ -62,6 +63,9 @@ srun --cpus-per-task 2 --mem=20G chopper ...
 ...
 
 # Make a folder for the Nanoplot results and run Nanoplot
+...
+
+# Run seqkit
 ...
 ```
 
@@ -79,8 +83,8 @@ conda activate chopper_0.11.0
 # Run chopper
 srun --cpus-per-task 2 --mem=20G chopper \
     -i data/barcodeX.fastq.gz \
-    -q 16 \
-    --minlength 1300 --maxlength 1600 \
+    -q 12 \
+    --minlength 1300 --maxlength 1650 \
     --threads 2 | gzip \
     > results/chopper/barcodeX_filtered.fastq.gz
 
@@ -100,24 +104,28 @@ srun --cpus-per-task 2 --mem=10G NanoPlot \
     -o results/nanoplot/cleaned
 
 conda deactivate
+
+# Run seqkit 
+srun --cpus-per-task=1 --mem=5G seqkit stats results/chopper/barcodeX_filtered.fastq.gz  \
+    -Tao results/seqkit/fastq_filtered.tsv --threads 1
+
 ```
 
 Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.
 
-- Input: 43,170 reads
-- Passed filtering: 28665 reads (66%). For this data this is reasonable given the relatively high Phred score we use for quality filtering
-
+- Input: 3785 reads
+- Passed filtering: 2976 reads (~80%).
 
 :::
 :::
 
 
 
-## `NGSpeciesID`: Read clustering 
+## `Minimap2`: Map reads to reference database
 
-Nanopore long-read sequencing can produce reads that span nearly the entire 16S rRNA gene, making it powerful for identifying microbial species. However, these long reads come with a trade-off: they have a higher error rate compared to short-read technologies.
+Nanopore long-read sequencing can produce reads that span nearly the entire 16S rRNA gene, making it useful for identifying microbial species. However, these long reads come with a trade-off: they have a higher error rate compared to short-read technologies.
 
-In our dataset, the average read quality is Q15. The Phred score (Q) is a measure of how confident the sequencer is in each base call. The probability of a base being called incorrectly can be calculated as:
+In our dataset, the average read quality is **Q10**. The Phred score (Q) is a measure of how confident the sequencer is in each base call. The probability of a base being called incorrectly can be calculated as:
 
 $$P=10^{-Q/10}$$
 
@@ -125,119 +133,120 @@ In R we can compute this with:
 
 ```{r}
 #| eval: true
-Q <- 16
+Q <- 10
 P_error <- 10^(-Q/10)
 percent_error <- P_error * 100
 message("Error rate: ", round(percent_error, 2), "%")
 ```
 
-This shows that with a mean Phred quality of 15, each base has roughly a 2.5% chance of being incorrect. Across a 1,500 bp amplicon, that’s about 38 errors per sequence, which can be too many for accurate species-level identification.
+This shows that with a mean Phred quality of 10, each base has roughly a 10% chance of being incorrect. For a 1,500 bp 16S amplicon we expect 150 errors per sequence with such a quality score. While Nanopore long reads are useful because they capture the full 16S gene, a high level of errors can make species-level identification unreliable.
 
-To address this, we can cluster similar reads together, meaning we group sequences that likely come from the same species. Tools like NGSpeciesID cluster reads and then build a consensus sequence for each cluster, correcting random sequencing errors by comparing all reads within a cluster. 
+To classify our filtered Nanopore reads, we use **Minimap2** to align each read against a reference database containing the 16S rRNA sequences from all the strains used in our lab experiments. In other words, each read is compared to every reference sequence, and one or more alignments may be recorded depending on how well the read matches the references, 
 
-You can install NGSpeciesID with mamba:
+Alignment-based tools like Minimap2 are well-suited for Nanopore data because they tolerate mismatches and small insertions or deletions, which are common in error-prone long reads. The output of Minimap2 is a PAF (Pairwise mApping Format) file, which contains information about how each read aligns to the reference sequences.
 
-```{bash}
-# Create a base environment
-mamba create -n NGSpeciesID_0.3.1  python=3.11 pip
+Some reads may align equally well to multiple reference sequences (‘multi-mappers’), particularly if the strains have highly similar 16S sequences (for example the different Pseudomonas strains you worked with in the lab). These multi-mapping reads are important to keep in mind when summarizing taxonomic abundances.
 
-# Activate and install dependencies
-conda activate NGSpeciesID_0.3.1
-mamba install --yes -c conda-forge -c bioconda medaka==2.0.1 openblas==0.3.3 spoa racon minimap2  samtools
-pip install NGSpeciesID
-conda deactivate
-```
-
+Minimap2 is installed by default on Crunchomics.
 
 ::: {.callout-question .callout-warning collapse=false}
-# Task 
+# Tasks 
 
-Familiarize yourself with the [NGSpeciesID documentation](https://github.com/ksahlin/NGSpeciesID) and finish the code below:
+**Task 1: Get the reference database**
 
-**Step1**: Prepare the input files as NGSpecies ID can not work with compressed FASTQ files.
+We have already prepared a non-redundant database of 16S rRNA gene sequences. Download it to your `data/` folder using: 
 
-```{bash}
-# Uncompress the chopper output
+```{r}
+wget https://raw.githubusercontent.com/ndombrowski/MicEco2025/refs/heads/main/data/amplicons_nr.fasta -P data
+```
+
+This file (`amplicons_nr.fasta`) contains one representative 16S rRNA sequence per strain used in the lab.
+
+**Task 2: Run minimap2**
+
+Now you will align your filtered reads against the reference database.
+
+Before running, make sure to check all the available options with `minimap2 -h` and to:
+
+- Create a folder to store your results.
+- Use srun with 2 CPUs and 20G of memory
+- Use the `-x` preset for Nanopore vs reference mapping
+- Ensure that the output is in PAF format
+- Provide both 
+  -  `data/amplicons_nr.fasta` (the reference) 
+  -   ` barcodeX_filtered.fastq.gz` (the cleaned fastq squences)
+- Use `> results/minimap2/barcodeX.paf` to store the output
+
+**Task 3: Explore the output**
+
+After the alignment finishes:
+
+- Count the number of alignments with `wc` 
+- View the file with `less` and scroll through the first few lines to inspect the structure.
+- Check the [minimap2 manual ](https://lh3.github.io/minimap2/minimap2.html) to find out what the different columns mean. 
+
+Answer the following questions:
+
+1. How many alignments are there? Is this number higher or lower than your total number of input reads? Why might that be?
+2. Look at the first 12 columns of the PAF file. Which of these could help you filter unreliable alignments or identify multi-mapping reads?
+
+```{r}
+# Generate a suitable output folder 
+...
+
+# Run minimap2 
+...
+
+# Count the number of alignments
 ...
 ```
-
-**Step2**: Run NGSpeciesID
-
-Here, you want to:
-
-- Use srun with with 6 CPUs, 50G of memory
-- Specify that you’re working with ONT data 
-- Use the cleaned uncompressed FASTQ file as input
-- Output results to a new results folder
-- Enable consensus generation (`--consensus`) and further polishing (`--medaka`)
-- Lower the abundance ratio to 0.01 (captures low-abundance sequences)
-- Require reads to align at least 95% (`--aligned_threshold 0.95`)
-
-```{bash}
-# Activate the conda environment
-conda activate NGSpeciesID_0.3.1
-
-# Run NGSpeciesID
-srun ... NGSpeciesID ...
-
-# Deactivate the conda environment 
-...
-```
-
-**Step3**: Explore the output
-
-In your results folder, you should find multiple subfolders (e.g., `medaka_cl_id_*`). Each folder contains a consensus.fasta file representing a consensus sequence.
-
-Answer the following:
-
-- How many consensus sequences were formed?
-- Is this number higher or lower than what you expected based on your experimental design (number of microbial species)?
-- If it differs, what could explain this discrepancy? Hint: Think about sequencing errors, read depth, and 16S sequence similarity.
-
-```{bash}
-# How many consensus sequences are formed?
-grep ...
-```
-
-
 
 ::: {.callout-answer .callout-warning collapse=true}
 # Click to see the answer 
 
-The `scripts/ngspeciesid.sh` should look as follows:
-
 ```{bash}
-# Uncompress the chopper output as NGSPeciesID only works with uncompressed files 
-gzip -d results/chopper/barcodeX_filtered.fastq.gz
+# Generate a suitable output folder 
+mkdir results/minimap2
 
-# Activate the conda environment
-conda activate NGSpeciesID_0.3.1
+# Run minimap2 
+srun --cpus-per-task 2 --mem=20G minimap2 \
+        -x map-ont -t 2 \
+        data/amplicons_nr.fasta \
+        results/chopper/barcodeX_filtered.fastq.gz \
+        > results/minimap2/barcodeX.paf
 
-# Run NGSpeciesID
-srun --cpus-per-task 6 --mem=50G NGSpeciesID \
-        --ont \
-        --fastq results/chopper/barcodeX_filtered.fastq \
-        --outfolder results/ngspeciesid  \
-        --consensus --medaka \
-        --t 6 \
-        --aligned_threshold 0.95 \
-        --abundance_ratio 0.01 
+# Count number of alignments: 3076 (-1 because of the header)
+wc -l results/minimap2/barcodeX.paf
 
-conda deactivate
-
-# Count how many consensus sequences we work with
-grep ">" results/ngspeciesid/medaka*/*fasta
+# Explore the file itself
+less -S results/minimap2/barcodeX.paf
 ```
 
 Answer:
 
-- Number of consensus sequences formed: 9
-- Expected number: 14 (based on 14 bacterial strains used)
-- Possible reasons for less consensus sequences:
-    - The high Nanopore error rate can blur true biological differences
-    - Highly similar 16S rRNA genes (95–99.9% identity) may have merged into a single cluster
-    - Lower-abundance taxa may not have had enough reads to form a distinct cluster
-- If you observe more consensus sequences than expected, it could indicate incomplete clustering due to sequencing errors or uneven read coverage
+1. There are 3076 alignments for 2976 reads. If your experiment included Pseudomonas strains you likely will have more alignments than reads. The higher number of alignments occurs because some reads (especially from Pseudomonas species) align equally well to multiple reference 16S sequences, these are multi-mapping reads.
+2. Useful PAF columns for assessing alignment reliability include:
+   - Column 10: number of matching bases (can be use to calculate % identity)
+   - Column 11: total length of the alignment (including gaps; can be use to calculate % identity)
+   - Column 12: mapping quality. 0 is used to mark and thereby identify multi-mappers
+   - Columns 3–4: read start and end positions (can be used to calculate how much of the read aligned)
+
+Information on the PAF output:
+
+| Col | Description                                             |
+| --- | ------------------------------------------------------- |
+| 1   | Query sequence name                                     |
+| 2   | Query sequence length                                   |
+| 3   | Query start coordinate (0-based)                        |
+| 4   | Query end coordinate (0-based)                          |
+| 5   | ‘+’ if query/target on the same strand; ‘-’ if opposite |
+| 6   | Target sequence name                                    |
+| 7   | Target sequence length                                  |
+| 8   | Target start coordinate on the original strand          |
+| 9   | Target end coordinate on the original strand            |
+| 10  | Number of matching bases in the mapping                 |
+| 11  | Number bases, including gaps, in the mapping            |
+| 12  | Mapping quality (0-255 with 255 for missing)            |
 
 :::
 :::
