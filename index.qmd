@@ -29,22 +29,23 @@ This course is designed for students in microbial ecology with little or no prio
     - How to use markdown and document workflows
 
 3. **Navigate the Command Line**
-    - Navigate the filesystem (`cd`, `ls`, `pwd`)
-    - Work with files (`mkdir`, `cp`, `mv`, `rm`, `cat`, `head`, `less`)
-    - Search and filter data (`grep`, `wc`)
-    - View and understand FASTQ files (`zcat`, wildcards)
+    - Navigate the filesystem
+    - Work with files
+    - Search and filter data
+    - View and understand sequence files
 
-5. **Understand the setup of an HPC**
+4. **Understand the setup of an HPC**
 
-6. **Work with an HPC**
-    - Connect to an HPC (SSH)
+5. **Work with an HPC**
+    - Connect to an HPC
     - Understand job schedulers (e.g., SLURM)
     - Run command-line tools (e.g., `fastqc`, `seqkit`)
     - Set up and activating conda environments
 
-7. **Analyse long-read data**
-    - Perform quality control
-    - Align quality-filtered reads to reference database 
+6. **Analyse long-read data**
+    - Analyse sequence read quality
+    - Perform quality filtering of sequence read data
+    - Align quality-filtered reads to a reference database 
     - Generate a count table
 
 

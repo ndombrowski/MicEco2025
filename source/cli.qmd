@@ -6,20 +6,20 @@ engine: knitr
 
 ## `pwd`: Find out where we are
 
-Once your terminal is open, you can get yourself oriented by typing your first command and then pressing enter: 
+Open your terminal is open, and get yourself oriented by typing your first command and then pressing enter: 
 
 ```{bash}
 pwd
 ```
 
-The command `pwd` stands for *print working directory*. It tells you where you currently are in the file system, that is, which folder (directory) your shell is operating on right now. You should see something like:
+The command `pwd` stands for *print working directory*. It tells you where you currently are in the file system, that is, which folder (directory) your shell is operating on right now. You should see something like this:
 
 ```
 /Users/YourUserName
 ```
 
 ::: {.callout-tip title="Tip: Finding the Desktop on Different Systems" collapse="true"}
-Your home directory path varies slightly across operating systems. Here’s how to locate yourself and connect to familiar locations like the Desktop:
+Your home directory (i.e. the directory you start in whenever you open the terminal) varies slightly across operating systems. Here’s how to locate yourself and connect to familiar locations like the Desktop:
 
 **macOS**
 
@@ -94,7 +94,7 @@ After running this you should see a more detail list of the contents of your fol
 
 ::: {.callout-tip title="Tip: Using ls in practice" collapse="false"}
 
-Throughout this tutorial, you’ll notice that we use `ls` frequently. There’s a reason for that:
+Throughout this tutorial, you’ll notice that we will use `ls` frequently. There’s a reason for that:
 
 When working with data, sanity checks are essential, because it is easy to make mistakes, overwrite files, or lose track of where things are. Using simple commands like `ls`, `pwd, `wc`, or `grep` helps you verify what’s happening to your files at every step of an analysis workflow.
 
@@ -104,7 +104,7 @@ These habits are not just for beginners, also experienced bioinformaticians rely
 
 ## Getting help
 
-At some point, you’ll want to know what options a command has or how it works. In this case, you can always check the **manual pages** (or *man pages*) by typing `man` followed by the command name:
+At some point, you’ll want to know what options a command has or how it works. In this case, you first should check if **manual pages** (or *man pages*) are available for the command by typing `man` followed by the command name:
 
 ```{bash}
 man ls
@@ -140,7 +140,7 @@ mkdir data_analysis
 ls
 ```
 
-You should see a new folder called data_analysis appear in the list. We will use this folder as our project folder for all exercises in this tutorial. Next, let's make a new `data` folder inside the new data_analysis folder by typing the following:
+You should see a new folder called data_analysis appears in the list. We will use this folder as our project folder for all exercises in this tutorial. Next, let's make a new `data` folder inside the new data_analysis folder by typing the following:
 
 ```{bash}
 # Make a data folder inside the data_analysis folder
@@ -176,7 +176,7 @@ There are two ways to specify a path to go the the portfolio folder:
 - **Absolute path**: starts from the root (e.g. `cd /users/john/portfolio`)
 - **Relative path**: starts from your current location (e.g. `cd portfolio` if you’re already in `/users/john`)
 
-It is generally recommended to use the relative path from inside your project directory. That makes your code more portable and still allows you to run the code even if your computer setup changes.
+> **Tip**: It is generally recommended to use the relative path from inside your project directory. That makes your code more portable and still allows you to run the code even if your computer setup changes.
 
 Let’s practice moving between folders (at each step, use `pwd` in case you feel that you get lost):
 
@@ -184,11 +184,11 @@ Let’s practice moving between folders (at each step, use `pwd` in case you fee
 # Move into the data analysis folder 
 cd data_analysis 
 
-# Check where we are 
+# Check where you are 
 pwd
 ```
 
-We now should see that we are in something like `/Users/Name/data_analysis`. We can use the `cd` command in multiple ways to move around:
+You now should see something like `/Users/Name/data_analysis`. You can use the `cd` command in multiple ways to move around:
 
 ```{bash}
 # Move into the data folder
@@ -220,12 +220,12 @@ Here, are some other tips for faster navigation (and less typos):
 - If there’s more than one match, press Tab twice to see all options.
 - Use ↑ / ↓ arrows to scroll through previously entered commands
 
-**Hint**: From now on try to use the Tab key once in a while so that you do not have to write everything yourself all the time.
+> **Tip**: From now on try to use the Tab key once in a while so that you do not have to write everything yourself all the time.
 :::
 
 
 ::: {.callout-question .callout-warning collapse=false}
-# Question 
+# Task 
 
 Familiarize yourself with these first commands and:
 
@@ -253,22 +253,14 @@ ls
 
 ## `wget`: Download data
 
-Next, let’s download a fasta file that contains a 16S sequence to go through some other useful commands. We can use the `wget` command to fetch a fasta file from an online website as follows:
+Next, let’s download a fasta file that contains the sequence of a 16S rRNA gene. This will file will be useful to learn about some other commands. Below, we use the `wget` command to fetch a fasta file from an online website as follows:
 
 ```{bash}
 # Download the example fasta file into the current directory
 wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz
 ```
 
-::: {.callout-tip title="Tip: Where does our data come from?" collapse="true"}
-
-The files comes from the [Plant-associated bacterial culture collections database](https://www.at-sphere.com/). This database contains information from microbial strains isolated from the roots and leaves of *Arabidopsis thaliana* and from roots and nodules from *Lotus japonicus*. Some of these strains are also used in your lab practicals. 
-
-For convenience (and security reasons) you will for this tutorial will download the data from Github. However, in practice you will often download data from institutional websites such as the one above. 
-
-:::
-
-After you download data, it is always a good idea to do some sanity check to see if the file is present and know how large it is:
+After you download any kind of data, it is always a good idea to do some sanity check to see if the file is present and know how large it is (or whether it is empty and something went wrong during the download):
 
 ```{bash}
 # List files in long (-l) and human-readable (-h) format
@@ -329,21 +321,21 @@ If we want to remove a folder, we need to tell `rm` that we want to remove folde
 ::: callout-important
 **Unix does not have an undelete command.**
 
-This means that if you delete something with rm, it's gone. Therefore, use `rm` with care and check what you write twice before pressing enter!
+This means that if you delete something with `rm`, it's gone. Therefore, use `rm` with care and check what you write twice before pressing enter!
 
 Also, NEVER run `rm -r` or `rm -rf` on the root `/` folder or any important path. And yes, we have seen recommendations to use these combinations online. Therefore, always double check the path or file name before pressing enter when using the `rm` command.
 :::
 
 ::: {.callout-question .callout-warning collapse=false}
-# Question 
+# Task 
 
-Download another genome:
+Download another fasta file:
 
 - Download another fasta file (not LjRoot303) from this url: https://github.com/ndombrowski/MicEco2025/tree/main/data. To get the link, 
-    - Click on the genome you want to download
+    - Click on the file you want to download
     - Right click on `view raw` and select `copy link`
     - Use wget to download that file
-- Make sure that the new genome stored in the data folder
+- Make sure that the new file stored in the data folder
 - Check the file size (hint: use the -h option with ls)
 
 ::: {.callout-answer .callout-warning collapse=true}
@@ -369,7 +361,7 @@ ls -lh data/
 You might have noticed that the file we downloaded ends with `.gz`. This extension is used for files that are compressed to make the file smaller. This is useful for saving files, but this makes the file unreadable for a human. To be able to learn how to read the content of a file, let's learn how to uncompress the file first.
 
 ```{bash}
-# Download another genome  
+# Download another file  
 # Here, we use the -P option to directly download the file into the data folder 
 wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz -P data
 
@@ -395,7 +387,7 @@ Now that we have the uncompressed file we can use different ways to explore the 
 
 ### `cat`: Print the full file
 
-We can use `cat` print the entire file to the screen, this is fine for short files, but overwhelming for long ones where we would see hundreds of line just flying over the screen.
+We can use `cat` print the entire file to the screen, this is useful for smaller files, but can get overwhelming for long ones where you would see hundreds of line just flying over the screen.
 
 ```{bash}
 cat data/LjRoot303.fasta
@@ -494,7 +486,7 @@ grep -c ">" data/LjRoot303.fasta
 ```
 
 
-::: {.callout-tip title="The structure of a fasta file" collapse="false"}
+::: {.callout-tip title="Tip: The structure of sequence files" collapse="false"}
 
 A sequence FASTA file is a text based format to store DNA or peptide sequences.  It should always look something like this:
 
@@ -504,12 +496,16 @@ The header always starts with a `>` followed by descriptive information. In a ne
 
 By convention the extension `.fna` is used to store fasta sequences from nucleotides and `.faa` is used to store fasta sequences from proteins. The extension `.fasta` can contain either nucleotide or protein sequences.
 
+Another common extension is `fastq`. Fastq files are used to store sequencing data generated by sequencers and contain four lines of information: (i) the sequence header, (ii) the sequence itself, (iii) a separator and (iv) information about the quality of each single base pair in the sequence. They typically look something like this:
+
+![](../img/fastq_format.png)
+
 :::
 
 
 
 ::: {.callout-question .callout-warning collapse=false}
-# Question 
+# Task 
 
 1. Uncompress the file for GCF_000714595
 2. Compare the number of 16S rRNA gene sequences for GCF_000714595 and LjRoot303
@@ -523,7 +519,7 @@ By convention the extension `.fna` is used to store fasta sequences from nucleot
 gzip -d data/GCF_000714595.fasta.gz
 
 # Count the number of contigs 
-# We work with genomes with 1 and 9 16S rRNA gene sequences
+# LjRoot303 has 1 and and GCF_000714595 9 16S rRNA gene sequences
 grep -c ">" data/LjRoot303.fasta
 grep -c ">" data/GCF_000714595.fasta
 ```
@@ -543,7 +539,7 @@ This can cause problems in, for example, 16S amplicon analyses:
 
 ## Working with multiple files
 
-So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files, for example, one FASTQ file per barcode. Let’s practice handling several files at once. Let's begin by getting more genomes and not only download genomes from human-background(files with Lj prefix) but also from a human background (files with GCF prefix):
+So far, we’ve worked with single files. In practice, sequencing data often comes as multiple files, for example, one file per strain or per sample. Let’s practice handling several files at once. Let's begin by getting more genomes and not only download 16S sequences from strains isolated from *Lotus japonicus* (files with Lj prefix) but also sequences from strains coming from a human background (files with GCF prefix):
 
 **Hint**: If you downloaded one of the genomes in the exercise before, then you don't need to run this wget command.
 
@@ -562,15 +558,19 @@ We now should have 5 files, 3 of which are still compressed.
 ::: {.callout-tip title="Hint: Downloading many files with a for loop" collapse="true"}
 Once you understand how to use `wget`, you can easily scale it up to download multiple files automatically using a **for loop**.
 
-For example, suppose you have a list of genome IDs in a file called `genomes.txt`, one ID per line:
+For example, suppose you have a list of all the accessions that were used in the lab experiments in a file called `accessions.txt`, one accession per line:
 
 ```
-LjRoot303
-GCF_000714595
-LjRoot59
-LjRoot60
 GCF_000009425
 GCF_000253315
+GCF_000714595
+GCF_014058685
+LjRoot303
+LjRoot44
+LjRoot59
+LjRoot60
+Root401
+Root68
 Root935
 ```
 
@@ -581,24 +581,24 @@ You can then loop through all URLs and download them into the `data` folder like
 mkdir playground 
 
 # Download all genomes at once
-for genome in $(cat genomes.txt); do
-    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/${genome}.fasta.gz -P playground
+for accession in $(cat accessions.txt); do
+    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/${accession}.fasta.gz -P playground
 done
 ```
 
 Here’s what happens:
 
-- `$(cat genomes.txt)` reads all lines from the file
-- `for genome in ...` goes through each line one by one
-- `wget github_path/${genome}.fasta.gz -P playground` downloads each genome into the playground folder. Here, the `${genome}` will get replaced with one line in `genomes.txt`
+- `$(cat accessions.txt)` reads all lines from the file
+- `for accession in ...` goes through each line one by one and stores an accession name in the `accession` variable
+- `wget github_path/${accession}.fasta.gz -P playground` downloads the compressed fasta file for each accession into the playground folder. Here, the `${accession}` will get replaced with one line in `accessions.txt`
 
 You can use this same loop structure to run any command on multiple files automatically. This is one of the main reasons the CLI is so powerful. For example, you could in one command count the number of contigs in all your genomes:
 
 ```{bash}
 # Download all genomes at once
-for genome in $(cat genomes.txt); do
-    echo $genome
-    zcat playground/${genome}.fasta.gz | grep -c ">"
+for accession in $(cat accessions.txt); do
+    echo $accession
+    zcat playground/${accession}.fasta.gz | grep -c ">"
 done
 ```
 
@@ -656,10 +656,10 @@ If you want to add (append) to an existing file instead of replacing it, use `>>
 Whenever you combine or modify files it is a good idea to do some sanity checks. Luckily, we already learned about useful ways to do this:
 
 ```{bash}
-# Check how many protein files are in the individual faa files 
+# Check how many 16S sequences are found in individual Lotus strains 
 grep -c ">" data/Lj*
 
-# Check how many protein files are in concatenated file
+# Check how many 16S sequences files are in concatenated file
 # Hopefully the numbers add up
 grep -c ">" results/lotus.fasta
 ```
@@ -670,7 +670,7 @@ grep -c ">" results/lotus.fasta
 # Question 
 
 1. Combine the 16S rRNA gene sequences from human-associated strains (GCF Prefix) into a new file that should be stored in the results folder
-2. Count the total number of contigs in the individual and the combined file
+2. Count the total number of 16S sequences in the individual and the combined file
 
 ::: {.callout-answer .callout-warning collapse=true}
 # Click to see the answer 
@@ -695,7 +695,7 @@ So far, we’ve run one command at a time, for example. But often, you might wan
 For example, we might want to ask how many sequences all human-associated strains have together but might not want to store a concatenated file to do so. Here, we could do the following instead:
 
 ```{bash}
-# Combine two files and count the total number of contigs
+# Combine two files and count the total number of 16S sequences in the combined file
 cat data/GCF*.fasta | grep -c ">"
 ```
 
@@ -703,6 +703,6 @@ Here:
 
 - `cat data/GCF*.fasta` concatenates fasta files from all human-associated strains
 - The pipe (`|`) sends the combined contigs directly to the `grep` command
-- `grep -c ">"` only counts how many headers are found in the two genomes
+- `grep -c ">"` only counts how many headers are found in the combined file
 
 

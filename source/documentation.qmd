@@ -3,14 +3,14 @@
 
 Documenting your code is crucial for both your future self and anyone else who might work with your code. Good documentation helps others (and your future self) understand the purpose, functionality, and usage of your scripts. You want to document your code in the same way that you would write a detailed lab notebook.
 
-For more in-depth guidance, see [A Guide to Reproducible Code in Ecology and Evolution](https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf). While examples are mainly in R, the principles are general and apply across programming languages.
+For more in-depth guidance, see [A Guide to Reproducible Code in Ecology and Evolution](https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf). While the examples are mainly in R, the principles are general and apply across programming languages.
 
-To see how code documentation looks like in a real-world context, have a look at an example workflow I wrote for a previous analysis. It shows how to describe each analysis step, software dependency, and command used — in a way that allows someone else to reproduce the entire analysis from scratch and for me to remember what I did a month later:
+To see how code documentation looks like in a real-world context, have a look at an example workflow I wrote for a previous analysis. It shows how to describe each analysis step, software dependency, and command used in a way that allows someone else to reproduce the entire analysis from scratch and for me to remember what I did a month later:
 
 - View the [raw code](https://github.com/ndombrowski/example_repo/blob/main/scripts/nanoclass_workflow.qmd) 
 - View the [rendered HTML version](https://ndombrowski.github.io/example_repo/scripts/nanoclass_workflow.html)
 
-This workflow documents a 16S rRNA amplicon analysis from Winogradsky columns, including:
+This workflow documents a 16S rRNA gene amplicon analysis from Winogradsky columns, including:
 
 - A project description and sample metadata table
 - All software dependencies and environment versions
@@ -18,7 +18,7 @@ This workflow documents a 16S rRNA amplicon analysis from Winogradsky columns, i
 - Comments explaining why a step was done
 - A structured layout (headings, subheadings, results summaries)
 
-Even if you don't understand all commands yet, notice how it reads almost like a lab notebook for code — each step has context, rationale, and expected results.
+Even if you don't understand all commands yet, notice how it reads almost like a lab notebook for code where each step has context, rationale, and description of the results.
 
 
 ## Choosing your editor
@@ -30,7 +30,7 @@ Avoid visual editors like Word, as they are not designed for code and can change
 One of the easiest solutions is to use a **plain text editor**, such as:
 
 - **TextEdit** (Mac)
-- **Notepad** (Windows)
+- **Notepad++** (Windows)
 
 These editors allow you to write and save code safely, but they lack advanced features like syntax highlighting or integrated code execution.
 
@@ -51,7 +51,7 @@ More info: [RMarkdown tutorial](https://rmarkdown.rstudio.com/lesson-1.html)
 
 ### Quarto in Rstudio
 
-**Quarto** is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options. This software was used to generate this tutorial.
+**Quarto** is a next-generation alternative to RMarkdown. It supports R, Python, and other languages, and offers more output formats and customization options. Quarto was also used to generate this tutorial.
 
 To create a Quarto document:
 
@@ -64,7 +64,7 @@ More info: [Quarto documentation](https://quarto.org/docs/get-started/hello/rstu
 
 ## Markdown for Documentation
 
-Markdown is a lightweight language for formatting text in your plain text, Rmarkdown or Quarto document. You can easily add headers, lists, links, code, images, and tables. You can use markdown inside a plain text editor or inside a Rmarkdown or Quarto document.
+Markdown is a lightweight language for formatting text in your plain text, Rmarkdown or Quarto document. You can easily add headers, lists, links, code, images, and tables. 
 
 **Headers:**
 

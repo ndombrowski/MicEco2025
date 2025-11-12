@@ -21,8 +21,8 @@ div.callout-answer.callout {
     width: 1.2rem;
     line-height: 1.6rem;
     text-align: center;
-    margin-right: 0.1rem;
-    vertical-align: middle;
+    margin-right: 0.6rem;
+    vertical-align: left;
   }
 
   .callout-icon::before {
@@ -36,12 +36,13 @@ div.callout-answer.callout {
   border-left: 4px solid $border-color-left;
 }
 
+
 div.callout-question.callout .callout-icon::before {
-  content: "?";
+  content: "🟪";
 }
 
 div.callout-answer.callout .callout-icon::before {
-  content: "✓";
+  content: "☑️";
 }
 
 

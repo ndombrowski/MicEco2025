@@ -68,7 +68,7 @@ Unlike macOS or Linux, Windows doesn’t include a Unix-style terminal by defaul
     - Gives you a full Linux environment directly on Windows
     - Recommended if you’re comfortable installing software or already have some command-line experience
     - Uses Ubuntu by default, which includes Bash and all standard Linux tools
-    - Installation guide:[ Microsoft WSL install instructions](https://learn.microsoft.com/en-us/windows/wsl/install)
+    - Installation guide: [ Microsoft WSL install instructions](https://learn.microsoft.com/en-us/windows/wsl/install)
 
 Once installed, open your terminal (MobaXterm or Ubuntu via WSL2) and verify that Bash is available:
 
