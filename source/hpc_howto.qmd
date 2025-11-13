@@ -52,11 +52,11 @@ ssh -X uvanetid@omics-h0.science.uva.nl
 
 If this is your **first time using Crunchomics**, you need to run a small Bash script to set up your account. This script will:
 
--   Add `/zfs/omics/software/bin` to your PATH. This basically allows Bash to locate and use the system-wide installed software available on Crunchomic
+-   Add `/zfs/omics/software/bin` to your PATH variable. This basically allows Bash to locate and use the system-wide installed software available on Crunchomics
 -   Set up a Python 3 environment with some useful Python packages pre-installed
 -   Create a link to your 500 GB personal directory inside your home directory, giving you plenty of space to store data and results
 
-To set up your account, run the following command:
+To set up your account, run the following commands:
 
 ```{bash}
 # First orient yourself by typing 
@@ -115,7 +115,7 @@ mamba -h
 
 #### Installing NanoPlot 
 
-[NanoPlot](https://github.com/wdecoster/NanoPlot) is a visualization tool for long-read sequencing data. We can easily install it, and other software, using mamba (or conda if mamba is unavailable). 
+[NanoPlot](https://github.com/wdecoster/NanoPlot) is a visualization tool for long-read sequencing data. We can install it, and other software, using mamba (or conda if mamba is unavailable). 
 
 ```{bash}
 # Check if NanoPlot is already available
@@ -156,7 +156,7 @@ cd personal
 mkdir data_analysis
 cd data_analysis 
 
-# Ensure that we are in the right folder 
+# Ensure that you are in the right folder 
 pwd
 ```
 
@@ -187,7 +187,7 @@ ll data/*.fasta
 
 Notes:
 
-- The -r option copies directories recursively, i.e. you want to copy everything in the directory(recursively)
+- The `-r` option copies directories recursively, i.e. you want to copy everything in the directory and the directory itself (recursively)
 - It’s helpful to keep two terminal windows open: one for your local computer and one for the HPC
 - Run this command from inside your local `data_analysis` folder (the one you created earlier)
 
@@ -225,7 +225,7 @@ squeue
 
 This displays all jobs submitted to the system, and might look something like this:
 
-![](../img/squeue.png){width="70%" fig-align="left"}
+![](../img/squeue.png){width="90%" fig-align="left"}
 
 Some useful columns to know:
 
@@ -242,7 +242,7 @@ squeue -u $USER
 
 ### `srun`:Submitting a job interactively
 
-Now that we’ve seen how to check the job queue, let’s learn how to actually run jobs on the compute nodes. There are two main ways to submit jobs: with `srun` and with `sbatch`. We'll start with `srun`, which you typically use when:
+Now that we’ve seen how to check the job queue, let’s learn how to actually run jobs on the compute nodes. There are two main ways to submit jobs: `srun` and with `sbatch`. We'll start with `srun`, which you typically use when:
 
 - You want to run tasks **interactively** and see the output directly on your screen
 - You are **testing or debugging** your commands before writing a job script
@@ -269,7 +269,7 @@ So the arguments after `srun` and before `echo` are where you tell SLURM what re
 
 ### Running a analysis with Seqkit interactively
 
-Next, let’s use srun for something more useful. Well analyze our genomes using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files.
+Next, let’s use srun for something more useful. First, we will analyze the fasta files that we have explored using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files.
 
 > **Tip**: Whenever you use a tool for the first time, check its help page (e.g., `seqkit -h`) to see all available options.
 
@@ -317,13 +317,13 @@ Remember: Over-requesting resources can make jobs wait longer in the queue — a
 
 
 ::: {.callout-question .callout-warning collapse=false}
-# Question 
+# Tasks 
 
-Now it’s your turn to run an srun job interactively. Follow these steps:
+Now it’s your turn to run an srun job interactively by exploring the FASTQ files that you have generated during your practical. Follow these steps:
 
-**Question 1: Inspect the data**
+**Task 1: Inspect the data**
 
-Without uncompressing the FASTQ file, view the first few lines of `barcodeX.fastq.gz` using `zcat` and `head`. 
+Without uncompressing the FASTQ file, explore the content of the FASTQ files by viewing the first few lines of `barcodeX.fastq.gz` using `zcat` and `head`. 
 
 You can get the FASTQ file as follows:
 
@@ -340,12 +340,13 @@ You can get the FASTQ file as follows:
     wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode07.fastq.gz -P data/
     ```
 
+Have a look at the data and have a look the header, sequence and quality scores.
 
-**Question 2: Run seqkit interactively**
+**Tasks 2: Run seqkit interactively**
 
 Use `srun` to analyze `barcodeX.fastq.gz` with `seqkit stats`. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.
 
-**Question 3: Check the results**
+**Tasks 3: Check the results**
 
 Open the output file and answer the following:
 
@@ -384,7 +385,7 @@ Answers:
 
 ### `sbatch`: submitting a long-running job
 
-While `srun` is great for quick, interactive runs, most analyses on the HPC are submitted with **`sbatch`**, which lets jobs run in the background even after you log out.
+While `srun` is great for quick, interactive runs, a lot of analyses on the HPC are submitted with **`sbatch`**, which lets jobs run in the background even after you log out.
 
 Use `sbatch` when:
 
@@ -475,7 +476,7 @@ If your job fails:
 
 #### Step 5: `scancel`: Cancelling a job
 
-Sometimes you realize a job is stuck, misconfigured, or using the wrong resources. You can easily cancel it with:
+Sometimes you realize a job is stuck, misconfigured, or using the wrong resources. You can cancel it with:
 
 ```{bash}
 scancel <jobID>
@@ -495,8 +496,9 @@ Always cancel jobs that are running incorrectly or stuck in a queue too long. Th
 
 
 ::: {.callout-question .callout-warning collapse=false}
+# Tasks
 
-**Exercise: Run NanoPlot with sbatch**
+**Task 1: Write a script to run NanoPlot with sbatch**
 
 Now you'll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
 
@@ -511,7 +513,7 @@ In your script, make sure to:
 - Use NanoPlot options to:  
     - Indicate the input is in **FASTQ** format  
     - Output a **TSV stats file**  
-    - Produce **bivariate dot plots**  
+    - Produce bivariate dot plots
     - Save all results in the new results folder  
 
 ```{bash}
@@ -538,10 +540,12 @@ NanoPlot ...
 ...
 ```
 
+**Task 2: Submit the job and inspect the results**
+
 Then:
 
-1. Submit your job with sbatch scripts/nanoplot.sh
-2. Use squeue to check whether it’s running
+1. Submit your job with sbatch `scripts/nanoplot.sh`
+2. Use `squeue` to check whether it’s running
 3. Inspect your log files (logs/nanoplot_*.out and logs/nanoplot_*.err)
 4. Use scp to copy the results folder to your own computer for viewing
 5. In your NanoPlot output, open:
@@ -589,7 +593,7 @@ echo "Job ended: "
 date
 ```
 
-Check your results:
+Submit the script and check your results:
 
 ```{bash}
 # Submit the job 
