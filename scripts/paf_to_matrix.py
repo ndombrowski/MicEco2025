@@ -181,6 +181,7 @@ def main():
 
     # Filter on query coverage, sequency identity and mapq to discard uncertain hits
     # But keep multimappers (map=0)
+    counts_before = df.groupby("sample").size()
     before_filter = len(df)
     df = df[
         (df.qcov >= coverage_threshold)
@@ -190,13 +191,23 @@ def main():
 
     after_filter = len(df)
     filtered_out = before_filter - after_filter
+    counts_after = df.groupby("sample").size()
 
-    print(f"Filtering summary:")
-    print(f"  Total alignments before filtering: {before_filter:,}")
-    print(f"  Alignments kept: {after_filter:,}")
-    print(
-        f"  Alignments removed: {filtered_out:,} ({filtered_out / before_filter:.1%} of total)\n"
+    # Combine into a summary table
+    per_sample_summary = (
+        pd.DataFrame({"before": counts_before, "after": counts_after})
+        .fillna(0)
+        .astype(int)
     )
+    per_sample_summary["removed"] = (
+        per_sample_summary["before"] - per_sample_summary["after"]
+    )
+    per_sample_summary["removed_frac_perc"] = (
+        per_sample_summary["removed"] / per_sample_summary["before"] * 100
+    )
+
+    print("\nPer-sample filtering summary:")
+    print(per_sample_summary.to_string())
 
     # ------------------- Generate table including multimappers ------------------ #
     # Count reads per target
@@ -220,7 +231,6 @@ def main():
     # Count reads per target
     counts = df_best.groupby(["sample", "tname"]).size().reset_index(name="reads")
 
-    # Add unmapped reads if stats are provided
     # Add unmapped reads if stats are provided
     if stats_path and stats_path.exists():
         stats = pd.read_csv(stats_path, sep="\t")
@@ -287,13 +297,11 @@ def main():
 
     # ------------------------------- Write to file ------------------------------ #
     otu_table_tax.to_csv(output_folder / "otu_table.tsv", sep="\t")
-    otu_table_multi_tax.to_csv(
-        output_folder / "otu_table_multimappers.tsv", sep="\t", index=False
-    )
+    otu_table_multi_tax.to_csv(output_folder / "otu_table_multimappers.tsv", sep="\t")
     otu_table_genus.to_csv(output_folder / "otu_table_genus.tsv", sep="\t")
 
     print(
-        f"otu_table.tsv, otu_table_multimappers.tsv and otu_table_genus.tsv written to {output_folder}"
+        f"\notu_table.tsv, otu_table_multimappers.tsv and otu_table_genus.tsv written to {output_folder}"
     )
 
 
