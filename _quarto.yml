@@ -32,6 +32,7 @@ format:
   #   titlepage: true
   #   include-in-header: source/titlepage.tex
 
+
 engine: knitr 
 execute:
   freeze: auto

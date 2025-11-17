@@ -51,6 +51,11 @@ This course is designed for students in microbial ecology with little or no prio
 
 ::: {.content-hidden}
 
+```{bash}
+# Standalone rendering 
+quarto render --profile standalone source/terminal.qmd
+```
+
 ::: {.callout-question .callout-warning collapse=false}
 # Question 
 

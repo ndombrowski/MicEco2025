@@ -1,0 +1,12 @@
+# _quarto-standalone.yml
+project:
+  output-dir: docs/standalone
+
+format:
+  html:
+    extends: html
+    embed-resources: true
+    toc: true
+    toc-title: Contents
+    toc-expand: 1
+    sidebar: false

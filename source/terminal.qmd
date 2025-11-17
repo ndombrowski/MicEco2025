@@ -1,5 +1,9 @@
 ---
 engine: knitr
+
+format:
+  html:
+    embed-resources: true
 ---
 
 
