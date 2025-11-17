@@ -10,3 +10,4 @@ format:
     toc-title: Contents
     toc-expand: 1
     sidebar: false
+    page-navigation: false

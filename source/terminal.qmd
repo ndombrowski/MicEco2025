@@ -83,10 +83,28 @@ echo $SHELL
 
 ## Sanity check
 
-After setup, open your terminal and type `echo $SHELL` and press enter. You should see something like this:
+**Task 1**
+
+After installing a software to open a terminal, open the terminal and type `echo $SHELL` and press enter. You should see something like this:
 
 ![](../img/terminal.png)
 
-If you see a prompt ending in `$` (for example `user@machine:~$`), your shell is ready to go and you are all set to follow along with the tutorial!
+If you see a prompt ending in `$` (for example `user@machine:~$`), your shell is ready to go.
+
+**Task 2**
+
+Confirm that you already have access to the UvA Crunchomics High-Performance Computer by typing the following (exchange `user` with your UvanetID and enter your UvA password when prompted):
+
+```{bash}
+ssh -X user@omics-h0.science.uva.nl
+```
+
+If you see the following, you are could to go. 
+
+![](../img/crunchomics_login.png)
+
+If you are not able to successfully login, first control that you typed the right user name and used the correct password when prompted.
+
+> Hint: You can log out of Crunchomics by typing `exit` or closing the terminal window.
 
 </div>

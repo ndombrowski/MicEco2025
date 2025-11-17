@@ -331,7 +331,7 @@ You can get the FASTQ file as follows:
 
     ```{bash}
     # Replace X with the barcode you used in the practical
-    cp <tba>/barcodeX.fastq.gz data
+    cp /zfs/omics/projects/education/miceco/data/practical/barcodeX.fastq.gz data
     ```
 
 1.  If you are following this tutorial independently you can get an example file as follows:
