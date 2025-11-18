@@ -3,3 +3,4 @@ _freeze
 data_analysis/
 /.quarto/
 **/*.quarto_ipynb
+slides/_extensions/

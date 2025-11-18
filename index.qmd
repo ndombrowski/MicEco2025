@@ -52,6 +52,12 @@ This course is designed for students in microbial ecology with little or no prio
 ::: {.content-hidden}
 
 ```{bash}
+#| echo: true
+#| output-location: fragment
+ls ../data/*fasta.gz
+```
+
+```{bash}
 # Standalone rendering 
 quarto render --profile standalone source/terminal.qmd
 quarto render --profile standalone source/documentation.qmd

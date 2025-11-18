@@ -1,0 +1,117 @@
+---
+title: |
+    Introduction to Data Analysis
+
+    in Microbial Ecology
+
+author: "Nina Dombrowski"
+logo: "../img/logo.png"
+format: 
+    revealjs: 
+        theme: [slides.scss, slides.css]
+        transition: fade
+        slide-number: true
+        style: "text-align: right; left: 10%"
+
+engine: knitr
+embed-resources: true
+
+revealjs-plugins:
+    - pointer
+    - editable
+filters:
+  - editable
+---
+
+## Introduction to Bioinformatics
+
+[Bioinformatics applies computational methods to store, manage, and analyse biological data]{.highlighted}
+
+- Experiments involving sequencing generates too much data to analyse manually
+- Your Nanopore sequencing generated ~ 100,000 sequencing reads
+- Computational tools allow you to store, filter and analyse such data
+
+
+## The Command Line Interface (CLI)
+
+[A text-based interface for giving instructions to a computer]{.highlighted} 
+
+![](../img/terminal2.png){.absolute width=606px height=353px left=0px top=224.957px}
+
+::: {.absolute width=437px height=272px left=612.932px top=270.821px style="font-size: 34px;"}
+<ul>
+
+<li>Allows to handle large datasets effectively</li>
+
+<li>Gives us access to many bioinformatic tools</li>
+
+<li>Easy to document and reproduce workflows</li>
+
+</ul>
+::: 
+
+
+## High Performance Computing (HPC)
+
+[A shared computer system that provides more memory, CPUs, space than a typical laptop]{.highlighted}
+
+</br>
+
+![](../img/crunchomics1.png)
+
+
+## Real-life application
+
+In this tutorial, you will analyse these reads to:
+
+- Determine which strains are present in the mixed communities
+- Quantify their relative abundances
+- Asses whether the counts fit with your assumptions about individual interactions
+
+
+## Workflow
+
+::: {.columns}
+
+::: {.column width="30%"}
+```{mermaid}
+flowchart TB
+    classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
+    classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] ---->|FASTA| D  
+
+    %% Workflow boxes
+    A[Raw reads] -->|FASTQ| B[Quality control]
+    B -->|FASTQ| C[Quality filtering]
+    C -->|FASTQ| D[Alignment to <br> Reference DB]
+    D -->|PAF| E[Count table]
+
+    %% Assign classes after nodes exist
+    class A,B,C,D,E greenfill
+    class DB dbfill
+
+    %% Arrow styles (index starts at 0 for first arrow)
+    linkStyle 0,1,2,3,4 stroke:#5B888C,stroke-width:2,color:#000, fill: none
+```
+
+:::
+
+
+::: {.column width="70%" .small}
+
+</br>
+
+- 16S Reference Database: publicly available curated 16S sequences (e.g., SILVA, Greengenes)
+- Quality control: remove reads that are too short or have low average quality
+- Quality filtering: trimming adapters or low-quality ends
+- Alignment: mapping filtered reads to the reference sequences to identify which strains are present
+- Count table: summarizes how many reads map to each strain
+:::
+:::
+
+
+## Practical part
+
+tba
