@@ -12,6 +12,9 @@ format:
         transition: fade
         slide-number: true
         style: "text-align: right; left: 10%"
+        preview-links: true
+        code-annotations: below
+        highlight-style: "vim-dark"
 
 engine: knitr
 embed-resources: true
@@ -19,6 +22,7 @@ embed-resources: true
 revealjs-plugins:
     - pointer
     - editable
+    - qrcode
 filters:
   - editable
 ---
@@ -71,22 +75,22 @@ In this tutorial, you will analyse these reads to:
 
 ## Workflow
 
-::: {.columns}
+</br>
+</br>
 
-::: {.column width="30%"}
 ```{mermaid}
-flowchart TB
+flowchart LR
     classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
     classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
-
-    %% Reference database node
-    DB[(16S <br> Reference  <br> Database)] ---->|FASTA| D  
 
     %% Workflow boxes
     A[Raw reads] -->|FASTQ| B[Quality control]
     B -->|FASTQ| C[Quality filtering]
-    C -->|FASTQ| D[Alignment to <br> Reference DB]
+    C -->|FASTQ| D[Mapping to <br> Reference DB]
     D -->|PAF| E[Count table]
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
 
     %% Assign classes after nodes exist
     class A,B,C,D,E greenfill
@@ -96,22 +100,79 @@ flowchart TB
     linkStyle 0,1,2,3,4 stroke:#5B888C,stroke-width:2,color:#000, fill: none
 ```
 
-:::
-
-
-::: {.column width="70%" .small}
-
 </br>
 
-- 16S Reference Database: publicly available curated 16S sequences (e.g., SILVA, Greengenes)
-- Quality control: remove reads that are too short or have low average quality
-- Quality filtering: trimming adapters or low-quality ends
-- Alignment: mapping filtered reads to the reference sequences to identify which strains are present
-- Count table: summarizes how many reads map to each strain
+::: {.absolute width=1038.16px height=160.597px left=-5.44323px top=490.062px style="font-size: 32px;"}
+
+PAF: 
+
+- Pairwise Alignment Format
+- A table with information about how each read maps to the reference
+
 :::
+
+
+## The FastQ format 
+
+[FASTQ format is a text-based format for storing a sequence and its corresponding quality scores]{.highlighted}
+
+::: {.fragment}
+
+![](../img/fastq_format_red.png){.absolute top=200px}
+
+:::
+
+
+## Phred scores
+
+[The Phred score is a measure for base quality. The larger the Phred value, the better the quality of a base]{.highlighted}
+
+::: {.fragment}
+
+![](../img/phred1.png){.absolute top=200px}
+
+:::
+
+
+## Phred scores
+
+[The Phred score is a measure for base quality. The larger the Phred value, the better the quality of a base]{.highlighted}
+
+![](../img/phred2.png){.absolute top=200px}
+
+
+## Bringing things together 
+
+::: {.small}
+```{bash}
+#| echo: true
+#| eval: false 
+
+# Run Nanoplot on FASTQ files to assess quality
+NanoPlot \                            # <1>
+    --fastq data/barcode01.fastq \    # <2>
+    -o QC_plots \                     # <2>
+    -t 2 \                            # <2>
+    --tsv_stats                       # <2>
+```
+
+1. Define what tool we want to use 
+2. Use options to modify the tools behavior
+:::
+
+:::{.fragment}
+![](../img/nanoplot.png){width=80%}
 :::
 
 
 ## Practical part
 
-tba
+You will have today and Monday to work on a practical and learn how to:
+
+- Navigate the command line
+- Work on an HPC
+- Analyze sequencing data
+
+{{< qrcode https://ndombrowski.github.io/MicEco2025// qr1 width=150 height=150 colorDark='#2d3e3f' >}}
+
+[https://ndombrowski.github.io/MicEco2025/](https://ndombrowski.github.io/MicEco2025/){.small}

@@ -1,14 +1,14 @@
 /*-- scss:defaults --*/
 
 // fonts
-@import 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap';
-@import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap';
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&family=Yanone+Kaffeesatz&display=swap');
 
-$font-family-sans-serif: "Inter", sans-serif;
+$font-family-sans-serif: 'Lato', Tahoma, sans-serif !default;
 $presentation-heading-color: #5B888C;
 $presentation-title-slide-text-align: "center";
 $body-color: #000000;
-
+$link-color: #5B888C;
+ 
 /*-- scss:rules --*/
 
 .sectionhead {
