@@ -87,13 +87,14 @@ flowchart LR
     A[Raw reads] -->|FASTQ| B[Quality control]
     B -->|FASTQ| C[Quality filtering]
     C -->|FASTQ| D[Mapping to <br> Reference DB]
-    D -->|PAF| E[Count table]
+    D -->|PAF| E[Quality filtering]
+    E -->|PAF| F[Count table]
 
     %% Reference database node
     DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
 
     %% Assign classes after nodes exist
-    class A,B,C,D,E greenfill
+    class A,B,C,D,E,F greenfill
     class DB dbfill
 
     %% Arrow styles (index starts at 0 for first arrow)
@@ -161,7 +162,7 @@ NanoPlot \                            # <1>
 :::
 
 :::{.fragment}
-![](../img/nanoplot.png){width=80%}
+![](../img/nanoplot.png){width=75%}
 :::
 
 

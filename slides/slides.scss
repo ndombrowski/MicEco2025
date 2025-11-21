@@ -62,3 +62,9 @@ $link-color: #5B888C;
 .mermaid svg {
 text-align: center;
 }
+
+.columns.bottom-align {
+  display: flex;
+  align-items: flex-end; /* bottom-align all columns */
+  gap: 1rem;             /* optional horizontal spacing */
+}
