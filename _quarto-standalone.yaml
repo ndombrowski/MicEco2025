@@ -1,6 +1,7 @@
 # _quarto-standalone.yml
 project:
-  output-dir: docs/standalone
+  output-dir: _standalone
+  resources: "!_slides"
 
 format:
   html:

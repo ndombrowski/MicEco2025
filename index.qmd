@@ -62,6 +62,13 @@ ls ../data/*fasta.gz
 quarto render --profile standalone source/terminal.qmd
 quarto render --profile standalone source/documentation.qmd
 quarto render --profile standalone source/hpc_intro.qmd
+
+cd _slides 
+quarto render
+
+# Render main doc (if needed)
+cd ..
+quarto render
 ```
 
 ::: {.callout-question .callout-warning collapse=false}

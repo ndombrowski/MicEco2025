@@ -1,0 +1,566 @@
+---
+title: |
+    Introduction to Data Analysis
+
+    in Microbial Ecology
+
+author: "Nina Dombrowski"
+logo: "../img/logo.png"
+format: 
+    revealjs: 
+        theme: [slides.scss, slides.css]
+        transition: fade
+        slide-number: true
+        style: "text-align: right; left: 10%"
+        preview-links: true
+        code-annotations: below
+        highlight-style: "vim-dark"
+
+engine: knitr
+embed-resources: true
+
+revealjs-plugins:
+    - pointer
+    - editable
+    - qrcode
+filters:
+  - editable
+---
+
+## Workflow
+
+</br>
+</br>
+
+```{mermaid}
+flowchart LR
+    classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
+    classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
+
+    %% Workflow boxes
+    A[Raw reads] -->|FASTQ| B[Quality control]
+    B -->|FASTQ| C[Quality filtering]
+    C -->|FASTQ| D[Mapping to <br> Reference DB]
+    D -->|PAF| E[Quality filtering]
+    E -->|PAF| F[Count table]
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
+
+    %% Assign classes after nodes exist
+    class A,B,C,D,E,F greenfill
+    class DB dbfill
+
+    %% Arrow styles (index starts at 0 for first arrow)
+    linkStyle 0,1,2,3,4,5 stroke:#5B888C,stroke-width:2,color:#000, fill: none
+```
+
+</br>
+
+
+## Quality filtering
+
+</br>
+</br>
+
+```{mermaid}
+flowchart LR
+    classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
+    classDef darkgreenfill fill:#365154,stroke:#333,stroke-width:1,color:#fff;
+    classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
+
+    %% Workflow boxes
+    A[Raw reads] -->|FASTQ| B[Quality control]
+    B -->|FASTQ| C[Quality filtering]
+    C -->|FASTQ| D[Mapping to <br> Reference DB]
+    D -->|PAF| E[Quality filtering]
+    E -->|PAF| F[Count table]
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
+
+    %% Assign classes after nodes exist
+    class A,B,C darkgreenfill
+    class D,E,F greenfill
+    class DB dbfill
+
+    %% Arrow styles (index starts at 0 for first arrow)
+    linkStyle 0,1,2,3,4,5 stroke:#5B888C,stroke-width:2,color:#000, fill: none
+```
+
+</br>
+
+
+## Quality filtering
+
+![](../img/nanoplot.png){.absolute width=1031.15px height=450.01px left=15.0766px top=80.8344px}
+
+
+## Quality filtering
+
+![](../img/nanoplot2.png){.absolute width=1031.15px height=450.01px left=15.0766px top=80.8344px}
+
+:::{.absolute width=619.043px height=236.331px left=72.824px top=544.894px style="font-size: 1.1rem;"}
+**Useful Tools**:   
+
+- Porechop (adapter removal) 
+- Chopper 
+- Filtlong 
+- ... 
+:::
+
+
+## Read mapping
+
+</br>
+</br>
+
+```{mermaid}
+flowchart LR
+    classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
+    classDef darkgreenfill fill:#365154,stroke:#333,stroke-width:1,color:#fff;
+    classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
+
+    %% Workflow boxes
+    A[Raw reads] -->|FASTQ| B[Quality control]
+    B -->|FASTQ| C[Quality filtering]
+    C -->|FASTQ| D[Mapping to <br> Reference DB]
+    D -->|PAF| E[Quality filtering]
+    E -->|PAF| F[Count table]
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
+
+    %% Assign classes after nodes exist
+    class D,E darkgreenfill
+    class A,B,C,F greenfill
+    class DB dbfill
+
+    %% Arrow styles (index starts at 0 for first arrow)
+    linkStyle 0,1,2,3,4,5 stroke:#5B888C,stroke-width:2,color:#000, fill: none
+```
+
+</br>
+
+
+
+## Read mapping
+
+::: {.r-stack}
+![](../img/read_mapping_min2.svg){width=800}
+
+![](../img/read_mapping_min1.svg){.fragment width=800}
+
+![](../img/read_mapping_all.svg){.fragment width=800}
+:::
+
+
+
+::: {.notes}
+Mapping = coarse placement of a read on the reference (approximate location)
+Alignment = fine-grained comparison at each base, showing matches and mismatches
+
+Quality filtering: 
+
+- Remove reads with too many mismatches, too short coverage, ...
+- If reads map to multiple references decide on the best match
+:::
+
+
+
+## Multi-mappers
+
+</br>
+
+![](../img/multi-mappers.svg)
+
+**Multi-mapping** reads are reads that are mapping to multiple loci on the reference genome.
+
+
+
+## Multi-mappers
+
+</br>
+
+![](../img/multi-mappers2.svg)
+
+
+We can use mismatches and differences in read coverage to select the best match.
+
+
+
+## Count table and what comes next
+
+</br>
+</br>
+
+```{mermaid}
+flowchart LR
+    classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
+    classDef darkgreenfill fill:#365154,stroke:#333,stroke-width:1,color:#fff;
+    classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
+
+    %% Workflow boxes
+    A[Raw reads] -->|FASTQ| B[Quality control]
+    B -->|FASTQ| C[Quality filtering]
+    C -->|FASTQ| D[Mapping to <br> Reference DB]
+    D -->|PAF| E[Quality filtering]
+    E -->|PAF| F[Count table]
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
+
+    %% Assign classes after nodes exist
+    class F darkgreenfill
+    class A,B,C,D,E greenfill
+    class DB dbfill
+
+    %% Arrow styles (index starts at 0 for first arrow)
+    linkStyle 0,1,2,3,4,5 stroke:#5B888C,stroke-width:2,color:#000, fill: none
+```
+
+</br>
+
+
+
+## Count table and what comes next {.smaller}
+
+```{r}
+#| eval: true
+library(tidyverse)
+library(ggplot2)
+library(gt)
+
+# Extreme competition counts
+counts <- tribble(
+  ~Taxon,            ~C1_rep1, ~C1_rep2, ~C1_rep3, ~C2_rep1, ~C2_rep2, ~C2_rep3,
+  "Pseudomonas",         900,       850,       800,       300,       400,       250,
+  "Streptomyces",          0,         0,         0,       800,       3600,       850, 
+  "Flavobacterium",       800,       600,       1200,       900,     4200,       850,
+)
+
+counts_extra <- counts %>%
+  bind_rows(
+    tibble(
+      Taxon = "Total",
+      C1_rep1 = sum(.$C1_rep1),
+      C1_rep2 = sum(.$C1_rep2),
+      C1_rep3 = sum(.$C1_rep3),
+      C2_rep1 = sum(.$C2_rep1),
+      C2_rep2 = sum(.$C2_rep2),
+      C2_rep3 = sum(.$C2_rep3)
+    )
+  )
+
+main_counts <- counts_extra %>% filter(Taxon != "Total")
+total_row <- counts_extra %>% filter(Taxon == "Total")
+
+expected <- tribble(
+  ~Culture, ~Taxon,
+  "C1",     "Pseudomonas",
+  "C1",     "Flavobacterium",
+  "C2",     "Pseudomonas",
+  "C2",      "Flavobacterium",
+  "C2",     "Streptomyces",
+)
+
+expected |> 
+  gt() |> 
+  tab_style(
+    style = list(cell_fill(color = "grey95")),
+    locations = cells_body(rows = Culture == "C1")
+  ) |> 
+  tab_style(
+    style = list(cell_fill(color = "grey85")),
+    locations = cells_body(rows = Culture == "C2")
+  ) |> 
+  cols_align(
+    align = "center",
+    columns = starts_with("C")
+  ) |> 
+  tab_options(
+    table.align = "left",           
+    table.font.size = pct(80)      
+  )
+```
+
+</br>
+
+::: {.r-stack} 
+
+:::{.fragment .absolute top="440"}
+```{r}
+counts |> 
+  gt() |> 
+  tab_style(
+    style = list(cell_fill(color = "grey95")),
+    locations = cells_body(columns = C1_rep1:C1_rep3)
+  ) |> 
+  tab_style(
+    style = list(cell_fill(color = "grey85")),
+    locations = cells_body(columns = C2_rep1:C2_rep3)
+  ) |> 
+  tab_style(
+    style = list(cell_fill(color = "white")),
+    locations = cells_body(rows = Taxon == "Total")
+  ) |> 
+  cols_align(
+    align = "center",
+    columns = starts_with("C")
+  ) |> 
+  tab_options(
+    table.align = "left",
+    table.font.size = pct(100)
+  )
+```
+:::
+
+
+:::{.fragment .absolute top="440"}
+```{r}
+counts_extra |> 
+  gt() |> 
+  tab_style(
+    style = list(cell_fill(color = "grey95")),
+    locations = cells_body(columns = C1_rep1:C1_rep3)
+  ) |> 
+  tab_style(
+    style = list(cell_fill(color = "grey85")),
+    locations = cells_body(columns = C2_rep1:C2_rep3)
+  ) |> 
+  tab_style(
+    style = list(cell_fill(color = "white")),
+    locations = cells_body(rows = Taxon == "Total")
+  ) |> 
+  cols_align(
+    align = "center",
+    columns = starts_with("C")
+  ) |> 
+  tab_options(
+    table.align = "left",
+    table.font.size = pct(100)
+  )
+```
+:::
+
+
+:::
+
+## Data wrangling {.smaller}
+
+::: {.columns .bottom-align}
+
+::: {.column width="50%"}
+```{r}
+#| eval: true
+#| echo: true
+
+# Data re-structuring
+counts_long <- counts |> 
+    # Convert to long format
+    pivot_longer(
+        cols = starts_with("C"),
+        names_to = "Sample",
+        values_to = "Count"
+    ) |> 
+    # Order taxa by most abundant
+    mutate(Taxon = fct_reorder(Taxon, Count)) |> 
+    separate_wider_delim(Sample, delim = "_", names = c("Culture", "Rep"), cols_remove = FALSE) |> 
+    # Calculate relative abundance
+    group_by(Sample) |> 
+    mutate(RelAbundance = Count / sum(Count) * 100) |> 
+    ungroup()
+
+# Plotting
+p <- ggplot(counts_long, aes(x = Sample, y = RelAbundance, fill = Taxon)) +
+  geom_col(width = 0.9) +
+  scale_fill_manual(values = c('#CCEDB1', '#41B7C4', '#144348ff')) +
+  labs(x = "", y = "Relative abundance (%)", fill = "Genus") +
+  facet_wrap(~Culture, scales = "free_x") +
+  theme_classic()
+```
+:::
+
+::: {.column width="50%"}
+```{r}
+#| eval: true
+#| echo: false
+#| fig-width: 6
+#| fig-height: 4
+p
+```
+:::
+:::
+
+
+
+## Statistics {.smaller}
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Filter taxa based on expected presence 
+filtered_counts <- counts_long |> 
+  inner_join(expected, by = c("Culture", "Taxon"))
+
+# Run ANOVA
+res_aov <- aov(RelAbundance ~ Taxon * Culture, data = filtered_counts)
+summary(res_aov)
+```
+
+</br>
+
+:::{.fragment}
+
+```{r}
+#| eval: true
+#| echo: true
+
+# Run Posthoc test
+res_tukey <- TukeyHSD(res_aov)
+res_tukey$`Taxon:Culture` |> 
+  as.data.frame() |> 
+  filter(`p adj` < 0.05)
+```
+
+:::
+
+:::{.notes}
+
+- The expected table encodes the true composition of each culture.
+- Streptomyces rows in C1 are artifacts of merging datasets, not biologically meaningful.
+- Filtering before running ANOVA removes these biologically impossible combinations, so the model now reflects the actual experimental design.
+:::
+
+
+## Data interpretation
+
+</br>
+</br>
+
+```{mermaid}
+flowchart LR
+    classDef greenfill fill:#5B888C,stroke:#333,stroke-width:1,color:#fff;
+    classDef dbfill fill:#E2F0F1,stroke:#333,stroke-width:1,color:#333;
+    classDef darkgreenfill fill:#365154,stroke:#333,stroke-width:1,color:#fff;
+
+    %% Workflow boxes
+    A[Raw reads] -->|FASTQ| B[Quality control]
+    B -->|FASTQ| C[Quality filtering]
+    C -->|FASTQ| D[Mapping to <br> Reference DB]
+    D -->|PAF| E[Quality filtering]
+    E -->|PAF| F[Count table]
+
+    %% Reference database node
+    DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
+
+    %% Assign classes after nodes exist
+    class A,B,C,D,E,F darkgreenfill
+    class DB dbfill
+
+    %% Arrow styles (index starts at 0 for first arrow)
+    linkStyle 0,1,2,3,4,5 stroke:#5B888C,stroke-width:2,color:#000, fill: none
+```
+
+</br>
+
+[Once you have visualized your data and performed statistics, you can check whether the results fit the hypotheses you have made based on your interaction experiments]{.highlighted}
+
+
+
+## Statistics {.smaller visibility="hidden"}
+
+```{r}
+#| eval: true
+#| echo: false
+parse_TukeyHSD <- function(tukey_res) {
+  df <- as.data.frame(tukey_res[[1]])
+  df$comparison <- rownames(df)
+  
+  # Add significance stars
+  df$p.adj.signif <- cut(
+    df$`p adj`,
+    breaks = c(-Inf, 0.001, 0.01, 0.05, Inf),
+    labels = c("***", "**", "*", "ns")
+  )
+  
+  # Reorder columns
+  df <- df[, c("comparison", "diff", "lwr", "upr", "p adj", "p.adj.signif")]
+  
+  return(df)
+}
+```
+
+```{r}
+#| eval: true
+#| echo: true
+# Filter taxa based on expected presence 
+filtered_counts <- counts_long |> 
+  inner_join(expected, by = c("Culture", "Taxon"))
+
+# Split data by Culture
+split_data <- filtered_counts |> 
+  group_by(Culture) |> 
+  group_split(.keep = TRUE) 
+
+# Run ANOVA for each culture
+anova_list <- lapply(split_data, function(df) {
+  aov(RelAbundance ~ Taxon, data = df)
+})
+
+names(anova_list) <- sapply(split_data, function(df) df$Culture[1])
+
+lapply(anova_list, summary)
+```
+
+
+## Statistics {.smaller visibility="hidden"}
+
+```{r, results = 'asis'}
+#| eval: true
+#| echo: true
+
+# Run posthoc test
+tukey_list <- lapply(split_data, function(df) {
+  if (n_distinct(df$Taxon) > 2) {
+    parse_TukeyHSD(TukeyHSD(aov(RelAbundance ~ Taxon, data = df)))
+  } else {
+    NULL
+  }
+})
+
+names(tukey_list) <- sapply(split_data, function(df) df$Culture[1])
+```
+
+</br>
+
+```{r, results = 'asis'}
+#| eval: true
+#| echo: false
+
+for (culture_name in names(tukey_list)) {
+  tukey_result <- tukey_list[[culture_name]]
+  if (!is.null(tukey_result)) {
+    cat("
+
+Tukey Results for culture ", culture_name, "
+")
+    df <- gt(as.data.frame(tukey_result)) |> tab_options(table.align = "left")
+    print(df)
+  }
+} 
+```
+
+
+::: {.notes}
+https://www.statology.org/understanding-anova-when-and-how-to-use-it-in-your-research/
+https://www.geeksforgeeks.org/r-language/performing-anova-for-multiple-variables-in-r/
+
+```{r}
+temp <- aov(RelAbundance ~ Taxon * Culture, data = filtered_counts)
+summary(temp)
+
+TukeyHSD(temp)
+```
+:::

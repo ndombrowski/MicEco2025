@@ -2,6 +2,9 @@ project:
   type: book
   output-dir: docs
   execute-dir: project
+  resources:
+    - _standalone/source/*html
+    - _slides/*html
 
 book:
   title: "Microbial Ecology: Introduction into Data Analysis"

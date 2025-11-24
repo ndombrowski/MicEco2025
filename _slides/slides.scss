@@ -1,0 +1,70 @@
+/*-- scss:defaults --*/
+
+// fonts
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&family=Yanone+Kaffeesatz&display=swap');
+
+$font-family-sans-serif: 'Lato', Tahoma, sans-serif !default;
+$presentation-heading-color: #5B888C;
+$presentation-title-slide-text-align: "center";
+$body-color: #000000;
+$link-color: #5B888C;
+ 
+/*-- scss:rules --*/
+
+.sectionhead {
+  font-size: 1.0em;
+  text-align: center;
+  color: $presentation-heading-color;
+  font-family: $font-family-sans-serif;
+  background-color: $body-bg;
+  margin: 1px;
+  padding: 2px 2px 2px 2px;
+  width: 120px;
+  border-left: 10px solid;
+}
+
+.reveal h2 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.small {
+  font-size: 0.75em;
+}
+
+.highlighted {
+  font-weight: bold;
+  font-size: 1.05em;
+}
+
+.reveal .slide-logo {
+  height: 100px !important;
+  width: 100px !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+.title {
+  font-size: 70px !important;
+  font-weight: bolder;
+}
+
+.quarto-title-author-name {
+  font-size: 40px;
+}
+
+.mermaid svg .node text {
+  text-anchor: middle;      // horizontally center text
+  dominant-baseline: middle; // vertically center text
+}
+
+.mermaid svg {
+text-align: center;
+}
+
+.columns.bottom-align {
+  display: flex;
+  align-items: flex-end; /* bottom-align all columns */
+  gap: 1rem;             /* optional horizontal spacing */
+}
