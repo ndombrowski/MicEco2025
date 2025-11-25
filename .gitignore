@@ -4,3 +4,4 @@ data_analysis/
 /.quarto/
 **/*.quarto_ipynb
 slides/_extensions/
+source/miceco2025_analysis_files/

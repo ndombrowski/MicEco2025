@@ -1,0 +1,981 @@
+---
+title: "Analyse strain-mix data"
+
+author: Nina Dombrowski
+date-modified: last-modified
+date: 11/05/2024
+
+engine: knitr 
+
+execute:
+  eval: false
+format:
+  html:
+    toc: true
+    embed-resources: true
+---
+
+
+# Description
+
+In order to develop the workflow different microbial strains (see below) were mixed in different combinations, grown for a while in liquid media, DNA isolated and the 16S amplified and sequenced with Nanopore. In total 15 combinations were tested and 15 barcoded datasets generated. Here, I will test the different tools and whether all species can be successfully recovered from the sequencing data. The specific  details of the communities are as follows:
+
+- S1.1-S1.3 (bc01-bc03)  
+  - LjRoot60            Pseudoxanthomonas
+  - LjRoot59            Pseudomonas 
+  - Root401             Pseudomonas
+  - Root935             Flavobacterium 
+- S2.1-S2.3             (bc04-bc06)  
+  - LjRoot44            Microbacterium
+  - LjRoot60            Pseudoxanthomonas
+  - Root401             Pseudomonas
+  - Root935             Flavobacterium
+- H1.1-H1.3 (bc07-bc09) 
+  - GCF_000009425       Lactococcus lactis
+  - GCF_000009425       Lactococcus lactis ***(verify)
+  - GCF_000253315       Staphylococcus salivarius 
+- H2.1-H2.3 (bc10-bc12) 
+  - GCF_000009425       Lactococcus lactis
+  - GCF_014058685       Lactobacillus johnsonni
+  - GCF_000253315       Streptococcus salivarius
+  - GCA_000714595       Escherichia coli
+- H3.1-H3.3 (bc13-bc15) 
+  - GCF_000009425        Lactocccus lactis
+  - GCF_014058685        Lactobacillus johnsonni
+
+We also have Root68 (Pseudomonas) but it was not part of any of the tested combinations.
+
+## Get genomes and 16S sequences
+
+Strain names were provided by Atharv Ambekar and the info was used to download the assemblies and rRNA sequences from [AT-sphere](https://www.at-sphere.com/ccquery/ccview/?sort=-GFFs) into `data/16s` and `data/genomes`. These genomes already have the genomeID in the fasta header, so no cleaning needed to be done for those genomes.
+
+The genomes from NCBI were first downloaded and some initial cleaning of the header done for standardization of the two sources.
+
+```{bash}
+# Genome 
+## Download
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/014/058/685/GCF_014058685.1_ASM1405868v1/GCF_014058685.1_ASM1405868v1_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/009/425/GCF_000009425.1_ASM942v1/GCF_000009425.1_ASM942v1_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/253/315/GCF_000253315.1_ASM25331v1/GCF_000253315.1_ASM25331v1_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/714/595/GCF_000714595.1_ASM71459v1/GCF_000714595.1_ASM71459v1_genomic.fna.gz
+
+## Parse NCBI genomes
+gzip -d *gz
+
+for file in *fna; do 
+  genome=$(echo $file | cut -f1 -d ".")
+
+  echo "Processing $genome..."
+    sed -E "/^>/ {
+    s/^>/>${genome}-/;   # prefix genome name
+    s/ .*//;             # remove anything after first space
+    s/\./_/g;            # replace dot with underscore
+    }" "$file" > data/genomes/${genome}.fna
+done
+
+rm *fna
+
+## Do some parsing for At-sphere genomes to have a clear `-` separator
+for genome in data/genomes/*Root*.fna; do
+  sed -i 's/_/-/' $genome
+done 
+
+# Amplicon
+## Download 
+wget  https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/014/058/685/GCF_014058685.1_ASM1405868v1/GCF_014058685.1_ASM1405868v1_rna_from_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/009/425/GCF_000009425.1_ASM942v1/GCF_000009425.1_ASM942v1_rna_from_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/253/315/GCF_000253315.1_ASM25331v1/GCF_000253315.1_ASM25331v1_rna_from_genomic.fna.gz
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/714/595/GCF_000714595.1_ASM71459v1/GCF_000714595.1_ASM71459v1_rna_from_genomic.fna.gz
+
+## Extract only 16S sequence and deal with multi-line fasta 
+gzip -d *fna 
+
+grep "16S ribosomal" *fna
+
+for file in *_rna_from_genomic.fna; do
+  genome=$(echo $file | cut -f1 -d ".")
+  echo "Extracting 16S from $genome..."
+
+  awk -v g="$genome" '
+    # Find headers
+    /^>/ {
+      # Default: stop capturing once we hit a new header
+      capture=0
+      # Find headers from 16S sequences
+      if ($0 ~ /16S ribosomal/) {
+        # Turn on capturing for the following lines
+        capture=1
+        # Extract the identifier immediately after "rrna_"
+        if (match($0, /rrna_([^ ]+)/, a)) {
+          id=a[1]
+          print ">" g "-" id
+        } else {
+          print ">" g "-unknown"
+        }
+      }
+      next
+    }
+    # for all non-header lines print if capturing is on
+    capture { print }
+  ' "$file" > data/16S/${genome}_16S.fasta
+done
+
+grep -c ">" data/16S/*.fasta
+rm *fna
+```
+
+Found 16S sequences per genome:
+
+- data/16S/GCF_000009425_16S.fasta:6
+- data/16S/GCF_000253315_16S.fasta:6
+- data/16S/GCF_000714595_16S.fasta:9
+- data/16S/GCF_014058685_16S.fasta:7
+- data/16S/LjRoot303.fasta:1
+- data/16S/LjRoot44.fasta:1
+- data/16S/LjRoot59.fasta:1
+- data/16S/LjRoot60.fasta:1
+- data/16S/Root401.fasta:1
+- data/16S/Root68.fasta:1
+- data/16S/Root935.fasta:1
+
+
+## Investigate 16S amplicon sequence
+
+### Extract amplicon
+
+Next, I used the primer information from Peter Kuperus to extract the exact amplicon sequence from the genome. I did this to check if we get more than one amplicon and also compared the extracted sequence with the downloaded 16s.
+
+rev_rc: AAGTCGTAACAAGGTAACCG
+
+```{bash}
+mkdir data/amplicons
+
+# Run in silico PCR on all genomes
+for genome in data/genomes/*fna; do
+    id=$(basename $genome .fna)
+    
+    echo "-------------------------------------"
+    echo "Start analysis of $id"
+    echo "-------------------------------------"
+
+    python scripts/insilico_pcr.py \
+        --fasta $genome \
+        --fasta_out ./${id}_16S_amplicon.fna \
+        --fwd_primer AGAGTTTGATCMTGGCTCAG \
+        --rev_primer CGGTTACCTTGTTACGACTT \
+        --max_errors 1 \
+        --min_len 1000 \
+        --max_len 1600
+
+done
+
+# Run in silico PCR on published fasta for Root68 
+# (since fwd sits on end of contig when run on the genome and thus only a very short 16s is extracted)
+python scripts/insilico_pcr.py \
+        --fasta data/16S/Root68.fasta \
+        --fasta_out data/amplicons/Root68_16S_amplicon.fna \
+        --fwd_primer AGAGTTTGATCMTGGCTCAG \
+        --rev_primer CGGTTACCTTGTTACGACTT \
+        --max_errors 1 \
+        --min_len 1000 \
+        --max_len 1600
+
+# Standardize the name 
+sed -i "s/_/-/" data/amplicons/Root68_16S_amplicon.fna
+
+# Combine 32 amplicons (coming from 11 genomes)
+grep -c ">" data/amplicons/*fna
+cat data/amplicons/*.fna > data/amplicons/all_amplicons.fasta
+```
+
+Found 16S/genome based on the insilico approach:
+
+- data/amplicons/GCF_000009425_16S_amplicon.fna:6
+- data/amplicons/GCF_000253315_16S_amplicon.fna:6
+- data/amplicons/GCF_000714595_16S_amplicon.fna:6 **
+  - Inconsistencies with 16S published in NCBI (n=9) and what potentially gets amplified (n=6)
+- data/amplicons/GCF_014058685_16S_amplicon.fna:7
+- data/amplicons/LjRoot303_16S_amplicon.fna:1
+- data/amplicons/LjRoot44_16S_amplicon.fna:1
+- data/amplicons/LjRoot59_16S_amplicon.fna:1
+- data/amplicons/LjRoot60_16S_amplicon.fna:1
+- data/amplicons/Root401_16S_amplicon.fna:1
+- data/amplicons/Root68_16S_amplicon.fna:1
+- data/amplicons/Root935_16S_amplicon.fna:1
+
+Notes on the positions:
+
+- If the length settings are set higher, to 2000, then the GCF_000714595 gives even more matches
+- **LjRoot303**: 
+  - Amplicon 1: Contig=LjRoot303_contig_38 start=32606 end=34053 inclusive length=1448 orientation=fwd+rev_rc
+- **LjRoot44**:  
+  - Amplicon 1: Contig=LjRoot44_contig_8 start=3781 end=5267 inclusive length=1487 orientation=fwd_rc+rev
+- **LjRoot59**:  
+  - Amplicon 1: Contig=LjRoot59_contig_41 start=3600 end=5098 inclusive length=1499 orientation=fwd_rc+rev
+- **LjRoot60**
+  - Amplicon 1: Contig=LjRoot60_contig_3 start=469224 end=470730 inclusive length=1507 orientation=fwd+rev_rc
+- **Root401**
+  - Amplicon 1: Contig=Root401_contig_30 start=64818 end=66316 inclusive length=1499 orientation=fwd+rev_rc
+- **Root68**: 
+  - Only fwd found at end of one contig, and since that is ~450 bp away from the end, no plausible amplicon was printed
+  - --> to retrieve a representative sequence the script was rerun on the published 16S
+  - The run on the published 16S returned:
+    - Amplicon 1: Contig=Root68 start=1 end=1386 inclusive length=1386 orientation=fwd_to_end
+- **Root935**: 
+  - Amplicon 1: Contig=Root935_contig_4 start=25 end=1500 inclusive length=1476 orientation=fwd+rev_rc
+- **GCF_000009425**
+  - Amplicon 1: Contig=GCF_000009425-NC_009004_1 start=511430 end=512938 inclusive length=1509 orientation=fwd+rev_rc (LLMG_RS02645_19)
+  - Amplicon 2: Contig=GCF_000009425-NC_009004_1 start=2134334 end=2135842 inclusive length=1509 orientation=fwd_rc+rev (LLMG_RS10890_60)
+  - Amplicon 3: Contig=GCF_000009425-NC_009004_1 start=2374924 end=2376432 inclusive length=1509 orientation=fwd_rc+rev (LLMG_RS12185_65)
+  - Amplicon 4: Contig=GCF_000009425-NC_009004_1 start=2422293 end=2423801 inclusive length=1509 orientation=fwd_rc+rev (LLMG_RS12390_69)
+  - Amplicon 5: Contig=GCF_000009425-NC_009004_1 start=2503641 end=2505149 inclusive length=1509 orientation=fwd_rc+rev (LLMG_RS12830_80)
+  - Amplicon 6: Contig=GCF_000009425-NC_009004_1 start=2527146 end=2528654 inclusive length=1509 orientation=fwd_rc+rev (LLMG_RS12960_86)
+- **GCF_000253315**
+  - Amplicon 1: Contig=GCF_000253315-NC_017595_1 start=14961 end=16470 inclusive length=1510 orientation=fwd+rev_rc (SALIVA_RS00070_1)
+  - Amplicon 2: Contig=GCF_000253315-NC_017595_1 start=66026 end=67535 inclusive length=1510 orientation=fwd+rev_rc (SALIVA_RS00375_22)
+  - Amplicon 3: Contig=GCF_000253315-NC_017595_1 start=125158 end=126667 inclusive length=1510 orientation=fwd+rev_rc (SALIVA_RS00700_39)
+  - Amplicon 4: Contig=GCF_000253315-NC_017595_1 start=130961 end=132470 inclusive length=1510 orientation=fwd+rev_rc (SALIVA_RS00765_52)
+  - Amplicon 5: Contig=GCF_000253315-NC_017595_1 start=338038 end=339547 inclusive length=1510 orientation=fwd+rev_rc (SALIVA_RS01750_58)
+  - Amplicon 6: Contig=GCF_000253315-NC_017595_1 start=2011832 end=2013341 inclusive length=1510 orientation=fwd_rc+rev (SALIVA_RS09150_83)
+- **GCF_000714595**
+  - Amplicon 1: Contig=GCF_000714595-NZ_CP007799_1 start=232809 end=234278 inclusive length=1470 orientation=fwd+rev_rc (ECOLIN_RS01105_1)
+  - Amplicon 2: Contig=GCF_000714595-NZ_CP007799_1 start=4606816 end=4608319 inclusive length=1504 orientation=fwd+rev_rc (ECOLIN_RS22915_102)
+  - Amplicon 3: Contig=GCF_000714595-NZ_CP007799_1 start=5079706 end=5081175 inclusive length=1470 orientation=fwd+rev_rc (ECOLIN_RS25280_120)
+  - Amplicon 4: Contig=GCF_000714595-NZ_CP007799_1 start=2966212 end=2967713 inclusive length=1502 orientation=fwd_rc+rev (ECOLIN_RS14660_58)
+  - Amplicon 5: Contig=GCF_000714595-NZ_CP007799_1 start=5344772 end=5346275 inclusive length=1504 orientation=fwd_rc+rev (ECOLIN_RS26725_141)
+  - Amplicon 6: Contig=GCF_000714595-NZ_CP007799_1 start=5347640 end=5349143 inclusive length=1504 orientation=fwd_rc+rev (ECOLIN_RS26740_144)
+  - Not found:
+    - lcl|NZ_CP007799.1_rrna_ECOLIN_RS22205_97; location=4339815..4341330 == 1515 bp
+    - lcl|NZ_CP007799.1_rrna_ECOLIN_RS27490_147; location=complement(5360896..5362258) == 1362 bp
+- **GCF_014058685**
+  - Amplicon 1: Contig=GCF_014058685-NZ_CP059055_1 start=539624 end=541158 inclusive length=1535 orientation=fwd+rev_rc (H0I41_RS02480_10)
+  - Amplicon 2: Contig=GCF_014058685-NZ_CP059055_1 start=1614395 end=1615929 inclusive length=1535 orientation=fwd_rc+rev (H0I41_RS07675_36)
+  - Amplicon 3: Contig=GCF_014058685-NZ_CP059055_1 start=1621063 end=1622597 inclusive length=1535 orientation=fwd_rc+rev (H0I41_RS07770_55)
+  - Amplicon 4: Contig=GCF_014058685-NZ_CP059055_1 start=1635512 end=1637046 inclusive length=1535 orientation=fwd_rc+rev (H0I41_RS07945_85)
+  - Amplicon 5: Contig=GCF_014058685-NZ_CP059055_1 start=1830821 end=1832355 inclusive length=1535 orientation=fwd_rc+rev (H0I41_RS08825_91)
+  - Amplicon 6: Contig=GCF_014058685-NZ_CP059055_1 start=1836336 end=1837870 inclusive length=1535 orientation=fwd_rc+rev (H0I41_RS08855_97)
+  - Amplicon 7: Contig=GCF_014058685-NZ_CP059055_1 start=1841851 end=1843385 inclusive length=1535 orientation=fwd_rc+rev (H0I41_RS08885_103 )
+
+
+
+### Prepare amplicons for analysis
+
+Next, I removed 100% identical sequences to better deal with multiple rrn operons in the same genome. This still left 5 amplicons for GCF_000714595. To skim this down a bit I ran vsearch with a 99% identity threshold arriving at two representative sequences from this genome. Thus for 11 taxa we work with 12 amplicon sequences.
+
+```{bash}
+# Deduplicate at 100% identity --> 15 seqs
+# Only GCF_000714595 keeps 5 duplicates
+seqkit rmdup -s data/amplicons/all_amplicons.fasta \
+  > data/amplicons/amplicons_nr.fasta
+
+# Extract sequences from GCF_000714595
+seqkit grep -r -p GCF_000714595 data/amplicons/amplicons_nr.fasta \
+  > results/vsearch/GCF_000714595_amplicons.fasta
+
+# Test if we can merge them 
+conda activate vsearch_2.30.1
+
+mkdir results/vsearch
+vsearch --cluster_fast results/vsearch/GCF_000714595_amplicons.fasta \
+  --id 0.99 \
+  --centroids results/vsearch/GCF_000714595_centroids.fasta \
+  --uc results/vsearch/GCF_000714595_clusters.uc \
+  --strand both \
+  --query_cov 0.9
+
+# Clean IDs 
+awk '/^>/{i++ ; print ">GCF_000714595_" i ; next} {print}' results/vsearch/GCF_000714595_centroids.fasta > results/vsearch/GCF_000714595_centroids_clean.fasta
+
+# Combine relevant data 
+## Remove existing copies for this genome
+seqkit grep -v -r -p GCF_000714595 data/amplicons/amplicons_nr.fasta \
+  > data/amplicons/amplicons_nr_wo_ecoli.fasta
+ 
+##  Append chosen merged centroid
+# Combine relevant data, remove GCF_000714595, append centroid, and trim headers in one go
+seqkit grep -v -r -p GCF_000714595 data/amplicons/amplicons_nr.fasta | \
+  cat - results/vsearch/GCF_000714595_centroids_clean.fasta | \
+  awk '/^>/{sub(/-.*/,"")}1' > data/amplicons/amplicons_nr_final.fasta
+
+grep -c ">" data/amplicons/amplicons_nr_final.fasta
+
+# Compare sequence identity 
+# Matching query sequences: 10 of 11 (90.91%)
+vsearch --allpairs_global data/amplicons/amplicons_nr_final.fasta \
+        --acceptall --maxaccepts 0 \
+        --blast6out results/vsearch/amplicons_identity.tsv 
+
+conda deactivate
+
+# Create summary
+python scripts/pivot_vsearch.py
+less -S results/vsearch/amplicons_identity_matrix.csv
+
+# Make one db with all E.coli sequences
+awk '/^>/ {
+  header=$0
+  # Extract genome name (before the first '-')
+  if (match(header, /^>([^-]+)-/, a)) genome=a[1]
+  else if (match(header, /^>([^_]+)_/, a)) genome=a[1]
+  else genome=substr(header, 2)
+  count[genome]++
+  print ">" genome "-" count[genome]
+  next
+} !/^>/ { print }' data/amplicons/amplicons_nr.fasta > data/amplicons/amplicons_nr_clean.fasta
+
+```
+
+**Compare 16S sequence identity across amplicons:** 
+
+|qseqid         |GCF_000714595_2|GCF_000714595_1|Root935|Root68|Root401|LjRoot60|LjRoot59|LjRoot44|LjRoot303|GCF_014058685|GCF_000253315|
+|---------------|---------------|---------------|-------|------|-------|--------|--------|--------|---------|-------------|-------------|
+|GCF_000009425  |74.3           |75.9           |72.2   |78.4  |78.6   |77.7    |78.5    |76.4    |75.0     |84.6         |89.5         |
+|GCF_000253315  |76.0           |76.8           |71.5   |78.1  |78.0   |76.7    |78.0    |77.9    |75.1     |84.6         |             |
+|GCF_014058685  |74.3           |75.6           |69.8   |76.3  |76.4   |75.4    |76.3    |75.6    |74.7     |             |             |
+|LjRoot303      |73.8           |74.8           |71.1   |75.8  |75.3   |75.5    |75.3    |86.3    |         |             |             |
+|LjRoot44       |74.4           |75.5           |72.8   |77.3  |76.6   |78.0    |76.5    |        |         |             |             |
+|LjRoot59       |83.9           |85.6           |73.2   |98.3  |99.9   |86.0    |        |        |         |             |             |
+|LjRoot60       |81.3           |83.1           |73.4   |85.5  |85.9   |        |        |        |         |             |             |
+|Root401        |83.8           |85.6           |73.3   |98.4  |       |        |        |        |         |             |             |
+|Root68         |83.2           |84.9           |73.9   |      |       |        |        |        |         |             |             |
+|Root935        |70.3           |70.9           |       |      |       |        |        |        |         |             |             |
+|GCF_000714595_1|97.4           |               |       |      |       |        |        |        |         |             |             |
+
+: {.striped .responsive .sm}
+
+
+Potential problematic comparisons since the percent identity is very close:
+
+- Root401 vs LjRoot59 (99.9)
+- Root68 vs  LjRoot59 (98.3)
+- Root68 vs Root401 (98.4)
+- GCF_000253315 vs GCF_000009425  (88.5%)
+- GCF_000714595_1 vs GCF_000714595_2 (97.4%)
+
+
+
+## Prepare Nanopore reads
+
+### Combine individual files
+
+```{bash}
+mkdir data/combined 
+
+# Combine individual fastq.gz files per barcode
+for path in data/fastq/fastq_pass/barcode*/; do 
+    barcode=$(echo $path | cut -f4 -d "/")
+    outdir="data/combined"
+
+    echo "Combining data for ${barcode} in ${outdir}/${barcode}.fastq.gz"
+    cat ${path}/*fastq.gz > ${outdir}/${barcode}.fastq.gz
+done
+
+# Cleanup (original data is still in the zip folder)
+rm -r data/fastq/fastq_pass/
+```
+
+### Check quality of the raw data
+
+```{bash}
+mkdir -p results/nanoplot/raw
+mkdir -p results/seqkit
+
+# Get Nanoplot visualization
+## Run Nanoplot
+conda activate nanoplot 
+
+for file in data/combined/*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    echo "Start analysis for $barcode"
+
+    srun --cpus-per-task 6 --mem=10G NanoPlot \
+        --fastq $file \
+        -t 6 \
+        --tsv_stats \
+        --plots dot \
+        -o results/nanoplot/raw/$barcode
+done
+
+conda deactivate
+
+## Combine Nanoplot HTMLs into one document
+python scripts/combine_nanoplot_html.py --base_path results/nanoplot/raw \
+    --output_html results/nanoplot/raw_nanoplot.html --start_barcode 01 --end_barcode 15
+
+# Get overaching summary with seqkit and summarize with awk
+srun --cpus-per-task=15 --mem=5G seqkit stats data/combined/*fastq.gz  \
+    -Tao results/seqkit/fastq_raw.tsv --threads 15
+
+awk 'NR>1 {
+    # Track min and max num_seqs
+    if(min=="" || $4<min) min=$4
+    if(max=="" || $4>max) max=$4
+    
+    # Sum for total num_seqs
+    total+=$4
+    
+    # Sum for AvgQual and mean length
+    sumQual+=$16
+    sumAvg_len+=$7
+    
+    # Count rows
+    n++
+}
+END {
+    meanQual = sumQual / n
+    meanAvg_len = sumAvg_len / n
+    print "Min num_seqs:", min
+    print "Max num_seqs:", max
+    print "Total num_seqs:", total
+    print "Mean avg_len:", meanAvg_len
+    print "Mean AvgQual:", meanQual
+}' results/seqkit/fastq_raw.tsv
+```
+
+Notes on summary statistics:
+
+- Min num_seqs: 3422
+- Max num_seqs: 4927
+- Total num_seqs: 60,197
+- Mean avg_len: 1,322
+- Mean AvgQual: 12.4393
+- NanoPlots look very comparable across barcodes
+
+Settings I chose for cleaning based on the NanoPlots
+
+- Phred 12
+- Min length 1300
+- Max length 1650
+
+
+### Quality reads with chopper
+
+```{bash}
+# Run chopper (tried first q12, then went for q10 to keep more reads)
+conda activate chopper_0.11.0
+
+for file in data/combined/barcode*fastq.gz; do
+    barcode=$(basename "$file" .fastq.gz)
+    outdir="results/chopper/" 
+    mkdir -p "$outdir"
+
+    echo "Start analysis for ${barcode}"
+
+    srun --cpus-per-task 20 --mem=50G chopper -i "$file" \
+        -q 10 \
+        --trim-approach trim-by-quality --cutoff 12 \
+        -l 1300 --maxlength 1650 \
+        --threads 20 | gzip > "${outdir}/${barcode}.fastq.gz"
+done
+
+conda deactivate
+```
+
+Results when filtering with -q 10 and -q 12:
+
+| SampleID   | Input Reads | Kept Reads (q12) | % Kept (q12) | Kept Reads (q10) | % Kept (q10) |
+|------------|------------|-----------------|--------------|-----------------|--------------|
+| barcode01  | 3835       | 1957            | 51.05        | 3017            | 78.71        |
+| barcode02  | 3725       | 1950            | 52.33        | 3000            | 80.53        |
+| barcode03  | 3892       | 1976            | 50.78        | 3092            | 79.45        |
+| barcode04  | 4346       | 2274            | 52.34        | 3530            | 81.23        |
+| barcode05  | 3497       | 1872            | 53.53        | 2836            | 81.15        |
+| barcode06  | 3422       | 1749            | 51.12        | 2697            | 78.85        |
+| barcode07  | 3785       | 1883            | 49.77        | 2964            | 78.28        |
+| barcode08  | 3613       | 1923            | 53.22        | 2855            | 79.06        |
+| barcode09  | 3546       | 1814            | 51.16        | 2783            | 78.48        |
+| barcode10  | 3937       | 2073            | 52.66        | 3135            | 79.63        |
+| barcode11  | 4366       | 2306            | 52.84        | 3464            | 79.36        |
+| barcode12  | 4386       | 2251            | 51.33        | 3436            | 78.34        |
+| barcode13  | 4239       | 2182            | 51.50        | 3443            | 81.28        |
+| barcode14  | 4927       | 2587            | 52.49        | 3962            | 80.38        |
+| barcode15  | 4681       | 2427            | 51.85        | 3746            | 80.03        |
+
+: {.striped .responsive .sm}
+
+Note: Will use q10 for this analysis, which gives ca. 6% errors but more reads are kept.
+
+
+
+### Check quality of the cleaned data
+
+```{bash}
+mkdir -p results/nanoplot/filtered
+
+# Get Nanoplot visualization
+## Run Nanoplot
+conda activate nanoplot 
+
+for file in results/chopper/*fastq.gz; do
+    barcode=$(basename $file .fastq.gz)
+    echo "Start analysis for $barcode"
+
+    srun --cpus-per-task 6 --mem=10G NanoPlot \
+        --fastq $file \
+        -t 6 \
+        --tsv_stats \
+        --plots dot \
+        -o results/nanoplot/filtered/$barcode
+done
+
+conda deactivate
+
+## Combine HTMLs
+python scripts/combine_nanoplot_html.py --base_path results/nanoplot/filtered \
+    --output_html results/nanoplot/filtered_nanoplot.html --start_barcode 01 --end_barcode 15
+
+# Get overaching summary with seqkit and summarize with awk
+srun --cpus-per-task=15 --mem=5G seqkit stats results/chopper/*fastq.gz  \
+    -Tao results/seqkit/fastq_filtered.tsv --threads 15
+
+awk 'NR>1 {
+    # Track min and max num_seqs
+    if(min=="" || $4<min) min=$4
+    if(max=="" || $4>max) max=$4
+    
+    # Sum for total num_seqs
+    total+=$4
+    
+    # Sum for AvgQual and mean length
+    sumQual+=$16
+    sumAvg_len+=$7
+    
+    # Count rows
+    n++
+}
+END {
+    meanQual = sumQual / n
+    meanAvg_len = sumAvg_len / n
+    print "Min num_seqs:", min
+    print "Max num_seqs:", max
+    print "Total num_seqs:", total
+    print "Mean avg_len:", meanAvg_len
+    print "Mean AvgQual:", meanQual
+}' results/seqkit/fastq_filtered.tsv
+```
+
+Notes:
+
+- Min num_seqs: 2697
+- Max num_seqs: 3962
+- Total num_seqs: 47,960
+- Mean avg_len: 1453.22
+- Mean AvgQual: 12.518
+
+
+## Map amplicons to reads
+
+### Inspect multi-mappers
+
+First, we map the reads/barcode to all consensus sequences to get a feel for multimappers.
+
+```{bash}
+# Run minimap
+mkdir results/mapping_counts 
+
+for file in results/chopper/barcode*.fastq; do
+    ref_db="data/amplicons/amplicons_nr_final.fasta"
+    barcode=$(basename $file .fastq)
+    echo "----------------------------------------------------------------"
+    echo "Mapping $barcode to reference database..."
+    echo "----------------------------------------------------------------"
+
+    # Map reads to reference
+    srun --cpus-per-task 2 --mem=20G minimap2 \
+        -ax map-ont -t 2 ${ref_db} ${file} | \
+        samtools view -bS - | samtools sort -o results/mapping_counts/${barcode}.bam
+
+    # Index BAM
+    samtools index results/mapping_counts/${barcode}.bam
+
+    # Count reads per reference (taxon)
+    samtools idxstats results/mapping_counts/${barcode}.bam > results/mapping_counts/${barcode}_stats.tsv
+done
+
+# Combine data 
+python scripts/idxstats_to_matrix.py -i results/mapping_counts/ -o results/mapping_counts/
+```
+
+Total mapped reads per sample while also allowing for multimappers: 
+
+| sample    | mapped |
+| --------- | ------ |
+| barcode01 | 8927   |
+| barcode02 | 8906   |
+| barcode03 | 9198   |
+| barcode04 | 10481  |
+| barcode05 | 8408   |
+| barcode06 | 8015   |
+| barcode07 | 3072   |
+| barcode08 | 2940   |
+| barcode09 | 2883   |
+| barcode10 | 3240   |
+| barcode11 | 3528   |
+| barcode12 | 3529   |
+| barcode13 | 3462   |
+| barcode14 | 3997   |
+| barcode15 | 3774   |
+
+: {.striped .responsive .sm}
+
+Note: Wee see that for barcodes with Pseudomonas we have more reads (2-3x) than we initially started with. That is likely due to multimappers that map equally well to the 3 Pseudomonas amplicons in the reference database
+
+
+OTU table including multimappers:
+
+| taxon         | barcode01 | barcode02 | barcode03 | barcode04 | barcode05 | barcode06 | barcode07 | barcode08 | barcode09 | barcode10 | barcode11 | barcode12 | barcode13 | barcode14 | barcode15 |
+| ------------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| GCF_000009425 | 0         | 0         | 0         | 1         | 0         | 0         | 393       | 262       | 340       | 374       | 238       | 339       | 3379      | 3882      | 3693      |
+| GCF_000253315 | 1         | 0         | 0         | 0         | 0         | 0         | 2668      | 2670      | 2537      | 2856      | 3268      | 3171      | 1         | 16        | 3         |
+| GCF_000714595 | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| GCF_014058685 | 0         | 0         | 0         | 0         | 0         | 0         | 11        | 8         | 6         | 10        | 22        | 19        | 79        | 96        | 78        |
+| LjRoot303     | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| LjRoot44      | 0         | 0         | 0         | 3         | 1         | 1         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| LjRoot59      | 2968      | 2968      | 3066      | 3479      | 2789      | 2661      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| LjRoot60      | 2         | 9         | 4         | 3         | 5         | 6         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Root401       | 2968      | 2968      | 3066      | 3478      | 2789      | 2661      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| Root68        | 2941      | 2937      | 3037      | 3467      | 2782      | 2657      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| Root935       | 47        | 24        | 25        | 50        | 42        | 29        | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| unassigned    | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+
+: {.striped .responsive .sm}
+
+Note: Pseudomonas LjRoot59, Root401 and possibly Root68 can not be distinguished by mapping (since they have very similar read numbers)
+
+
+
+### Generate more realistic OTU table 
+
+To deal with multimappers I re-ran minimap2 but generated a PAF file that is a tab-delimited file that has different columns we can use to:
+
+- Filter the table to remove hits with low mapping quality or low coverage
+- Sort the table by quality parameters and return a single-best hit per reads
+
+This will allow to give a "standard" OTU table and deal with multi-mappers.
+
+```{bash}
+# Generate paf file
+# Note: amplicons_nr_final will be named amplicons_nr.fasta for the tutorial
+for file in results/chopper/barcode*.fastq; do
+    ref_db="data/amplicons/amplicons_nr_final.fasta"
+    barcode=$(basename $file .fastq)
+    echo "----------------------------------------------------------------"
+    echo "Mapping $barcode to reference database..."
+    echo "----------------------------------------------------------------"
+
+    # Map reads to reference and save PAF
+    srun --cpus-per-task 2 --mem=20G minimap2 \
+        -cx map-ont -t 2 ${ref_db} ${file} \
+        > results/mapping_counts/${barcode}.paf
+done
+
+# Check for ecoli (not found)
+samtools view -F 4 results/mapping_counts/barcode10.bam | grep GCF_000714595
+grep "GCF_000714595" results/mapping_counts/*paf
+
+# Sanity check for bc07 
+awk '{ sum += $10; n++ } END { if (n > 0) print sum / n; }' results/minimap2/barcode07.paf
+awk '{ sum += $7; n++ } END { if (n > 0) print sum / n; }' barcode07.paf
+awk '{ sum += $2; n++ } END { if (n > 0) print sum / n; }' barcode07.paf
+
+# Use the paf for filtering low quality mappings and 
+# then select the best mapping read to generate an OTU table
+python scripts/paf_to_matrix.py -i results/mapping_counts/ -o results/mapping_counts/ -t data/genome_to_genus.tsv -s results/seqkit/fastq_filtered.tsv
+
+python scripts/paf_to_matrix.py -i results/mapping_counts/ -o . -t data/genome_to_genus.tsv 
+```
+
+OTU table with multimappers per amplicon:
+
+| tname         | genus             | barcode01 | barcode02 | barcode03 | barcode04 | barcode05 | barcode06 | barcode07 | barcode08 | barcode09 | barcode10 | barcode11 | barcode12 | barcode13 | barcode14 | barcode15 |
+| ------------- | ----------------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| GCF_000009425 | Lactococcus       | 0         | 0         | 0         | 1         | 0         | 0         | 316       | 208       | 269       | 302       | 192       | 280       | 3222      | 3677      | 3519      |
+| GCF_000253315 | Streptococcus     | 0         | 0         | 0         | 0         | 0         | 0         | 2506      | 2533      | 2391      | 2693      | 3105      | 2990      | 0         | 8         | 0         |
+| GCF_014058685 | Lactobacillus     | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 0         | 0         | 1         |
+| LjRoot44      | Microbacterium    | 0         | 0         | 0         | 2         | 1         | 1         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| LjRoot59      | Pseudomonas       | 2047      | 1987      | 2062      | 3167      | 2566      | 2422      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| LjRoot60      | Pseudoxanthomonas | 1         | 8         | 2         | 3         | 4         | 6         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Root401       | Pseudomonas       | 2333      | 2385      | 2444      | 1495      | 1185      | 1117      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| Root68        | Pseudomonas       | 2590      | 2624      | 2680      | 3060      | 2493      | 2369      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 0         | 0         |
+| Root935       | Flavobacterium    | 44        | 20        | 21        | 38        | 41        | 28        | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+
+: {.striped .responsive .sm}
+
+OTU table without multimappers per amplicon:
+
+| tname         | genus             | barcode01 | barcode02 | barcode03 | barcode04 | barcode05 | barcode06 | barcode07 | barcode08 | barcode09 | barcode10 | barcode11 | barcode12 | barcode13 | barcode14 | barcode15 |
+| ------------- | ----------------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| GCF_000009425 | Lactococcus       | 0         | 0         | 0         | 1         | 0         | 0         | 294       | 190       | 247       | 272       | 176       | 261       | 3222      | 3677      | 3519      |
+| GCF_000253315 | Streptococcus     | 0         | 0         | 0         | 0         | 0         | 0         | 2492      | 2522      | 2382      | 2682      | 3102      | 2977      | 0         | 7         | 0         |
+| GCF_014058685 | Lactobacillus     | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 0         | 0         | 1         |
+| LjRoot44      | Microbacterium    | 0         | 0         | 0         | 2         | 1         | 1         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| LjRoot59      | Pseudomonas       | 1479      | 1449      | 1399      | 1845      | 1521      | 1459      | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| LjRoot60      | Pseudoxanthomonas | 1         | 8         | 1         | 3         | 4         | 6         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Root401       | Pseudomonas       | 1368      | 1415      | 1555      | 1483      | 1176      | 1110      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| Root68        | Pseudomonas       | 0         | 0         | 0         | 0         | 0         | 2         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Root935       | Flavobacterium    | 44        | 20        | 21        | 38        | 41        | 28        | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| unassigned    | 125               | 108       | 116       | 158       | 93        | 91        | 178       | 143       | 154       | 181       | 186       | 197       | 220       | 277       | 226       |           |
+: {.striped .responsive .sm}
+
+
+OTU table without multimappers per genus:
+
+| genus             | barcode01 | barcode02 | barcode03 | barcode04 | barcode05 | barcode06 | barcode07 | barcode08 | barcode09 | barcode10 | barcode11 | barcode12 | barcode13 | barcode14 | barcode15 |
+| ----------------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| Flavobacterium    | 44        | 20        | 21        | 38        | 41        | 28        | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Lactobacillus     | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 0         | 0         | 1         |
+| Lactococcus       | 0         | 0         | 0         | 1         | 0         | 0         | 294       | 190       | 247       | 272       | 176       | 261       | 3222      | 3677      | 3519      |
+| Microbacterium    | 0         | 0         | 0         | 2         | 1         | 1         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Pseudomonas       | 2847      | 2864      | 2954      | 3328      | 2697      | 2571      | 0         | 0         | 0         | 0         | 0         | 0         | 1         | 1         | 0         |
+| Pseudoxanthomonas | 1         | 8         | 1         | 3         | 4         | 6         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         | 0         |
+| Streptococcus     | 0         | 0         | 0         | 0         | 0         | 0         | 2492      | 2522      | 2382      | 2682      | 3102      | 2977      | 0         | 7         | 0         |
+| unassigned        | 125       | 108       | 116       | 158       | 93        | 91        | 178       | 143       | 154       | 181       | 186       | 197       | 220       | 277       | 226       |
+
+: {.striped .responsive .sm}
+
+Note:
+
+- unassigned: reads that do not map to any representative amplicon. This can be due to sequences:
+  -  Not mapping at all
+  -  Being filtered out during the quality filtering
+- the unassigned reads are almost exclusively due to low mapping quality and low alignment percentage, so the reads map to the amplicons but with bad quality. This means that these are likely reads with relatively many errors and not contaminants that are absent in the representative amplicon sequences.
+- The two Pseudomonas strains LjRoot59 and Root401 likely get reads assigned to them randomly but there seem less reads captured by Root 68. So we might be able, with the right cutoffs to distinguish between strains with at ~98% similarity 
+  - Root401 vs LjRoot59 (99.9)
+  - Root68 vs  LjRoot59 (98.3)
+  - Root68 vs Root401 (98.4)
+
+
+### Try finding the missing ecoli sequences
+
+```{bash}
+mkdir results/mapping_counts/test/
+
+for file in results/chopper/barcode*.fastq; do
+    ref_db="data/amplicons/amplicons_nr_clean.fasta"
+    barcode=$(basename $file .fastq)
+    echo "----------------------------------------------------------------"
+    echo "Mapping $barcode to reference database..."
+    echo "----------------------------------------------------------------"
+
+    # Map reads to reference and save PAF
+    srun --cpus-per-task 2 --mem=20G minimap2 \
+        -cx map-ont -t 2 ${ref_db} ${file} \
+        > results/mapping_counts/test/${barcode}.paf
+done
+
+# Check if we now have any hits for ecoli 
+grep -c "GCF_000714595" results/mapping_counts/test/*paf 
+grep -c "Root935" results/mapping_counts/test/*paf 
+```
+
+Summary: Even by adding more E.coli 16S sequences, we can't find any reads mapping to that strain
+
+
+## Consensus analysis with NGSpeciesID (ongoing)
+
+### V1
+
+Due to some taxa having very low read counts we miss them at the moment, need to think about how to do this. Based on the analysis of the representative sequences I think these things are happening:
+
+- the aligned_threshold 0.95 might not work well with phred score 10 and cluster reverse complements separately at times
+- the ratio is not yet low enough for the low abundant taxa
+- the threads result in too much stochastic effects during the clustering
+
+[Here](https://github.com/ksahlin/NGSpeciesID/issues/23) are some suggestions on settings for ONT reads with around 2% errors (so this won't work with the current data, but maybe useful to revisit).
+
+```{bash}
+mkdir logs
+
+# Uncompress files for ngspeciesid 
+results/chopper/barcode*gz
+
+# Submit job 
+sbatch scripts/ngspeciesid.sh
+# NGSpeciesID \
+#         --ont \
+#         --fastq ${CURRENT_FILE} \
+#         --outfolder ${OUTDIR}  \
+#         --consensus --medaka --t 6 \
+#         --aligned_threshold 0.95 \
+#         --rc_identity_threshold 0.90 \
+#         --abundance_ratio ${ratio} \
+#         --mapped_threshold 0.7 \
+#         --debug
+
+# Check nr of sequences per barcode 
+# Loop over all consensus fasta files and extract info
+grep ">" results/ngspeciesid/v1/barcode*/medaka_*/consensus.fasta | ./scripts/ngspecies_summary.sh
+```
+
+Notes:
+
+**Barcode Summary**
+
+| Barcode_ID | Number_of_consensus_seqs |
+|------------|-------------------------|
+| barcode01 | 1 |
+| barcode02 | 2 |
+| barcode03 | 3 |
+| barcode04 | 1 |
+| barcode05 | 1 |
+| barcode06 | 2 |
+| barcode07 | 1 |
+| barcode08 | 1 |
+| barcode09 | 1 |
+| barcode10 | 1 |
+| barcode11 | 1 |
+| barcode12 | 1 |
+| barcode13 | 2 |
+| barcode14 | 1 |
+| barcode15 | 3 |
+
+**Detailed List**
+
+| Barcode_ID | Consensus_ID | Supporting_reads |
+|------------|--------------|-----------------|
+| barcode01 | cl_id_0 | 1764 |
+| barcode02 | cl_id_0 | 816 |
+| barcode02 | cl_id_1 | 803 |
+| barcode03 | cl_id_1 | 956 |
+| barcode03 | cl_id_350 | 665 |
+| barcode03 | cl_id_90 | 144 |
+| barcode04 | cl_id_0 | 1937 |
+| barcode05 | cl_id_1 | 1180 |
+| barcode06 | cl_id_0 | 941 |
+| barcode06 | cl_id_2 | 696 |
+| barcode07 | cl_id_0 | 1313 |
+| barcode08 | cl_id_0 | 1346 |
+| barcode09 | cl_id_101 | 1443 |
+| barcode10 | cl_id_0 | 1199 |
+| barcode11 | cl_id_0 | 1668 |
+| barcode12 | cl_id_2 | 1580 |
+| barcode13 | cl_id_0 | 1852 |
+| barcode13 | cl_id_116 | 118 |
+| barcode14 | cl_id_0 | 2410 |
+| barcode15 | cl_id_0 | 804 |
+| barcode15 | cl_id_160 | 145 |
+| barcode15 | cl_id_194 | 770 |
+
+
+### V2
+
+Changed settings:
+
+- lower desired reads to 10
+- change aligned_threshold to
+- Set threads to 1
+
+```{bash}
+sbatch scripts/ngspeciesid.sh
+
+# Get ratios 
+grep Running logs/ngspeciesid_221498_*
+
+# Loop over all consensus fasta files and extract info
+grep ">" results/ngspeciesid/v2/barcode*/medaka_*/consensus.fasta | ./scripts/ngspecies_summary.sh
+```
+
+Used ratios:
+
+- Running results/chopper/barcode10.fastq: total_reads=3135, abundance_ratio=0.003190
+- Running results/chopper/barcode11.fastq: total_reads=3464, abundance_ratio=0.002887
+- Running results/chopper/barcode12.fastq: total_reads=3436, abundance_ratio=0.002910
+- Running results/chopper/barcode13.fastq: total_reads=3443, abundance_ratio=0.002904
+- Running results/chopper/barcode14.fastq: total_reads=3962, abundance_ratio=0.002524
+- Running results/chopper/barcode15.fastq: total_reads=3746, abundance_ratio=0.002670
+- Running results/chopper/barcode01.fastq: total_reads=3017, abundance_ratio=0.003315
+- Running results/chopper/barcode02.fastq: total_reads=3000, abundance_ratio=0.003333
+- Running results/chopper/barcode03.fastq: total_reads=3092, abundance_ratio=0.003234
+- Running results/chopper/barcode04.fastq: total_reads=3530, abundance_ratio=0.002833
+- Running results/chopper/barcode05.fastq: total_reads=2836, abundance_ratio=0.003526
+- Running results/chopper/barcode06.fastq: total_reads=2697, abundance_ratio=0.003708
+- Running results/chopper/barcode07.fastq: total_reads=2964, abundance_ratio=0.003374
+- Running results/chopper/barcode08.fastq: total_reads=2855, abundance_ratio=0.003503
+- Running results/chopper/barcode09.fastq: total_reads=2783, abundance_ratio=0.003593
+
+We now get potentially low abundance sequences, but i.e. in barcode 02/03 Pseudomonas get splot that are fused in barcode01 . So based on a web-blast the two sequences in bc02 are Pseudomonas and the two sequences in bc01 are Flavobacterium and Pseudomonas. Based on the amplicon sequence similarity and the phred score I don't think it is reasonable to assume that NGSPecies ID correctly separates the two. Additionally, the low abundant taxa are still not found in every sample.
+
+**Barcode Summary**
+
+| Barcode_ID | Number_of_consensus_seqs |
+|------------|-------------------------|
+| barcode01 | 2 |
+| barcode02 | 2 |
+| barcode03 | 4 |
+| barcode04 | 4 |
+| barcode05 | 1 |
+| barcode06 | 1 |
+| barcode07 | 4 |
+| barcode08 | 2 |
+| barcode09 | 4 |
+| barcode10 | 2 |
+| barcode11 | 4 |
+| barcode12 | 3 |
+| barcode13 | 3 |
+| barcode14 | 2 |
+| barcode15 | 4 |
+
+**Detailed List**
+
+| Barcode_ID | Consensus_ID | Supporting_reads |
+|------------|--------------|-----------------|
+| barcode01 | cl_id_0 | 2371 |
+| barcode01 | cl_id_322 | 10 |
+| barcode02 | cl_id_0 | 1424 |
+| barcode02 | cl_id_1 | 841 |
+| barcode03 | cl_id_1 | 1063 |
+| barcode03 | cl_id_38 | 1034 |
+| barcode03 | cl_id_55 | 70 |
+| barcode03 | cl_id_90 | 1201 |
+| barcode04 | cl_id_0 | 2527 |
+| barcode04 | cl_id_196 | 101 |
+| barcode04 | cl_id_364 | 43 |
+| barcode04 | cl_id_509 | 25 |
+| barcode05 | cl_id_1 | 2150 |
+| barcode06 | cl_id_2 | 2122 |
+| barcode07 | cl_id_12 | 82 |
+| barcode07 | cl_id_193 | 60 |
+| barcode07 | cl_id_238 | 437 |
+| barcode07 | cl_id_4 | 1745 |
+| barcode08 | cl_id_0 | 1847 |
+| barcode08 | cl_id_142 | 52 |
+| barcode09 | cl_id_158 | 35 |
+| barcode09 | cl_id_167 | 66 |
+| barcode09 | cl_id_30 | 94 |
+| barcode09 | cl_id_4 | 1702 |
+| barcode10 | cl_id_0 | 2088 |
+| barcode10 | cl_id_128 | 119 |
+| barcode11 | cl_id_0 | 2234 |
+| barcode11 | cl_id_282 | 50 |
+| barcode11 | cl_id_31 | 75 |
+| barcode11 | cl_id_609 | 22 |
+| barcode12 | cl_id_186 | 66 |
+| barcode12 | cl_id_199 | 111 |
+| barcode12 | cl_id_2 | 2237 |
+| barcode13 | cl_id_0 | 2448 |
+| barcode13 | cl_id_234 | 11 |
+| barcode13 | cl_id_326 | 35 |
+| barcode14 | cl_id_0 | 2830 |
+| barcode14 | cl_id_146 | 20 |
+| barcode15 | cl_id_0 | 2651 |
+| barcode15 | cl_id_127 | 34 |
+| barcode15 | cl_id_238 | 466 |
+| barcode15 | cl_id_334 | 712 |
+
+
+### V3
+
+Changed settings:
+
+- lower desired reads to 10
+- change aligned_threshold to 0.90
+- Set threads to 1
+- increase k to 33
+
+```{bash}
+sbatch scripts/ngspeciesid.sh
+
+# Loop over all consensus fasta files and extract info
+# Only marginal changes to the above
+grep ">" results/ngspeciesid/v3/barcode*/medaka_*/consensus.fasta | ./scripts/ngspecies_summary.sh
+```
