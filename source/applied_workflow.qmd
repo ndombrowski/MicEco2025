@@ -7,21 +7,22 @@ engine: knitr
 
 # Amplicon long-read analysis
 
-After we better understand the quality of our amplicon long-read data we can then:
+Now that we have learned how to use the command line to issue commands and use an HPC we can now analyse our long-read amplicon data and:
 
-- Perform quality filtering 
+- Perform quality filtering by choosing appropriate cutoffs based on our quality assessment we did in the prior section
 - Align the quality filtered reads to a reference database 
 - Generate a count matrix 
 
+**Important**: All of this should be run on the Crunchomics HPC, so be sure that you connected with `ssh -X user@omics-h0.science.uva.nl`.
 
 ## `chopper`: Quality cleaning 
 
-In this section, you will learn how to perform quality filtering of your amplicon long-read data using **chopper**. Quality control is an essential first step to remove low quality reads that introduce errors in downstream analyses such as sequence alignment and taxonomic assignment. Typical things you want to do are:
+In this section, you will learn how to perform quality filtering of your amplicon long-read data using **chopper**. Quality control is an essential first step to remove low quality reads that introduce errors in downstream analyses such as sequence alignment. Typical things you want to do are:
 
-- Removing sequence adapters, barcodes, primer sequences (this already has been done for your data)
-- Removing reads with a too low quality score
-- Removing reads that are too long or too short
-- Trimming read ends if they have low quality scores
+- Remove sequence adapters, barcodes, primer sequences (this already has been done for your data)
+- Remove reads with a too low quality score
+- Remove reads that are too long or too short
+- Trim read ends if they have low quality scores
 
 `chopper` is designed for filtering and trimming of long-read data and you can install `chopper` with mamba:
 
@@ -29,7 +30,7 @@ In this section, you will learn how to perform quality filtering of your amplico
 mamba create -n chopper_0.11.0 -c bioconda chopper=0.11.0
 ```
 
-In this tutorial, you will always receive example code as a starting point, with sections containing `...` for you to fill in. If you get stuck, check [chopper's documentation](https://github.com/wdecoster/chopper) or use the built-in help via the CLI (`chopper -h`).
+In this tutorial, you will always receive example code as a starting point, with sections containing `...` for you to fill in. If you get stuck in this section, first check [chopper's documentation](https://github.com/wdecoster/chopper) or use the built-in help via the CLI (`chopper -h`).
 
 ::: {.callout-question .callout-warning collapse=false}
 # Tasks 
@@ -40,14 +41,14 @@ Use your NanoPlot quality plots from the previous section and choose some qualit
 
 Do the following:
 
-- Create a folder to store your results
+- Create a new folder to store the results and name the output file `barcodeX_filtered.fastq.gz`
 - Request 2 CPUs and 20G of memory with `srun`, and ensure chopper itself also uses 2 threads
-- Investigate the Nanoplot LengthvsQualityScatterPlot that you generated in the last exercise and decide on the right thresholds to use with chopper to:
+- Investigate the Nanoplot LengthvsQualityScatterPlot.html that you generated in the last exercise and decide on the right thresholds to use with chopper to:
   - Discard sequences that are too long or too short
   - Discard reads with a too low phred score 
-- Check the [tools manual](https://github.com/wdecoster/chopper) carefully with how to deal with `.gz` files. Hint: Closely check the example section
+- Check the [tools manual](https://github.com/wdecoster/chopper) carefully for how to deal with `.gz` files. Hint: Closely check the example section
 
-> **IMPORTANT**: After chopper finished you will see something like "Kept 133 reads out of 3785 read". If you see less than 50% of the reads remaining use less strict length and quality filters. You need enough reads for the next steps
+> **IMPORTANT**: After chopper finished you will see something like "Kept 1985conda de reads out of 3785 reads". If you see less than 50% of the reads remaining use less strict length and quality filters. You need enough reads for the next steps
 
 
 **Task 2: Assess the quality of the filtering step**
@@ -56,7 +57,7 @@ Investigate the quality of the filtered FASTQ file by running:
 
 -  NanoPlot
 -  seqkit
-   -  **Important**: Be sure that you add the barcodeID to the output file, we need this later!
+   -  **Important**: Be sure that you name the output file something like `barcodeX_filtered.tsv`, we need this file later!
 
 Afterwards open NanoPlots and seqkit. Investigate the outputs and record:
 
@@ -77,7 +78,8 @@ srun --cpus-per-task 2 --mem=20G chopper ...
 # Deactivate the conda environment 
 ...
 
-# Make a folder for the Nanoplot results and run Nanoplot
+# Make a folder for the Nanoplot results and run Nanoplot 
+# (don't forget to activate the right conda environment first and deactivate it after)
 srun ...
 
 # Run seqkit
@@ -100,7 +102,7 @@ conda activate chopper_0.11.0
 srun --cpus-per-task 2 --mem=20G chopper \
     -i data/barcodeX.fastq.gz \
     -q 12 \
-    --minlength 1300 --maxlength 1650 \
+    --minlength 1000 --maxlength 1650 \
     --threads 2 | gzip \
     > results/chopper/barcodeX_filtered.fastq.gz
 
@@ -130,7 +132,7 @@ srun --cpus-per-task=1 --mem=5G seqkit stats results/chopper/barcodeX_filtered.f
 Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.
 
 - Input: 3785 reads
-- Passed filtering: 2976 reads (~80%). You ideally want to keep 50%-90% of the reads for the down-stream analyses depending on the quality of the data and how many reads you generated.
+- Passed filtering: 1985 reads (~50%). You ideally want to keep 50%-90% of the reads for the down-stream analyses depending on the quality of the data and how many reads you generated.
 
 :::
 :::
@@ -157,11 +159,11 @@ message("Error rate: ", round(percent_error, 2), "%")
 
 This shows that with a mean Phred quality of 10, each base has roughly a 10% chance of being incorrect. For a 1,500 bp 16S amplicon we expect 150 errors per sequence with such a quality score. While Nanopore long reads are useful because they capture the full 16S rRNA gene, a high level of errors can make species-level identification unreliable.
 
-To classify our filtered Nanopore reads, we use **Minimap2** to align each read against a reference database containing the 16S rRNA sequences from all the strains used in our lab experiments. In other words, minimap compares how "similar" each read is compared to every reference sequence. One or more alignments may be recorded depending on how well the read matches the references. 
+To classify our filtered Nanopore reads, we use **Minimap2** to map each read against a reference database of 16S rRNA sequences from all the strains used in your lab experiments. Mapping identifies the reference sequence most similar to each read. The read is then aligned base-by-base to the corresponding reference sequence to check for exact matches or mismatches. Depending on the similarity, one or more hits may be recorded for each read.
 
-Alignment-based tools like Minimap2 are well-suited for Nanopore data because they tolerate mismatches and small insertions or deletions, which are common in error-prone long reads. The output of Minimap2 is a **PAF** (Pairwise mApping Format) file, which contains information about how well each read aligns to the reference sequences.
+Mapping tools like Minimap2 are well-suited for Nanopore data because they tolerate mismatches as well as small insertions and deletions, which are common in error-prone long reads. The output of Minimap2 is a **PAF** (Pairwise mApping Format) file, which contains information about how well each read maps to the reference sequences.
 
-Some reads may align equally well to multiple reference sequences (**multi-mappers**), particularly if the strains have highly similar 16S sequences (for example the different Pseudomonas strains you worked with in the lab). These multi-mapping reads are important to keep in mind when summarizing taxonomic abundances.
+Some reads may map equally well to multiple reference sequences (**multi-mappers**), particularly if the strains have highly similar 16S sequences (for example the different Pseudomonas strains you worked with in the lab). These multi-mapping reads are important to keep in mind when summarizing taxonomic abundances.
 
 Minimap2 is installed by default on Crunchomics.
 
@@ -176,13 +178,13 @@ We have already prepared a non-redundant database of 16S rRNA gene sequences. Do
 wget https://raw.githubusercontent.com/ndombrowski/MicEco2025/refs/heads/main/data/amplicons_nr.fasta -P data
 ```
 
-This file (`amplicons_nr.fasta`) contains one to two representative 16S rRNA sequences per strain used in the lab.
+This file (`amplicons_nr.fasta`) contains one to two representative 16S rRNA sequences per strain used in the lab. View the file with `head` and use `grep` to count how many sequences are in the file.
 
 **Task 2: Run minimap2**
 
-Next, you will align your filtered reads against the reference database.
+Next, you will map your filtered reads against the reference database using minimap2.
 
-Before running, make sure to check all the available options with `minimap2 -h` and to:
+Before running, make sure to check all the available options with `minimap2 -h` and then make sure tha tyou:
 
 - Create a folder to store your results
 - Use srun with 2 CPUs and 20G of memory
@@ -190,7 +192,7 @@ Before running, make sure to check all the available options with `minimap2 -h` 
 - Ensure that the output is in PAF format
 - Provide both 
   -  `data/amplicons_nr.fasta` (the reference) 
-  -  `barcodeX_filtered.fastq.gz` (the cleaned fastq squences)
+  -  `barcodeX_filtered.fastq.gz` (the cleaned fastq sequences)
 - Use `> results/minimap2/barcodeX.paf` to store the output
 
 **Task 3: Explore the output**
@@ -207,6 +209,9 @@ Answer the following questions:
 2. Look at the first 12 columns of the PAF file. Which of these could help you filter unreliable alignments or identify multi-mapping reads?
 
 ```{r}
+# Count the number of reference sequences
+... 
+
 # Generate a suitable output folder 
 ...
 
@@ -221,6 +226,9 @@ Answer the following questions:
 # Click to see the answer 
 
 ```{bash}
+# Count the number of reference sequences
+grep -c ">"  data/amplicons_nr.fasta
+
 # Generate a suitable output folder 
 mkdir results/minimap2
 
@@ -228,10 +236,10 @@ mkdir results/minimap2
 srun --cpus-per-task 2 --mem=20G minimap2 \
         -cx map-ont -t 2 \
         data/amplicons_nr.fasta \
-        results/chopper/barcode07_filtered.fastq.gz \
-        > results/minimap2/barcode07.paf
+        results/chopper/barcodeX_filtered.fastq.gz \
+        > results/minimap2/barcodeX.paf
 
-# Count number of alignments: 3076 (-1 because of the header)
+# Count number of alignments: 2059 (-1 because of the header)
 wc -l results/minimap2/barcodeX.paf
 
 # Explore the file itself
@@ -240,7 +248,7 @@ less -S results/minimap2/barcodeX.paf
 
 Answer:
 
-1. There are 3076 alignments for 2976 reads. There might be different reasons for seeing more reads aligning than expected 
+1. There are 2059 alignments for 2976 reads. If you see more alignments then there are reads, there might be different reasons for that:
    1. If your experiment included Pseudomonas strains you likely will have more alignments than reads. The higher number of alignments occurs because some reads might align equally well to multiple reference 16S sequences, these are multi-mapping reads.
    2. Some reads might only partially or weakly align to highly similar regions in the 16S rRNA gene
 2. Useful PAF columns for assessing alignment reliability include:
@@ -276,13 +284,14 @@ Now that we have our alignment results, our goal is to summarize them into a cou
 
 - Removing low-confidence hits by filtering out alignments with:
   - Low sequence identity (many mismatches)
-  - Low coverage (only part of the read aligned)
+  - Low coverage (only part of the read mapped to the reference)
   - Low mapping quality (reads could map equally well elsewhere)
 - Selecting the single best alignment for each read (to handle multi-mappers)
   
 Afterwards, we can count how many reads map to each reference sequence. These counts can then be summarized at higher taxonomic levels (e.g., genus) to account for the uncertainty due to sequencing errors.
 
-Instead of using a single pre-built program, we will use a custom Python script to perform this step. So why Python o R? 
+Instead of using a single pre-built program, we will use a custom Python script to perform this step. So why use a tool like Python or R for this?
+
 Tools like Minimap2 produce large, text-based alignment files. While command-line tools are great for specific tasks (like counting lines or filtering by quality), programming languages like Python and R allow you to:
 
 - Combine multiple filtering criteria (e.g. identity, coverage, quality)
@@ -325,7 +334,7 @@ You can inspect the script’s help menu to understand its required inputs by ty
 
 **Task 3: Generate the count table**
 
-Now, use `paf_to_matrix.py` to convert your alignment results into an OTU (operational taxonomic unit) count table. You will need to:
+Now, use `paf_to_matrix.py` to convert your alignment results into a count table. You will need to:
 
 - Make sure to activate the conda environment we setup in Task 1
 - Provide the path to your PAF alignment folder (`-i`)
@@ -379,14 +388,14 @@ mkdir results/tables
 # Run the python script
 python scripts/paf_to_matrix.py \
   -i results/minimap2/ \
-  -s results/seqkit/fastq_filtered.tsv \
+  -s results/seqkit/barcodeX_filtered.tsv \
   -t data/accession_to_genus.tsv \
   -o results/tables
 
 conda deactivate
 ```
 
-1. About 8% of reads were lost during the filtering. Since we had more alignments than reads, the filtered reads were likely secondary (less confident) alignments. If too many reads are removed, try lowering: the sequence identity threshold (`id`), mapping threshold (`-mapq`) or allowed coverage threshold (`-cov`)
+1. About 8% of reads were lost during the filtering. If you had more alignments than reads, the filtered reads were likely secondary (less confident) alignments. If too many reads are removed, try lowering: the sequence identity threshold (`id`), mapping threshold (`-mapq`) or allowed coverage threshold (`-cov`)
 2. Most reads map to Streptococcus and Lactococcus, consistent with the experiment. A few unassigned reads may come from contamination or poor-quality reads.
 3. Streptococcus had ~10× more reads than Lactococcus. This may indicate stronger growth due to better adaptation to liquid media or competitive advantage in the co-culture.
   

@@ -49,6 +49,12 @@ This course is designed for students in microbial ecology with little or no prio
     - Generate a count table
 
 
+The accompanying slides can be found here:
+
+- [Day1](https://ndombrowski.github.io/MicEco2025/slides/day01.html)
+- [Day2](https://ndombrowski.github.io/MicEco2025/slides/day02.html)
+
+
 ::: {.content-hidden}
 
 ```{bash}

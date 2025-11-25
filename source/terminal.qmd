@@ -16,24 +16,30 @@ The **command-line interface (CLI)** is an alternative to a graphical user inter
 - In a **GUI**, you click buttons, open folders, and use menus
 - In the **CLI**, you type text to issue commands and see text output in the terminal
 
-The CLI is commonly called the **shell**, **terminal**, **console**, or **prompt**. These terms are related but not identical:
+When talking about the CLI you might also hear about the **shell**, **terminal**, **console**, or **prompt**. These terms are related but not identical:
 
-- The **terminal** (or **console**) is the window or program that lets you type commands.
-- The **shell** is the program that interprets the commands you type inside the terminal and tells the operating system what to do. 
+- The **terminal** (or **console**) is the window or program that lets you type commands
+- The **shell** is the program that interprets the commands you type inside the terminal and tells the operating system what to do. There are several types of shells — for example, **bash** or **zsh** (that use slightly different languages to issue commands). This tutorial was written on a computer that uses **bash**, which stands for *Bourne Again Shell*.  
 - A **prompt** is the text displayed by the shell that indicates that it is ready to accept a command. The prompt often shows useful information, like your username, machine name, and current directory. This is one example for how a prompt can look like: `user@machine:~$`
-
-There are several types of shells — for example, **bash** or **zsh** (that use slightly different languages to issue commands). This tutorial was written on a computer that uses **bash**, which stands for *Bourne Again Shell*.  
 
 
 ## Installation guides
 
-### Linux
+### Windows
 
-If you’re using Linux, you already have everything you need and you don't need to install anything. All Linux systems come with a terminal and a shell, and the default shell is usually Bash.
+Unlike macOS or Linux, Windows doesn’t include a Unix-style terminal by default, so you will need to install one of the following:
 
-You can open a terminal from your applications menu or by searching for Gnome Terminal, KDE Konsole, or xterm, depending on your desktop environment.
+1. MobaXterm (recommended)
+    - Provides a terminal with Linux-like commands built-in
+    - Installation guide: [MobaXterm setup instructions](https://hpc.ncsu.edu/Documents/mobaxterm.php)
+    - Easiest option for beginners and lightweight to install
+2. Windows Subsystem for Linux (WSL2)
+    - Gives you a full Linux environment directly on Windows
+    - Recommended if you’re comfortable installing software or already have some command-line experience
+    - Uses Ubuntu by default, which includes Bash and all standard Linux tools
+    - Installation guide: [ Microsoft WSL install instructions](https://learn.microsoft.com/en-us/windows/wsl/install)
 
-To confirm which shell you’re using, type:
+Once installed, open your terminal (MobaXterm or Ubuntu via WSL2) and verify that Bash is available:
 
 ```{bash}
 echo $SHELL
@@ -59,22 +65,13 @@ echo $SHELL
 ```
 
 
+### Linux
 
-### Windows
+If you're using Linux, you already have everything you need and you don't need to install anything. All Linux systems come with a terminal and a shell, and the default shell is usually Bash.
 
-Unlike macOS or Linux, Windows doesn’t include a Unix-style terminal by default, so you will need to install one of the following:
+You can open a terminal from your applications menu or by searching for Gnome Terminal, KDE Konsole, or xterm, depending on your desktop environment.
 
-1. MobaXterm (recommended)
-    - Provides a terminal with Linux-like commands built-in
-    - Installation guide: [MobaXterm setup instructions](https://hpc.ncsu.edu/Documents/mobaxterm.php)
-    - Easiest option for beginners and lightweight to install
-2. Windows Subsystem for Linux (WSL2)
-    - Gives you a full Linux environment directly on Windows
-    - Recommended if you’re comfortable installing software or already have some command-line experience
-    - Uses Ubuntu by default, which includes Bash and all standard Linux tools
-    - Installation guide: [ Microsoft WSL install instructions](https://learn.microsoft.com/en-us/windows/wsl/install)
-
-Once installed, open your terminal (MobaXterm or Ubuntu via WSL2) and verify that Bash is available:
+To confirm which shell you’re using, type:
 
 ```{bash}
 echo $SHELL

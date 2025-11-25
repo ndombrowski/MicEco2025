@@ -253,26 +253,27 @@ window.Quarto = {
 </header>
 
 
-<p>After we better understand the quality of our amplicon long-read data we can then:</p>
+<p>Now that we have learned how to use the command line to issue commands and use an HPC we can now analyse our long-read amplicon data and:</p>
 <ul>
-<li>Perform quality filtering</li>
+<li>Perform quality filtering by choosing appropriate cutoffs based on our quality assessment we did in the prior section</li>
 <li>Align the quality filtered reads to a reference database</li>
 <li>Generate a count matrix</li>
 </ul>
+<p><strong>Important</strong>: All of this should be run on the Crunchomics HPC, so be sure that you connected with <code>ssh -X user@omics-h0.science.uva.nl</code>.</p>
 <section id="chopper-quality-cleaning" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="chopper-quality-cleaning"><span class="header-section-number">6.1</span> <code>chopper</code>: Quality cleaning</h2>
-<p>In this section, you will learn how to perform quality filtering of your amplicon long-read data using <strong>chopper</strong>. Quality control is an essential first step to remove low quality reads that introduce errors in downstream analyses such as sequence alignment and taxonomic assignment. Typical things you want to do are:</p>
+<p>In this section, you will learn how to perform quality filtering of your amplicon long-read data using <strong>chopper</strong>. Quality control is an essential first step to remove low quality reads that introduce errors in downstream analyses such as sequence alignment. Typical things you want to do are:</p>
 <ul>
-<li>Removing sequence adapters, barcodes, primer sequences (this already has been done for your data)</li>
-<li>Removing reads with a too low quality score</li>
-<li>Removing reads that are too long or too short</li>
-<li>Trimming read ends if they have low quality scores</li>
+<li>Remove sequence adapters, barcodes, primer sequences (this already has been done for your data)</li>
+<li>Remove reads with a too low quality score</li>
+<li>Remove reads that are too long or too short</li>
+<li>Trim read ends if they have low quality scores</li>
 </ul>
 <p><code>chopper</code> is designed for filtering and trimming of long-read data and you can install <code>chopper</code> with mamba:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mamba</span> create <span class="at">-n</span> chopper_0.11.0 <span class="at">-c</span> bioconda chopper=0.11.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>In this tutorial, you will always receive example code as a starting point, with sections containing <code>...</code> for you to fill in. If you get stuck, check <a href="https://github.com/wdecoster/chopper">chopper’s documentation</a> or use the built-in help via the CLI (<code>chopper -h</code>).</p>
+<p>In this tutorial, you will always receive example code as a starting point, with sections containing <code>...</code> for you to fill in. If you get stuck in this section, first check <a href="https://github.com/wdecoster/chopper">chopper’s documentation</a> or use the built-in help via the CLI (<code>chopper -h</code>).</p>
 <div class="callout callout-style-default callout-question callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -289,17 +290,17 @@ window.Quarto = {
 <p><strong>Task 1: Perform quality filtering using chopper</strong></p>
 <p>Do the following:</p>
 <ul>
-<li>Create a folder to store your results</li>
+<li>Create a new folder to store the results and name the output file <code>barcodeX_filtered.fastq.gz</code></li>
 <li>Request 2 CPUs and 20G of memory with <code>srun</code>, and ensure chopper itself also uses 2 threads</li>
-<li>Investigate the Nanoplot LengthvsQualityScatterPlot that you generated in the last exercise and decide on the right thresholds to use with chopper to:
+<li>Investigate the Nanoplot LengthvsQualityScatterPlot.html that you generated in the last exercise and decide on the right thresholds to use with chopper to:
 <ul>
 <li>Discard sequences that are too long or too short</li>
 <li>Discard reads with a too low phred score</li>
 </ul></li>
-<li>Check the <a href="https://github.com/wdecoster/chopper">tools manual</a> carefully with how to deal with <code>.gz</code> files. Hint: Closely check the example section</li>
+<li>Check the <a href="https://github.com/wdecoster/chopper">tools manual</a> carefully for how to deal with <code>.gz</code> files. Hint: Closely check the example section</li>
 </ul>
 <blockquote class="blockquote">
-<p><strong>IMPORTANT</strong>: After chopper finished you will see something like “Kept 133 reads out of 3785 read”. If you see less than 50% of the reads remaining use less strict length and quality filters. You need enough reads for the next steps</p>
+<p><strong>IMPORTANT</strong>: After chopper finished you will see something like “Kept 1985conda de reads out of 3785 reads”. If you see less than 50% of the reads remaining use less strict length and quality filters. You need enough reads for the next steps</p>
 </blockquote>
 <p><strong>Task 2: Assess the quality of the filtering step</strong></p>
 <p>Investigate the quality of the filtered FASTQ file by running:</p>
@@ -307,7 +308,7 @@ window.Quarto = {
 <li>NanoPlot</li>
 <li>seqkit
 <ul>
-<li><strong>Important</strong>: Be sure that you add the barcodeID to the output file, we need this later!</li>
+<li><strong>Important</strong>: Be sure that you name the output file something like <code>barcodeX_filtered.tsv</code>, we need this file later!</li>
 </ul></li>
 </ul>
 <p>Afterwards open NanoPlots and seqkit. Investigate the outputs and record:</p>
@@ -328,12 +329,13 @@ window.Quarto = {
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Deactivate the conda environment </span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a folder for the Nanoplot results and run Nanoplot</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> ...</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Run seqkit</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure that the output file is something like path/barcodeX_filtered.tsv</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a folder for the Nanoplot results and run Nanoplot </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># (don't forget to activate the right conda environment first and deactivate it after)</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> ...</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Run seqkit</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Make sure that the output file is something like path/barcodeX_filtered.tsv</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-answer callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
@@ -358,7 +360,7 @@ window.Quarto = {
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G chopper <span class="dt">\</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> data/barcodeX.fastq.gz <span class="dt">\</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-q</span> 12 <span class="dt">\</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--minlength</span> 1300 <span class="at">--maxlength</span> 1650 <span class="dt">\</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--minlength</span> 1000 <span class="at">--maxlength</span> 1650 <span class="dt">\</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">--threads</span> 2 <span class="kw">|</span> <span class="fu">gzip</span> <span class="dt">\</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">&gt;</span> results/chopper/barcodeX_filtered.fastq.gz</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
@@ -386,7 +388,7 @@ window.Quarto = {
 <p>Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.</p>
 <ul>
 <li>Input: 3785 reads</li>
-<li>Passed filtering: 2976 reads (~80%). You ideally want to keep 50%-90% of the reads for the down-stream analyses depending on the quality of the data and how many reads you generated.</li>
+<li>Passed filtering: 1985 reads (~50%). You ideally want to keep 50%-90% of the reads for the down-stream analyses depending on the quality of the data and how many reads you generated.</li>
 </ul>
 </div>
 </div>
@@ -411,9 +413,9 @@ window.Quarto = {
 </div>
 </div>
 <p>This shows that with a mean Phred quality of 10, each base has roughly a 10% chance of being incorrect. For a 1,500 bp 16S amplicon we expect 150 errors per sequence with such a quality score. While Nanopore long reads are useful because they capture the full 16S rRNA gene, a high level of errors can make species-level identification unreliable.</p>
-<p>To classify our filtered Nanopore reads, we use <strong>Minimap2</strong> to align each read against a reference database containing the 16S rRNA sequences from all the strains used in our lab experiments. In other words, minimap compares how “similar” each read is compared to every reference sequence. One or more alignments may be recorded depending on how well the read matches the references.</p>
-<p>Alignment-based tools like Minimap2 are well-suited for Nanopore data because they tolerate mismatches and small insertions or deletions, which are common in error-prone long reads. The output of Minimap2 is a <strong>PAF</strong> (Pairwise mApping Format) file, which contains information about how well each read aligns to the reference sequences.</p>
-<p>Some reads may align equally well to multiple reference sequences (<strong>multi-mappers</strong>), particularly if the strains have highly similar 16S sequences (for example the different Pseudomonas strains you worked with in the lab). These multi-mapping reads are important to keep in mind when summarizing taxonomic abundances.</p>
+<p>To classify our filtered Nanopore reads, we use <strong>Minimap2</strong> to map each read against a reference database of 16S rRNA sequences from all the strains used in your lab experiments. Mapping identifies the reference sequence most similar to each read. The read is then aligned base-by-base to the corresponding reference sequence to check for exact matches or mismatches. Depending on the similarity, one or more hits may be recorded for each read.</p>
+<p>Mapping tools like Minimap2 are well-suited for Nanopore data because they tolerate mismatches as well as small insertions and deletions, which are common in error-prone long reads. The output of Minimap2 is a <strong>PAF</strong> (Pairwise mApping Format) file, which contains information about how well each read maps to the reference sequences.</p>
+<p>Some reads may map equally well to multiple reference sequences (<strong>multi-mappers</strong>), particularly if the strains have highly similar 16S sequences (for example the different Pseudomonas strains you worked with in the lab). These multi-mapping reads are important to keep in mind when summarizing taxonomic abundances.</p>
 <p>Minimap2 is installed by default on Crunchomics.</p>
 <div class="callout callout-style-default callout-question callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
@@ -432,10 +434,10 @@ window.Quarto = {
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wget https<span class="sc">:</span><span class="er">//</span>raw.githubusercontent.com<span class="sc">/</span>ndombrowski<span class="sc">/</span>MicEco2025<span class="sc">/</span>refs<span class="sc">/</span>heads<span class="sc">/</span>main<span class="sc">/</span>data<span class="sc">/</span>amplicons_nr.fasta <span class="sc">-</span>P data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>This file (<code>amplicons_nr.fasta</code>) contains one to two representative 16S rRNA sequences per strain used in the lab.</p>
+<p>This file (<code>amplicons_nr.fasta</code>) contains one to two representative 16S rRNA sequences per strain used in the lab. View the file with <code>head</code> and use <code>grep</code> to count how many sequences are in the file.</p>
 <p><strong>Task 2: Run minimap2</strong></p>
-<p>Next, you will align your filtered reads against the reference database.</p>
-<p>Before running, make sure to check all the available options with <code>minimap2 -h</code> and to:</p>
+<p>Next, you will map your filtered reads against the reference database using minimap2.</p>
+<p>Before running, make sure to check all the available options with <code>minimap2 -h</code> and then make sure tha tyou:</p>
 <ul>
 <li>Create a folder to store your results</li>
 <li>Use srun with 2 CPUs and 20G of memory</li>
@@ -444,7 +446,7 @@ window.Quarto = {
 <li>Provide both
 <ul>
 <li><code>data/amplicons_nr.fasta</code> (the reference)</li>
-<li><code>barcodeX_filtered.fastq.gz</code> (the cleaned fastq squences)</li>
+<li><code>barcodeX_filtered.fastq.gz</code> (the cleaned fastq sequences)</li>
 </ul></li>
 <li>Use <code>&gt; results/minimap2/barcodeX.paf</code> to store the output</li>
 </ul>
@@ -461,14 +463,17 @@ window.Quarto = {
 <li>Look at the first 12 columns of the PAF file. Which of these could help you filter unreliable alignments or identify multi-mapping reads?</li>
 </ol>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a suitable output folder </span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of reference sequences</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>... </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap2 </span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a suitable output folder </span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>...</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of alignments</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap2 </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of alignments</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="callout callout-style-default callout-answer callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -483,25 +488,28 @@ window.Quarto = {
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a suitable output folder </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results/minimap2</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of reference sequences</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">"&gt;"</span>  data/amplicons_nr.fasta</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap2 </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G minimap2 <span class="dt">\</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">-cx</span> map-ont <span class="at">-t</span> 2 <span class="dt">\</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        data/amplicons_nr.fasta <span class="dt">\</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        results/chopper/barcode07_filtered.fastq.gz <span class="dt">\</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;</span> results/minimap2/barcode07.paf</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Count number of alignments: 3076 (-1 because of the header)</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> results/minimap2/barcodeX.paf</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a suitable output folder </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> results/minimap2</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap2 </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span> 2 <span class="at">--mem</span><span class="op">=</span>20G minimap2 <span class="dt">\</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">-cx</span> map-ont <span class="at">-t</span> 2 <span class="dt">\</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        data/amplicons_nr.fasta <span class="dt">\</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        results/chopper/barcodeX_filtered.fastq.gz <span class="dt">\</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;</span> results/minimap2/barcodeX.paf</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the file itself</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/minimap2/barcodeX.paf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Count number of alignments: 2059 (-1 because of the header)</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> results/minimap2/barcodeX.paf</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Explore the file itself</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">less</span> <span class="at">-S</span> results/minimap2/barcodeX.paf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Answer:</p>
 <ol type="1">
-<li>There are 3076 alignments for 2976 reads. There might be different reasons for seeing more reads aligning than expected
+<li>There are 2059 alignments for 2976 reads. If you see more alignments then there are reads, there might be different reasons for that:
 <ol type="1">
 <li>If your experiment included Pseudomonas strains you likely will have more alignments than reads. The higher number of alignments occurs because some reads might align equally well to multiple reference 16S sequences, these are multi-mapping reads.</li>
 <li>Some reads might only partially or weakly align to highly similar regions in the 16S rRNA gene</li>
@@ -587,13 +595,14 @@ window.Quarto = {
 <li>Removing low-confidence hits by filtering out alignments with:
 <ul>
 <li>Low sequence identity (many mismatches)</li>
-<li>Low coverage (only part of the read aligned)</li>
+<li>Low coverage (only part of the read mapped to the reference)</li>
 <li>Low mapping quality (reads could map equally well elsewhere)</li>
 </ul></li>
 <li>Selecting the single best alignment for each read (to handle multi-mappers)</li>
 </ul>
 <p>Afterwards, we can count how many reads map to each reference sequence. These counts can then be summarized at higher taxonomic levels (e.g., genus) to account for the uncertainty due to sequencing errors.</p>
-<p>Instead of using a single pre-built program, we will use a custom Python script to perform this step. So why Python o R? Tools like Minimap2 produce large, text-based alignment files. While command-line tools are great for specific tasks (like counting lines or filtering by quality), programming languages like Python and R allow you to:</p>
+<p>Instead of using a single pre-built program, we will use a custom Python script to perform this step. So why use a tool like Python or R for this?</p>
+<p>Tools like Minimap2 produce large, text-based alignment files. While command-line tools are great for specific tasks (like counting lines or filtering by quality), programming languages like Python and R allow you to:</p>
 <ul>
 <li>Combine multiple filtering criteria (e.g.&nbsp;identity, coverage, quality)</li>
 <li>Parse complex data formats</li>
@@ -635,7 +644,7 @@ window.Quarto = {
 <li>Filtering thresholds for identity, coverage, and mapping quality</li>
 </ol>
 <p><strong>Task 3: Generate the count table</strong></p>
-<p>Now, use <code>paf_to_matrix.py</code> to convert your alignment results into an OTU (operational taxonomic unit) count table. You will need to:</p>
+<p>Now, use <code>paf_to_matrix.py</code> to convert your alignment results into a count table. You will need to:</p>
 <ul>
 <li>Make sure to activate the conda environment we setup in Task 1</li>
 <li>Provide the path to your PAF alignment folder (<code>-i</code>)</li>
@@ -699,14 +708,14 @@ window.Quarto = {
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the python script</span></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/paf_to_matrix.py <span class="dt">\</span></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">-i</span> results/minimap2/ <span class="dt">\</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> results/seqkit/fastq_filtered.tsv <span class="dt">\</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> results/seqkit/barcodeX_filtered.tsv <span class="dt">\</span></span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">-t</span> data/accession_to_genus.tsv <span class="dt">\</span></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">-o</span> results/tables</span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ol type="1">
-<li>About 8% of reads were lost during the filtering. Since we had more alignments than reads, the filtered reads were likely secondary (less confident) alignments. If too many reads are removed, try lowering: the sequence identity threshold (<code>id</code>), mapping threshold (<code>-mapq</code>) or allowed coverage threshold (<code>-cov</code>)</li>
+<li>About 8% of reads were lost during the filtering. If you had more alignments than reads, the filtered reads were likely secondary (less confident) alignments. If too many reads are removed, try lowering: the sequence identity threshold (<code>id</code>), mapping threshold (<code>-mapq</code>) or allowed coverage threshold (<code>-cov</code>)</li>
 <li>Most reads map to Streptococcus and Lactococcus, consistent with the experiment. A few unassigned reads may come from contamination or poor-quality reads.</li>
 <li>Streptococcus had ~10× more reads than Lactococcus. This may indicate stronger growth due to better adaptation to liquid media or competitive advantage in the co-culture.</li>
 </ol>

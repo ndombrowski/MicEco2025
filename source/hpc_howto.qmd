@@ -2,12 +2,11 @@
 execute:
   eval: false
 engine: knitr
-
 ---
 
 # Working on an HPC
 
-Now that you are more comfortable with the command line, we will start working on the UVA Crunchomics HPC. In this section, you will go through the following steps:
+Now that you are more comfortable with the command line, we will learn how to work on the UVA Crunchomics HPC. In this section, you will go through the following steps:
 
 - Connect to the HPC and transfer your sequencing files
 - Install software using conda
@@ -32,7 +31,7 @@ Here:
 - server is the address of the HPC you want to connect to, for Crunchomics this is `omics-h0.science.uva.nl`
 - `-X` enables X11 forwarding, which allows graphical applications from the server (like plotting or viewing images) to appear on your local machine. "Untrusted" X11 forwarding means the server can send graphical output, but it has limited access to your local machine
 
-For Crunchomics at UVA, you would use:
+To log into the Crunchomics at UVA, use the following and enter your UvA password when prompted:
 
 ```{bash}
 ssh -X uvanetid@omics-h0.science.uva.nl
@@ -85,9 +84,9 @@ which conda
 which mamba
 ```
 
-If one of these commands returns “command not found”, then you can follow the next steps to install conda/mamba yourself.
+If one of these commands returns “command not found”, then you can follow the next steps to install conda/mamba yourself. If you already have conda but not mamba that is fine, just replace all instances of mamba in this tutorial with conda.
 
-To install Miniforge (which includes conda and mamba by default), run:
+If you don't have access to either conda or mamba then you can install Miniforge (which includes conda and mamba by default) by running the following two commands:
 
 ```{bash}
 # Download the miniforge installation script
@@ -101,7 +100,7 @@ During installation:
 
 - Read the license (scroll by pressing enter) and say "Yes" when asking for confirmation
 - Choose the installation location
-    - On Crunchomics, your home directory has only 25 GB of space. Therefore install everything into the personal folder that comes with 500 GB: `/zfs/omics/personal/uvanetID/miniforge3`
+    - **Important**: On Crunchomics, your home directory has only 25 GB of space. Therefore install everything into the personal folder that comes with 500 GB: `/zfs/omics/personal/uvanetID/miniforge3`
 - Say "yes" when asked if conda should be initialized
 - Restart your shell by typing `source ~/.bashrc`. You now should see a `(base)` in front of your prompt indicating that you are now inside conda's base environment
 - Verify the installation:
@@ -142,6 +141,7 @@ conda deactivate
 - Check the tool’s documentation for specific installation notes or version requirements
 - You can install specific versions when needed with `mamba create -n nanoplot_v1.42 -c bioconda nanoplot=1.42`
 - You can remove environments you no longer need with `conda env remove -n nanoplot`
+- You can list all existing environments with `conda env list`
 
 
 ### Preparing your working directory
@@ -172,17 +172,22 @@ The basic syntax is:
 - `scp [options] SOURCE DESTINATION`
 - For connecting to any HPC the syntax is `server:file_location`
 
-When transferring data you must **run the command from a terminal session on your own computer**, not from a terminal session that runs on the HPC.
+When transferring data you must **run the command from a terminal session on your own computer**, not from a terminal session that runs on the HPC. To keep yourself organized its often useful to have one terminal session open on your laptop and another one Crunchomics as shown in the example below:
+
+![](../img/terminal_tabs.png){width=80%}
 
 To copy the entire data folder into your Crunchomics project folder, use:
 
 ```{bash}
-# Run this from your local terminal (not while logged into the HPC)
+# Run this from your local terminal (not while logged into the HPC) 
+# Run this while being inside the data_analysis folder to be able to access the data folder
 # Replace 'username' with your UvAnetID
 scp -r data username@omics-h0.science.uva.nl:/home/username/personal/data_analysis
 
-# Then check on the HPC that the files arrived:
-ll data/*.fasta
+# Run this command while being logged into the HPC
+# and while being inside the data_analysis folder
+# to check on the HPC that the files arrived:
+ll data
 ```
 
 Notes:
@@ -233,7 +238,7 @@ Some useful columns to know:
 - ST: the current state of the job (e.g., R = running, PD = pending).
 - A full list of SLURM job state codes can be found [here](https://curc.readthedocs.io/en/latest/running-jobs/squeue-status-codes.html)
 
-If you have already submitted a job, it will appear in this list. To see only your own jobs, you can add the `-u` flag followed by your username:
+If you have already submitted a job, it will appear in this list. To see only your own jobs, you can add the `-u` flag followed by your username or the USER variable:
 
 ```{bash}
 squeue -u $USER
@@ -258,26 +263,26 @@ srun --cpus-per-task=1 --mem=1G --time=00:10:00 echo "Hello world"
 
 Here’s what each part means:
 
-- `srun` → communicate that you want to run something on the compute node
+- `srun` → communicate to SLURM that you want to run something on the compute node with the following resources:
 - `--cpus-per-task=1` → request 1 CPU core
 - `--mem=1G` → request 1 GB of memory
 - `--time=00:10:00` → set a maximum runtime of 10 minutes
-- `echo "Hello world"` → the actual command to run (prints text to the screen)
+- `echo "Hello world"` → the actual command to run (echo is a command that prints text to the screen)
 
-So the arguments after `srun` and before `echo` are where you tell SLURM what resources to allocate on the compute node.
+So the arguments after `srun` and before `echo` are where you tell SLURM what resources to allocate on the compute node. Note, that after running this command that you might see `Hello world` twice. This is fine and just some specific behavior of some HPC systems we don't need to worry about.
 
 
 ### Running a analysis with Seqkit interactively
 
-Next, let’s use srun for something more useful. First, we will analyze the fasta files that we have explored using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files.
+Next, let's use `srun` for something more useful. We will analyze the fasta files that we have explored using [`seqkit`](https://scienceparkstudygroup.github.io/ibed-bioinformatics-page/source/core_tools/seqkit.html), a fast toolkit for inspecting FASTA/FASTQ files. Seqkit comes with different modules, for example the stats module, that generates basic summary statistics from sequence files and can be called with `seqkit stats`.
 
-> **Tip**: Whenever you use a tool for the first time, check its help page (e.g., `seqkit -h`) to see all available options.
+> **Tip**: Whenever you use a tool for the first time, check its help page (e.g., `seqkit -h`) to see all available options or check online for a manual or basic usage information.
 
 ```{bash}
-# Create a results folder
+# Create a results folder with a seqkit folder sinide
 mkdir -p results/seqkit 
 
-# Run seqkit interactively
+# Run seqkit with srun
 srun --cpus-per-task=1 --mem=5G seqkit stats data/*fasta -Tao results/seqkit/16s_stats.tsv --threads 1
 
 # View the results (press 'q' to exit less)
@@ -286,16 +291,17 @@ less -S results/seqkit/16s_stats.tsv
 
 Here:
 
-- `seqkit stats data/*fasta` → analyzes all FASTA files in the data folder ending in fna
-- `-Tao` → output in tabular format (-T), include all stats (-a), and write to file (-o)
+- `seqkit stats data/*fasta` → Use the `seqkit stats` module to analyse all FASTA files in the data folder ending in fasta
+- `-Tao` → options to store output in tabular format (-T), include all stats (-a), and write to file (-o)
 - `--threads 1` → run on one thread (should match `--cpus-per-task=1`)
-- The results are stored in results/seqkit/genome_stats.tsv
+    - **Important**: Whenever you submit jobs to the compute node, make sure that the number of requested CPUS/threads match with the number of CPUS used by the software
+- The results are stored in `results/seqkit/16s_stats.tsv`
 
-This job runs very quickly — so fast that it might not even appear in the queue when you type `squeue`.
+This job runs very quickly, so fast that it might not even appear in the queue when you type `squeue`.
 
-When you open the results file, you'll see:
+When you open the results file, you will, among others, see:
 
-- The number of sequences (`num_seqs`), this should match what we saw earlier
+- The number of sequences in each fasta file (`num_seqs`), this should match with what you saw during the CLI tutorial part
 - The average length of the sequences in bp (`avg_len`)
 - Additional metrics such as the minimum, maximum or total sequence length
 
@@ -306,8 +312,8 @@ When starting out, choosing the right amount of CPUs, memory, or runtime can be 
 Here are a few rules of thumb:
 
 - Start small, a lot of tools don't need huge resources for small test runs
-- Check the tool's documentation, many list recommended resource settings
-- Test on a subset of your data first. It runs faster and helps you debug
+- Check the tool's documentation, some might list recommended resource settings
+- When starting out, you can begin by testing on a subset of your data first. It runs faster and helps you debug
 - If your job fails or runs out of memory, increase the resources gradually
 - Once you have a stable workflow, you can scale up
 
@@ -323,14 +329,14 @@ Now it’s your turn to run an srun job interactively by exploring the FASTQ fil
 
 **Task 1: Inspect the data**
 
-Without uncompressing the FASTQ file, explore the content of the FASTQ files by viewing the first few lines of `barcodeX.fastq.gz` using `zcat` and `head`. 
+Without uncompressing the FASTQ file, explore the content of the FASTQ files by viewing the first few lines of `barcodeX.fastq.gz` using `zcat` and `head`.  Replace `barcodeX` with the barcodeID that you prepared during the practical.
 
 You can get the FASTQ file as follows:
 
 1.  If you are following the Microbial Ecology course:
 
     ```{bash}
-    # Replace X with the barcode you used in the practical
+    # Replace X with the barcode ID that you used in the practical
     cp /zfs/omics/projects/education/miceco/data/practical/barcodeX.fastq.gz data
     ```
 
@@ -344,7 +350,7 @@ Have a look at the data and have a look the header, sequence and quality scores.
 
 **Tasks 2: Run seqkit interactively**
 
-Use `srun` to analyze `barcodeX.fastq.gz` with `seqkit stats`. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder.
+Use `srun` to analyze `barcodeX.fastq.gz` with `seqkit stats`. Request 1 CPU, 5 GB memory, and 10 minutes of runtime. Save the output in the results/seqkit/ folder and name the file `barcodeX_stats.tsv`.
 
 **Tasks 3: Check the results**
 
@@ -376,7 +382,7 @@ Answers:
 - Your average sequence length should be ~ 1400 bp and this should correspond to the amplicon size of your PCR reaction.
 - num_seqs should correspond to the number of sequences in your FASTQ file and will be around 2000-10000 reads. The actual number will depend on how the sequencing went.
 
-> **Tip**: Use `\` to split long commands across lines for readability.
+> **Tip**: Use `\` to split long commands across lines for readability. If you do this, be careful and do NOT add a space after the `\`
 
 :::
 :::
@@ -403,7 +409,9 @@ mkdir -p scripts logs
 
 #### Step 2: Write a job script
 
-Use nano (or another editor) to create a script file:
+We will first run `seqkit stats` again but this time instead of `srun` we will use `sbatch`, so that you directly can compare the two.
+
+Use nano to create a script file:
 
 ```{bash}
 nano scripts/run_seqkit.sh
@@ -423,7 +431,7 @@ Then add the following content:
 echo "Seqkit job started on:" 
 date
 
-srun --cpus-per-task=1 --mem=5G seqkit stats data/*fasta -Tao results/seqkit/genome_stats_2.tsv --threads 1
+seqkit stats data/*fasta -Tao results/seqkit/16s_stats_2.tsv --threads 1
 
 echo "Seqkit job finished on:"
 date
@@ -433,34 +441,42 @@ Save and exit:
 
 - Press `Ctrl+X` to exit, then `Y` to confirm that you want to safe the file, then Enter.
 
+Notice how the `seqkit stats` command looks exactly the same as when we used srun? The main difference between `srun` and `sbatch` is how we have to package the instructions for the compute node.
+
 
 #### Step 3: Submit and monitor your job
 
 ```{bash}
-# Submit 
+# Submit by using sbatch and providing it with the script we just wrote
 sbatch scripts/run_seqkit.sh
 
 # Check job status (may run too fast to appear)
 squeue -u $USER
-```
 
+# Once the job is finished and does not appear in the list, check the outputs 
+ls -l logs 
+ls -l results/seqkit
+less -S results/seqkit/16s_stats_2.tsv
+```
 
 When submitted successfully, you’ll see something like `Submitted batch job 754` and new log files will appear in your logs folder:
 
 - `seqkit_<jobID>.out` → standard output (results and messages)
 - `seqkit_<jobID>.err` → error log (check this if your job fails)
 
+The content of `results/seqkit/16s_stats_2.tsv` should look exactly the same as when you ran it with `srun`.
+
 
 #### Step 4: Understanding your job script
 
 In the job script above:
 
-- `#!/bin/bash`:	Runs the script with the Bash shell
-- `#SBATCH --...`	Define SLURM options: resources, runtime, output names. 
+- `#!/bin/bash`:	Runs the script with the Bash shell, this is something you need to add on top of every job script
+- `#SBATCH --...`	Allows us to define the SLURM options: resources, runtime, output names. 
     - These are the same options that you have used with `srun`
     - The `%j` variable in your log filenames automatically expands to the job ID, making it easier to keep track of multiple submissions.
 - `echo / date`:	Prints status messages to track job progress
-- `srun ...`: The actual analysis command to run on the compute node
+- `seqkit stats ...`: The actual analysis command to run on the compute node
 
 
 ::: {.callout-tip title="Tip: Debugging your first sbatch jobs" collapse=false}
@@ -500,44 +516,55 @@ Always cancel jobs that are running incorrectly or stuck in a queue too long. Th
 
 **Task 1: Write a script to run NanoPlot with sbatch**
 
-Now you'll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment.
+Now you'll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment. For this, first have a look at the [tools manual](https://github.com/wdecoster/NanoPlot) and read what the tools does and what the different options are.
 
-Below is a template for a script called `scripts/nanoplot.sh`.  Replace all `...` with the correct code.
+Below is a template for a script that you should store in the file `scripts/nanoplot.sh`.  Replace all `...` with the correct code.
 
-In your script, make sure to:
+The script already ensures that the job:
 
 - Give your job, output, and error files meaningful names  
 - Request **2 CPUs**, **10 GB of memory**, and **30 minutes** of runtime  
 - Activate your `nanoplot` conda environment  
 - Create an appropriate **output directory** under `results/`  
-- Use NanoPlot options to:  
-    - Indicate the input is in **FASTQ** format  
-    - Output a **TSV stats file**  
-    - Produce bivariate dot plots
-    - Save all results in the new results folder  
+
+Your task is now to use Nanoplot and use the right options (check the manual for those) and:
+
+1. Indicate the input is in **FASTQ** format
+2. Use 2 threads 
+3. Output the stats file as a properly formatted TSV 
+4. Specify that we want bivariate dot plots
+5. Save all results in the new results folder  
 
 ```{bash}
 #!/bin/bash
 #SBATCH --job-name=nanoplot
 #SBATCH --output=logs/nanoplot_%j.out
 #SBATCH --error=logs/nanoplot_%j.err
-...
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=10G
+#SBATCH --time=00:30:00
 
 # Activate the conda environment
 source ~/.bashrc # this is needed so that conda is initialized inside the compute node
-conda activate nanoplot
+conda activate nanoplot # whenever activating an environment, make sure that the environment name is correct
 
 # Add start date (optional)
-...
+date
 
-# Make an output directory 
-...
+# Make an output directory
+mkdir -p results/nanoplot/raw
 
-# Run Nanoplot
-NanoPlot ...
+# Run Nanoplot 
+# And replace the ... with the right options for sub-tasks 1-5
+NanoPlot \
+    --fastq ... \
+    -t ... \
+    --... \
+    --plots ... \
+    -o results/nanoplot/raw
 
 # Add end date (optional)
-...
+date
 ```
 
 **Task 2: Submit the job and inspect the results**
@@ -546,11 +573,11 @@ Then:
 
 1. Submit your job with sbatch `scripts/nanoplot.sh`
 2. Use `squeue` to check whether it’s running
-3. Inspect your log files (logs/nanoplot_*.out and logs/nanoplot_*.err)
+3. Inspect your log files (logs/nanoplot_*.out and logs/nanoplot_*.err) and check how long the job ran
 4. Use scp to copy the results folder to your own computer for viewing
 5. In your NanoPlot output, open:
     - NanoStats.txt (text summary)
-    - LengthvsQualityScatterPlot_dot.html (interactive plot)
+    - LengthvsQualityScatterPlot_dot.html (interactive plot that you can open on your computer in your internet browser)
 6. Record:
     - How many reads were processed
     - The mean read length
@@ -582,7 +609,8 @@ date
 mkdir -p results/nanoplot/raw
 
 # Run Nanoplot
-NanoPlot --fastq data/barcodeX.fastq.gz \
+NanoPlot \
+    --fastq data/barcode07.fastq.gz \
     -t 2 \
     --tsv_stats \
     --plots dot \
@@ -602,16 +630,26 @@ sbatch scripts/nanoplot.sh
 # Check job status
 squeue
 
-# Explore the log files 
+# Explore the log files once the job is done
+# The job typically should run for < 1 minute
 ls -l logs/nanoplot* 
 tail logs/nanoplot_*.out
 
 # Copy results to your computer
-# Run this command inside the data_analysis folder on my own computer 
+# Run this command inside the data_analysis folder on your own computer 
+# (you should already have a results folder inside that folder)
 scp -r uvanetid@omics-h0.science.uva.nl:/home/uvanetid/personal/data_analysis/results/nanoplot results
+
+# If you are using a Windows computer, then you can use explorer.exe to open the folder you are in
+# Run this command inside the data_analysis folder on your own computer 
+# Mac users instead can use: `open .`
+explorer.exe .
 
 # Explore the stats file 
 less -S results/nanoplot/NanoStats.txt
+
+# On your own computer, find the nanoplot folder and open this file in your browser:
+# results/nanoplot/raw/LengthvsQualityScatterPlot_dot.html
 ```
 
 What to look for:

@@ -20,7 +20,7 @@ This workflow documents a 16S rRNA gene amplicon analysis from Winogradsky colum
 
 - A project description and sample metadata table
 - All software dependencies and environment versions
-- Reproducible bash commands for data inspection, merging, and quality control
+- The bash commands that were used for data inspection, merging, and quality control
 - Comments explaining why a step was done
 - A structured layout (headings, subheadings, results summaries)
 
@@ -31,14 +31,14 @@ Even if you don't understand all commands yet, notice how it reads almost like a
 
 ### Plain text editor
 
-Avoid visual editors like Word, as they are not designed for code and can change syntax by for example replacing backticks (\`) with apostrophes (\').  
+Avoid visual editors like Word, as they are not designed for code and can change syntax by, for example, replacing backticks (\`) with apostrophes (\').  
 
 One of the easiest solutions is to use a **plain text editor**, such as:
 
 - **TextEdit** (Mac)
 - **Notepad++** (Windows)
 
-These editors allow you to write and save code safely, but they lack advanced features like syntax highlighting or integrated code execution.
+These editors allow you to write and save code safely, but they lack features like syntax highlighting or integrated code execution.
 
 
 ### Rmarkdown in RStudio
@@ -138,6 +138,14 @@ Enclose code snippets in triple backticks followed by the computational language
 
 ````markdown
 ```bash
+grep "control" downloads/Experiment1.txt
+```
+````
+
+Some editors also use the following syntax:
+
+````markdown
+```{bash}
 grep "control" downloads/Experiment1.txt
 ```
 ````
