@@ -18,7 +18,7 @@ format:
 
 # Description
 
-In order to develop the workflow different microbial strains (see below) were mixed in different combinations, grown for a while in liquid media, DNA isolated and the 16S amplified and sequenced with Nanopore. In total 15 combinations were tested and 15 barcoded datasets generated. Here, I will test the different tools and whether all species can be successfully recovered from the sequencing data. The specific  details of the communities are as follows:
+In order to develop the workflow different microbial strains (see below) were mixed in different combinations, grown for a while in liquid media, DNA isolated and the 16S amplified and sequenced with Nanopore. In total 15 combinations were tested and 15 barcoded datasets generated. Here, I will test the different tools and whether all species can be successfully recovered from the sequencing data. The specific  details of the communities are as follows and were provided by Aliki Antoniou:
 
 - S1.1-S1.3 (bc01-bc03)  
   - LjRoot60            Pseudoxanthomonas
