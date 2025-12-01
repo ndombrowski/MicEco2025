@@ -100,7 +100,11 @@ If you see the following, you are could to go.
 
 ![](../img/crunchomics_login.png)
 
-If you are not able to successfully login, first control that you typed the right user name and used the correct password when prompted.
+If you are not able to successfully login, first control that 
+
+- you typed the right user name 
+- you entered the correct password when prompted
+- you are logged into the eduroam Wifi and don't use the open Wifi instead
 
 > Hint: You can log out of Crunchomics by typing `exit` or closing the terminal window.
 

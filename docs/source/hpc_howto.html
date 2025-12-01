@@ -78,6 +78,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-9659cec03f8b4312cb209e52599abb46.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -398,7 +401,7 @@ Important
 <li>For connecting to any HPC the syntax is <code>server:file_location</code></li>
 </ul>
 <p>When transferring data you must <strong>run the command from a terminal session on your own computer</strong>, not from a terminal session that runs on the HPC. To keep yourself organized its often useful to have one terminal session open on your laptop and another one Crunchomics as shown in the example below:</p>
-<p><img src="../img/terminal_tabs.png" class="img-fluid" style="width:80.0%"></p>
+<p><a href="../img/terminal_tabs.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="../img/terminal_tabs.png" class="img-fluid" style="width:80.0%"></a></p>
 <p>To copy the entire data folder into your Crunchomics project folder, use:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run this from your local terminal (not while logged into the HPC) </span></span>
@@ -456,7 +459,7 @@ Important
 <p>This displays all jobs submitted to the system, and might look something like this:</p>
 <div class="quarto-figure quarto-figure-left">
 <figure class="figure">
-<p><img src="../img/squeue.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:90.0%"></p>
+<p><a href="../img/squeue.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../img/squeue.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:90.0%"></a></p>
 </figure>
 </div>
 <p>Some useful columns to know:</p>
@@ -1350,6 +1353,38 @@ Important
   </div>
 </nav>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

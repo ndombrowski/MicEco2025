@@ -117,13 +117,13 @@ def main():
 
     # For testing (change to true for testing)
     if False:
-        input_folder = Path("../data_analysis/results/minimap2/")
-        taxon_path = Path("../data/accession_to_genus.tsv")
-        stats_path = Path("../data_analysis/results/seqkit/fastq_filtered.tsv")
-        output_folder = Path("../data_analysis/results/tables/")
+        input_folder = Path("data_analysis/results/minimap2/")
+        taxon_path = Path("data/accession_to_genus.tsv")
+        stats_path = Path("data_analysis/results/seqkit/fastq_filtered.tsv")
+        output_folder = Path("data_analysis/results")
         coverage_threshold = 0.9  # minimum fraction of query covered
         identity_threshold = (
-            0.9  # optional, if you compute identity from AS/optional tags
+            0.9  # optional, if computing identity from AS/optional tags
         )
         mapq_threshold = 30
 
@@ -258,8 +258,8 @@ def main():
             print(
                 "Warning: No matching samples found between PAF and stats files. Check naming consistency."
             )
-
-        # Continue as before
+        
+        # Generate count table but including the info from stats
         mapped_seqs = counts.groupby("sample")["reads"].sum()
         barcode_total_seqs = stats.groupby("sample")["num_seqs"].sum()
         unmapped_seqs = (barcode_total_seqs - mapped_seqs).reset_index()
@@ -268,6 +268,9 @@ def main():
         unmapped_seqs = unmapped_seqs[["sample", "tname", "reads"]]
 
         counts = pd.concat([counts, unmapped_seqs], ignore_index=True)
+
+    else:
+        print(f"{stats_path} not provided or does not exist")
 
     # Generate OTU table
     otu_table = (
@@ -278,6 +281,9 @@ def main():
     otu_table_tax = taxon_df.merge(otu_table, on="tname", how="right").set_index(
         "tname"
     )
+
+    otu_table_tax["genus"] = otu_table_tax["genus"].fillna("unassigned")
+
 
     # ---------------- Generate table with best-hits and taxonomy ---------------- #
     # Combine with counts and deal with unassigned reads

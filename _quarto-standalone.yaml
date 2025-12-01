@@ -12,3 +12,5 @@ format:
     toc-expand: 1
     sidebar: false
     page-navigation: false
+
+lightbox: true

@@ -78,6 +78,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-9659cec03f8b4312cb209e52599abb46.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -307,7 +310,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>You should see something like this (your output will vary depending on what’s in your directory):</p>
-<p><img src="../img/ls.png" class="img-fluid" style="width:90.0%"></p>
+<p><a href="../img/ls.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="../img/ls.png" class="img-fluid" style="width:90.0%"></a></p>
 <p>The colors and formatting depend on your terminal settings, but typically:</p>
 <ul>
 <li>Folders (directories) appear in one color (often green or blue)</li>
@@ -323,13 +326,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>An option (or flag): A way to modify how the command behaves, i.e <code>-l</code> (long format)</li>
 <li>An optional argument: The input, i.e.&nbsp;a file or folder</li>
 </ul>
-<p><img src="../img/unix_command.png" class="img-fluid" style="width:70.0%"></p>
+<p><a href="../img/unix_command.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../img/unix_command.png" class="img-fluid" style="width:70.0%"></a></p>
 <p>Try the following command in your current directory to “List (<code>ls</code>) the contents of the current folder and show details in long format (<code>-l</code>)”:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>After running this you should see a more detail list of the contents of your folder.In the example below you can now see additional information about who owns the files (i.e.&nbsp;access modes), how large the files are, when they were last modified and their name:</p>
-<p><img src="../img/ls2.png" class="img-fluid" style="width:80.0%"></p>
+<p><a href="../img/ls2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="../img/ls2.png" class="img-fluid" style="width:80.0%"></a></p>
 <div class="callout callout-style-default callout-tip callout-titled" title="Tip: Using ls in practice">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -416,7 +419,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="3.6" class="anchored" data-anchor-id="cd-move-around-folders"><span class="header-section-number">3.6</span> <code>cd</code>: Move around folders</h2>
 <p>Now that we have our own project folder, let’s learn how to move around the file system.</p>
 <p>The file system is structured like a tree that starts from a single <strong>root</strong> directory (that is also denoted as <code>/</code> in bash). All other folders branch out from this root directory. For example, we can go from the root directory, to the users folder and from there into the john folder.</p>
-<p><img src="../img/filesystem.png" class="img-fluid" style="width:90.0%"></p>
+<p><a href="../img/filesystem.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="../img/filesystem.png" class="img-fluid" style="width:90.0%"></a></p>
 <p>There are two ways to specify a path to go the the portfolio folder:</p>
 <ul>
 <li><strong>Absolute path</strong>: starts from the root (e.g.&nbsp;<code>cd /users/john/portfolio</code>)</li>
@@ -771,11 +774,11 @@ Important
 <div id="callout-11" class="callout-11-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <p>A sequence FASTA file is a text based format to store DNA or peptide sequences. It should always look something like this:</p>
-<p><img src="../img/fasta.png" class="img-fluid"></p>
+<p><a href="../img/fasta.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="../img/fasta.png" class="img-fluid"></a></p>
 <p>The header always starts with a <code>&gt;</code> followed by descriptive information. In a new line the sequence data gets stored in either a single line or multiple lines. A fasta file can contain a single sequence or multiple sequences.</p>
 <p>By convention the extension <code>.fna</code> is used to store fasta sequences from nucleotides and <code>.faa</code> is used to store fasta sequences from proteins. The extension <code>.fasta</code> can contain either nucleotide or protein sequences.</p>
 <p>Another common extension is <code>fastq</code>. Fastq files are used to store sequencing data generated by sequencers and contain four lines of information: (i) the sequence header, (ii) the sequence itself, (iii) a separator and (iv) information about the quality of each single base pair in the sequence. They typically look something like this:</p>
-<p><img src="../img/fastq_format_red.png" class="img-fluid"></p>
+<p><a href="../img/fastq_format_red.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="../img/fastq_format_red.png" class="img-fluid"></a></p>
 </div>
 </div>
 </div>
@@ -1433,6 +1436,38 @@ Root935</code></pre>
   </div>
 </nav>
 </div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

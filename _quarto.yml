@@ -18,6 +18,7 @@ book:
     - source/applied_workflow.qmd
 
 bibliography: source/references.bib
+lightbox: true
 
 format:
   html:
