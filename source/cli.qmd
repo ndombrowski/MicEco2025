@@ -260,6 +260,19 @@ Next, let's download a fasta file that contains the sequence of a 16S rRNA gene.
 wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz
 ```
 
+::: {.callout-important}
+## Wget for Mac users
+
+For Mac users wget is not installed by default. If you do not want to install it, you can instead use the `curl` command:
+
+```{bash}
+# -O: save the file under its oroginal name 
+# -L: Tells curl that if the server tells it to go somewhere else, follow it until you reach the actual file
+curl -LO https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz
+```
+:::
+
+
 After you download any kind of data, it is always a good idea to do some sanity check to see if the file is present and know how large it is (or whether it is empty and something went wrong during the download):
 
 ```{bash}
@@ -362,7 +375,7 @@ You might have noticed that the file we downloaded ends with `.gz`. This extensi
 ```{bash}
 # Download another file  
 # Here, we use the -P option to directly download the file into the data folder 
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz -P data
+wget -P data https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz
 
 # Check that this worked 
 # You now should see two files
@@ -378,6 +391,15 @@ gzip -d data/LjRoot303.fasta.gz
 ls data
 ```
 
+::: {.callout-important}
+## Wget -P for Mac users
+
+For Mac users that use `curl` instead of `wget`, you can redirect the file to a specific folder like this:
+
+```{bash}
+curl --output-dir data -LO https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz
+```
+:::
 
 
 ## Exploring file contents
@@ -438,6 +460,16 @@ zcat data/GCF_000714595.fasta.gz
 ls -l data
 ```
 
+
+::: {.callout-important}
+## Zcat for Mac users
+
+For Mac users using the zsh shell, zcat might not work as expected. Try using gzcat instead:
+
+```{bash}
+gzcat data/GCF_000714595.fasta.gz
+```
+:::
 
 
 ::: {.callout-tip title="Tip: Editing text files with `nano`" collapse="true"}
@@ -544,9 +576,9 @@ So far, we have worked with single files. In practice, sequencing data often com
 
 ```{bash}
 # Download some more data 
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000009425.fasta.gz -P data
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000253315.fasta.gz -P data
-wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot59.fasta.gz -P data
+wget -P data https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000009425.fasta.gz
+wget -P data https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000253315.fasta.gz
+wget -P data https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot59.fasta.gz
 
 # Check what was done
 ls -lh data
@@ -581,7 +613,7 @@ mkdir playground
 
 # Download all genomes at once
 for accession in $(cat accessions.txt); do
-    wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/${accession}.fasta.gz -P playground
+    wget -P playground https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/${accession}.fasta.gz
 done
 ```
 
@@ -589,7 +621,7 @@ Here’s what happens:
 
 - `$(cat accessions.txt)` reads all lines from the file
 - `for accession in ...` goes through each line one by one and stores an accession name in the `accession` variable
-- `wget github_path/${accession}.fasta.gz -P playground` downloads the compressed fasta file for each accession into the playground folder. Here, the `${accession}` will get replaced with one line in `accessions.txt`
+- `wget  -P playground github_path/${accession}.fasta.gz` downloads the compressed fasta file for each accession into the playground folder. Here, the `${accession}` will get replaced with one line in `accessions.txt`
 
 You can use this same loop structure to run any command on multiple files automatically. This is one of the main reasons the CLI is so powerful. For example, you could in one command count the number of headers in all your fasta files:
 
