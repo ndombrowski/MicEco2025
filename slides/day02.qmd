@@ -15,6 +15,7 @@ format:
         preview-links: true
         code-annotations: below
         highlight-style: "vim-dark"
+        code-block-height: 650px
 
 engine: knitr
 embed-resources: true
@@ -132,9 +133,8 @@ flowchart LR
     DB[(16S <br> Reference  <br> Database)] -->|FASTA| D  
 
     %% Assign classes after nodes exist
-    class D,E darkgreenfill
-    class A,B,C,F greenfill
-    class DB dbfill
+    class DB,C,D,E darkgreenfill
+    class A,B,F greenfill
 
     %% Arrow styles (index starts at 0 for first arrow)
     linkStyle 0,1,2,3,4,5 stroke:#5B888C,stroke-width:2,color:#000, fill: none
@@ -232,17 +232,17 @@ library(ggplot2)
 library(gt)
 
 # Extreme competition counts
-counts <- tribble(
-  ~Taxon,            ~C1_rep1, ~C1_rep2, ~C1_rep3, ~C2_rep1, ~C2_rep2, ~C2_rep3,
+counts_wide <- tribble(
+  ~taxon,            ~C1_rep1, ~C1_rep2, ~C1_rep3, ~C2_rep1, ~C2_rep2, ~C2_rep3,
   "Pseudomonas",         900,       850,       800,       300,       400,       250,
   "Streptomyces",          0,         0,         0,       800,       3600,       850, 
   "Flavobacterium",       800,       600,       1200,       900,     4200,       850,
 )
 
-counts_extra <- counts %>%
+counts_extra <- counts_wide %>%
   bind_rows(
     tibble(
-      Taxon = "Total",
+      taxon = "total",
       C1_rep1 = sum(.$C1_rep1),
       C1_rep2 = sum(.$C1_rep2),
       C1_rep3 = sum(.$C1_rep3),
@@ -252,11 +252,11 @@ counts_extra <- counts %>%
     )
   )
 
-main_counts <- counts_extra %>% filter(Taxon != "Total")
-total_row <- counts_extra %>% filter(Taxon == "Total")
+main_counts <- counts_extra |> filter(taxon != "total")
+total_row <- counts_extra |> filter(taxon == "total")
 
 expected <- tribble(
-  ~Culture, ~Taxon,
+  ~culture, ~taxon,
   "C1",     "Pseudomonas",
   "C1",     "Flavobacterium",
   "C2",     "Pseudomonas",
@@ -266,32 +266,35 @@ expected <- tribble(
 
 expected |> 
   gt() |> 
+  tab_header("Expected taxa composition:") |> 
   tab_style(
     style = list(cell_fill(color = "grey95")),
-    locations = cells_body(rows = Culture == "C1")
+    locations = cells_body(rows = culture == "C1")
   ) |> 
   tab_style(
     style = list(cell_fill(color = "grey85")),
-    locations = cells_body(rows = Culture == "C2")
+    locations = cells_body(rows = culture == "C2")
   ) |> 
   cols_align(
     align = "center",
     columns = starts_with("C")
   ) |> 
   tab_options(
-    table.align = "left",           
-    table.font.size = pct(80)      
-  )
+    table.align = "left",   
+    heading.align = "left",        
+    table.font.size = pct(70),
+    table.border.top.style = "none",
+    table.border.top.width = px(0)      
+  ) 
 ```
-
-</br>
 
 ::: {.r-stack} 
 
-:::{.fragment .absolute top="440"}
+:::{.fragment .absolute top="420"}
 ```{r}
-counts |> 
+counts_wide |> 
   gt() |> 
+  tab_header(title = html("Count table")) |> 
   tab_style(
     style = list(cell_fill(color = "grey95")),
     locations = cells_body(columns = C1_rep1:C1_rep3)
@@ -302,7 +305,7 @@ counts |>
   ) |> 
   tab_style(
     style = list(cell_fill(color = "white")),
-    locations = cells_body(rows = Taxon == "Total")
+    locations = cells_body(rows = taxon == "total")
   ) |> 
   cols_align(
     align = "center",
@@ -310,16 +313,20 @@ counts |>
   ) |> 
   tab_options(
     table.align = "left",
-    table.font.size = pct(100)
+    heading.align = "left",
+    table.font.size = pct(70),
+    table.border.top.style = "none",
+    table.border.top.width = px(0)   
   )
 ```
 :::
 
 
-:::{.fragment .absolute top="440"}
+:::{.fragment .absolute top="420"}
 ```{r}
 counts_extra |> 
   gt() |> 
+  tab_header(title = html("Count table")) |> 
   tab_style(
     style = list(cell_fill(color = "grey95")),
     locations = cells_body(columns = C1_rep1:C1_rep3)
@@ -330,7 +337,7 @@ counts_extra |>
   ) |> 
   tab_style(
     style = list(cell_fill(color = "white")),
-    locations = cells_body(rows = Taxon == "Total")
+    locations = cells_body(rows = taxon == "total")
   ) |> 
   cols_align(
     align = "center",
@@ -338,8 +345,11 @@ counts_extra |>
   ) |> 
   tab_options(
     table.align = "left",
-    table.font.size = pct(100)
-  )
+    heading.align = "left",
+    table.font.size = pct(70),
+    table.border.top.style = "none",
+    table.border.top.width = px(0)   
+  ) 
 ```
 :::
 
@@ -356,32 +366,35 @@ counts_extra |>
 #| echo: true
 
 # Data re-structuring
-counts_long <- counts |> 
-    # Convert to long format
+## Convert wide to long format
+## and add extra columns
+df <- counts_wide |> 
     pivot_longer(
         cols = starts_with("C"),
-        names_to = "Sample",
-        values_to = "Count"
+        names_to = "sample",
+        values_to = "count"
     ) |> 
-    # Order taxa by most abundant
-    mutate(Taxon = fct_reorder(Taxon, Count)) |> 
-    separate_wider_delim(Sample, delim = "_", names = c("Culture", "Rep"), cols_remove = FALSE) |> 
-    # Calculate relative abundance
-    group_by(Sample) |> 
-    mutate(RelAbundance = Count / sum(Count) * 100) |> 
-    ungroup()
+    separate_wider_delim(sample, delim = "_", names = c("culture", "rep"), cols_remove = FALSE) 
 
-# Plotting
-p <- ggplot(counts_long, aes(x = Sample, y = RelAbundance, fill = Taxon)) +
+## Calculate relative abundance
+## and order factors by taxa abundance 
+df <- df |> 
+    group_by(sample) |> 
+    mutate(rel_abund = count / sum(count) * 100) |> 
+    ungroup() |> 
+    mutate(taxon = fct_reorder(taxon, rel_abund, .fun = sum))
+
+# Plot data
+p <- ggplot(df, aes(x = sample, y = rel_abund, fill = taxon)) +
   geom_col(width = 0.9) +
   scale_fill_manual(values = c('#CCEDB1', '#41B7C4', '#144348ff')) +
   labs(x = "", y = "Relative abundance (%)", fill = "Genus") +
-  facet_wrap(~Culture, scales = "free_x") +
+  facet_wrap(~culture, scales = "free_x") +
   theme_classic()
 ```
 :::
 
-::: {.column width="50%"}
+::: {.fragment .column width="50%"}
 ```{r}
 #| eval: true
 #| echo: false
@@ -401,11 +414,11 @@ p
 #| echo: true
 
 # Filter taxa based on expected presence 
-filtered_counts <- counts_long |> 
-  inner_join(expected, by = c("Culture", "Taxon"))
+filtered_counts <- df |> 
+  inner_join(expected, by = c("culture", "taxon"))
 
 # Run ANOVA
-res_aov <- aov(RelAbundance ~ Taxon * Culture, data = filtered_counts)
+res_aov <- aov(rel_abund ~ taxon * culture, data = filtered_counts)
 summary(res_aov)
 ```
 
@@ -419,7 +432,7 @@ summary(res_aov)
 
 # Run Posthoc test
 res_tukey <- TukeyHSD(res_aov)
-res_tukey$`Taxon:Culture` |> 
+res_tukey$`taxon:culture` |> 
   as.data.frame() |> 
   filter(`p adj` < 0.05)
 ```
@@ -496,20 +509,20 @@ parse_TukeyHSD <- function(tukey_res) {
 #| eval: true
 #| echo: true
 # Filter taxa based on expected presence 
-filtered_counts <- counts_long |> 
-  inner_join(expected, by = c("Culture", "Taxon"))
+filtered_counts <- df |> 
+  inner_join(expected, by = c("culture", "taxon"))
 
 # Split data by Culture
 split_data <- filtered_counts |> 
-  group_by(Culture) |> 
+  group_by(culture) |> 
   group_split(.keep = TRUE) 
 
 # Run ANOVA for each culture
 anova_list <- lapply(split_data, function(df) {
-  aov(RelAbundance ~ Taxon, data = df)
+  aov(rel_abund ~ taxon, data = df)
 })
 
-names(anova_list) <- sapply(split_data, function(df) df$Culture[1])
+names(anova_list) <- sapply(split_data, function(df) df$culture[1])
 
 lapply(anova_list, summary)
 ```
@@ -523,14 +536,14 @@ lapply(anova_list, summary)
 
 # Run posthoc test
 tukey_list <- lapply(split_data, function(df) {
-  if (n_distinct(df$Taxon) > 2) {
-    parse_TukeyHSD(TukeyHSD(aov(RelAbundance ~ Taxon, data = df)))
+  if (n_distinct(df$taxon) > 2) {
+    parse_TukeyHSD(TukeyHSD(aov(rel_abund ~ taxon, data = df)))
   } else {
     NULL
   }
 })
 
-names(tukey_list) <- sapply(split_data, function(df) df$Culture[1])
+names(tukey_list) <- sapply(split_data, function(df) df$culture[1])
 ```
 
 </br>
@@ -558,7 +571,7 @@ https://www.statology.org/understanding-anova-when-and-how-to-use-it-in-your-res
 https://www.geeksforgeeks.org/r-language/performing-anova-for-multiple-variables-in-r/
 
 ```{r}
-temp <- aov(RelAbundance ~ Taxon * Culture, data = filtered_counts)
+temp <- aov(rel_abund ~ taxon * culture, data = filtered_counts)
 summary(temp)
 
 TukeyHSD(temp)
