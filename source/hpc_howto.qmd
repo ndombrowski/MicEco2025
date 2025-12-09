@@ -333,14 +333,22 @@ Without uncompressing the FASTQ file, explore the content of the FASTQ files by 
 
 You can get the FASTQ file as follows:
 
-1.  If you are following the Microbial Ecology course:
+1.  If you are following the Microbial Ecology course: 
+
+    If you have prepared more than one barcode during the practical then check the individual file sizes of your barcodes and find the barcode with the largest file size. You will analyse this sample throughout this tutorial to keep things simple. Throughout this tutorial replace `barcodeX` with that barcode ID.
+
+    If want to know how to analyse several samples in an efficient manner, you can have a look at [an example workflow](https://github.com/ndombrowski/MicEco2025/blob/main/source/miceco2025_analysis.qmd){target="_blank"} after you are done with the full tutorial. 
 
     ```{bash}
+    # Check the file size of all barcodes 
+    ls -lh /zfs/omics/projects/education/miceco/data/practical/*.fastq.gz
+
+    # Copy a fastq file to your data folder
     # Replace X with the barcode ID that you used in the practical
     cp /zfs/omics/projects/education/miceco/data/practical/barcodeX.fastq.gz data
     ```
 
-1.  If you are following this tutorial independently you can get an example file as follows:
+3.  If you are following this tutorial independently you can get an example file as follows:
 
     ```{bash}
     wget https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/barcode07.fastq.gz -P data/
@@ -518,16 +526,16 @@ Always cancel jobs that are running incorrectly or stuck in a queue too long. Th
 
 Now you'll write your own `sbatch` script to generate quality plots from `barcodeX.fastq.gz` using **NanoPlot**, which you installed earlier in your conda environment. For this, first have a look at the [tools manual](https://github.com/wdecoster/NanoPlot) and read what the tools does and what the different options are.
 
-Below is a template for a script that you should store in the file `scripts/nanoplot.sh`.  Replace all `...` with the correct code.
+Below is a template for a script that you should store in the file `scripts/nanoplot.sh` using `nano`.  You should replace all `...` with the correct code.
 
 The script already ensures that the job:
 
-- Give your job, output, and error files meaningful names  
-- Request **2 CPUs**, **10 GB of memory**, and **30 minutes** of runtime  
-- Activate your `nanoplot` conda environment  
-- Create an appropriate **output directory** under `results/`  
+- Gives your job, output, and error files meaningful names  
+- Requests **2 CPUs**, **10 GB of memory**, and **30 minutes** of runtime  
+- Activates your `nanoplot` conda environment  
+- Creates an appropriate **output directory** under `results/`  
 
-Your task is now to use Nanoplot and use the right options (check the manual for those) and:
+Your task is to use Nanoplot and use the right options (check the [tools manual](https://github.com/wdecoster/NanoPlot) for those) and:
 
 1. Indicate the input is in **FASTQ** format
 2. Use 2 threads 
@@ -555,7 +563,7 @@ date
 mkdir -p results/nanoplot/raw
 
 # Run Nanoplot 
-# And replace the ... with the right options for sub-tasks 1-5
+# and replace the ... with the right options for sub-tasks 1-5
 NanoPlot \
     --fastq ... \
     -t ... \
@@ -666,3 +674,15 @@ Use these plots to guide quality filtering to removing reads that are too short,
 :::
 :::
 
+
+::: {.callout-tip title="Viewing files without scp" collapse="false"}
+
+Crunchomics has an Application Server that can be used to run the RStudio app on the server. 
+You can use this to run R code but also to view files. To do this: 
+
+1. Go to [https://omics-app01.science.uva.nl/](https://omics-app01.science.uva.nl/)
+2. Enter your UvAnetID and password
+3. The File Viewer on the right side shows the files and folders that you have access to on Crunchomics
+4. You can view your NanoPlot HTML by going to `personal/data_analysis/results/nanoplot/raw`, clicking on the HTML you want to view and selecting View in Web Browser
+
+:::

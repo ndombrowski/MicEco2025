@@ -573,9 +573,15 @@ Important
 <p>You can get the FASTQ file as follows:</p>
 <ol type="1">
 <li><p>If you are following the Microbial Ecology course:</p>
+<p>If you have prepared more than one barcode during the practical then check the individual file sizes of your barcodes and find the barcode with the largest file size. You will analyse this sample throughout this tutorial to keep things simple. Throughout this tutorial replace <code>barcodeX</code> with that barcode ID.</p>
+<p>If want to know how to analyse several samples in an efficient manner, you can have a look at <a href="https://github.com/ndombrowski/MicEco2025/blob/main/source/miceco2025_analysis.qmd" target="_blank">an example workflow</a> after you are done with the full tutorial.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace X with the barcode ID that you used in the practical</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /zfs/omics/projects/education/miceco/data/practical/barcodeX.fastq.gz data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the file size of all barcodes </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-lh</span> /zfs/omics/projects/education/miceco/data/practical/<span class="pp">*</span>.fastq.gz</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy a fastq file to your data folder</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace X with the barcode ID that you used in the practical</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /zfs/omics/projects/education/miceco/data/practical/barcodeX.fastq.gz data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></li>
 <li><p>If you are following this tutorial independently you can get an example file as follows:</p>
 <div class="cell">
@@ -772,18 +778,18 @@ Important
 <div class="callout-body-container callout-body">
 <p><strong>Task 1: Write a script to run NanoPlot with sbatch</strong></p>
 <p>Now you’ll write your own <code>sbatch</code> script to generate quality plots from <code>barcodeX.fastq.gz</code> using <strong>NanoPlot</strong>, which you installed earlier in your conda environment. For this, first have a look at the <a href="https://github.com/wdecoster/NanoPlot">tools manual</a> and read what the tools does and what the different options are.</p>
-<p>Below is a template for a script that you should store in the file <code>scripts/nanoplot.sh</code>. Replace all <code>...</code> with the correct code.</p>
+<p>Below is a template for a script that you should store in the file <code>scripts/nanoplot.sh</code> using <code>nano</code>. You should replace all <code>...</code> with the correct code.</p>
 <p>The script already ensures that the job:</p>
 <ul>
-<li>Give your job, output, and error files meaningful names<br>
+<li>Gives your job, output, and error files meaningful names<br>
 </li>
-<li>Request <strong>2 CPUs</strong>, <strong>10 GB of memory</strong>, and <strong>30 minutes</strong> of runtime<br>
+<li>Requests <strong>2 CPUs</strong>, <strong>10 GB of memory</strong>, and <strong>30 minutes</strong> of runtime<br>
 </li>
-<li>Activate your <code>nanoplot</code> conda environment<br>
+<li>Activates your <code>nanoplot</code> conda environment<br>
 </li>
-<li>Create an appropriate <strong>output directory</strong> under <code>results/</code></li>
+<li>Creates an appropriate <strong>output directory</strong> under <code>results/</code></li>
 </ul>
-<p>Your task is now to use Nanoplot and use the right options (check the manual for those) and:</p>
+<p>Your task is to use Nanoplot and use the right options (check the <a href="https://github.com/wdecoster/NanoPlot">tools manual</a> for those) and:</p>
 <ol type="1">
 <li>Indicate the input is in <strong>FASTQ</strong> format</li>
 <li>Use 2 threads</li>
@@ -811,7 +817,7 @@ Important
 <span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> results/nanoplot/raw</span>
 <span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot </span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co"># And replace the ... with the right options for sub-tasks 1-5</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="co"># and replace the ... with the right options for sub-tasks 1-5</span></span>
 <span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="ex">NanoPlot</span> <span class="dt">\</span></span>
 <span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">--fastq</span> ... <span class="dt">\</span></span>
 <span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">-t</span> ... <span class="dt">\</span></span>
@@ -930,6 +936,28 @@ Important
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Viewing files without scp">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Viewing files without scp
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Crunchomics has an Application Server that can be used to run the RStudio app on the server. You can use this to run R code but also to view files. To do this:</p>
+<ol type="1">
+<li>Go to <a href="https://omics-app01.science.uva.nl/">https://omics-app01.science.uva.nl/</a></li>
+<li>Enter your UvAnetID and password</li>
+<li>The File Viewer on the right side shows the files and folders that you have access to on Crunchomics</li>
+<li>You can view your NanoPlot HTML by going to <code>personal/data_analysis/results/nanoplot/raw</code>, clicking on the HTML you want to view and selecting View in Web Browser</li>
+</ol>
 </div>
 </div>
 </div>
