@@ -166,7 +166,7 @@ def main():
     df[numeric_cols] = df[numeric_cols].apply(pd.to_numeric, errors="coerce")
 
     # Calculate query coverage and identity
-    df["qcov"] = (df.qend - df.qstart + 1) / df.qlen
+    df["qcov"] = (df.qend - df.qstart) / df.qlen
     df["identity"] = df["nmatch"] / df["alen"].replace(0, pd.NA)
 
     # Visualize the data distribution of key parameters
@@ -183,15 +183,15 @@ def main():
     # But keep multimappers (map=0)
     counts_before = df.groupby("sample").size()
     before_filter = len(df)
-    df = df[
+    df_filtered = df[
         (df.qcov >= coverage_threshold)
         & (df.identity >= identity_threshold)
         & ((df.mapq == 0) | (df.mapq >= mapq_threshold))
     ]
 
-    after_filter = len(df)
+    after_filter = len(df_filtered)
     filtered_out = before_filter - after_filter
-    counts_after = df.groupby("sample").size()
+    counts_after = df_filtered.groupby("sample").size()
 
     # Combine into a summary table
     per_sample_summary = (
@@ -211,7 +211,7 @@ def main():
 
     # ------------------- Generate table including multimappers ------------------ #
     # Count reads per target
-    counts_multi = df.groupby(["sample", "tname"]).size().reset_index(name="reads")
+    counts_multi = df_filtered.groupby(["sample", "tname"]).size().reset_index(name="reads")
     otu_table_multi = (
         counts_multi.pivot(index="tname", columns="sample", values="reads")
         .fillna(0)
@@ -223,8 +223,8 @@ def main():
 
     # -------------------- Generate table with best-hits only -------------------- #
     # Select best hit per query (highest qcov, then highest AS, highest mapq, longest aln as tie breaker)
-    df_best = df.sort_values(
-        ["qname", "qcov", "AS", "mapq", "alen"],
+    df_best = df_filtered.sort_values(
+        ["qname", "AS", "mapq", "qcov", "alen"],
         ascending=[True, False, False, False, False],
     ).drop_duplicates("qname")
 
@@ -301,10 +301,21 @@ def main():
         .astype(int)
     )
 
+    # --------------------------- Get unmapped read ids -------------------------- #
+    good_reads = set(df_filtered["qname"].unique())
+    bad_reads_all = set(df["qname"].unique())
+    unassigned_reads = bad_reads_all - good_reads
+
+
     # ------------------------------- Write to file ------------------------------ #
     otu_table_tax.to_csv(output_folder / "otu_table.tsv", sep="\t")
     otu_table_multi_tax.to_csv(output_folder / "otu_table_multimappers.tsv", sep="\t")
     otu_table_genus.to_csv(output_folder / "otu_table_genus.tsv", sep="\t")
+    pd.Series(sorted(unassigned_reads)).to_csv(
+        output_folder / "bad_hit_read_ids.txt",
+        index=False,
+        header=False
+    )
 
     print(
         f"\notu_table.tsv, otu_table_multimappers.tsv and otu_table_genus.tsv written to {output_folder}"
