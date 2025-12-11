@@ -72,7 +72,7 @@ quarto render --profile standalone source/hpc_intro.qmd
 quarto render --profile standalone source/hpc_howto.qmd
 quarto render --profile standalone source/applied_workflow.qmd
 
-cd _slides 
+cd slides 
 quarto render
 
 # Render main doc (if needed)

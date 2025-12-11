@@ -102,7 +102,7 @@ conda activate chopper_0.11.0
 srun --cpus-per-task 2 --mem=20G chopper \
     -i data/barcodeX.fastq.gz \
     -q 12 \
-    --minlength 1000 --maxlength 1650 \
+    --minlength 1400 --maxlength 1540 \
     --threads 2 | gzip \
     > results/chopper/barcodeX_filtered.fastq.gz
 
@@ -131,8 +131,8 @@ srun --cpus-per-task=1 --mem=5G seqkit stats results/chopper/barcodeX_filtered.f
 
 Below are example results from one of my analyses. These numbers will be different for you, however, this process will make you more familiar for what to look for in your own analyses.
 
-- Input: 3785 reads
-- Passed filtering: 1985 reads (~50%). You ideally want to keep 50%-90% of the reads for the down-stream analyses depending on the quality of the data and how many reads you generated.
+- Input: 29,468 reads
+- Passed filtering: 24,600 reads (~80%). You ideally want to keep 50%-90% of the reads for the down-stream analyses depending on the quality of the data and how many reads you generated.
 
 :::
 :::
@@ -248,7 +248,7 @@ less -S results/minimap2/barcodeX.paf
 
 Answer:
 
-1. There are 2059 alignments for 2976 reads. If you see more alignments then there are reads, there might be different reasons for that:
+1. There are 45,318 alignments for 24,600 reads. If you see more alignments then there are reads, there might be different reasons for that:
    1. If your experiment included Pseudomonas strains you likely will have more alignments than reads. The higher number of alignments occurs because some reads might align equally well to multiple reference 16S sequences, these are multi-mapping reads.
    2. Some reads might only partially or weakly align to highly similar regions in the 16S rRNA gene
 2. Useful PAF columns for assessing alignment reliability include:
@@ -395,7 +395,7 @@ python scripts/paf_to_matrix.py \
 conda deactivate
 ```
 
-1. About 8% of reads were lost during the filtering. If you had more alignments than reads, the filtered reads were likely secondary (less confident) alignments. If too many reads are removed, try lowering: the sequence identity threshold (`id`), mapping threshold (`-mapq`) or allowed coverage threshold (`-cov`)
+1. About 12% of reads were lost during the filtering. If you had more alignments than reads, the filtered reads were likely secondary (less confident) alignments. You will also loose potential contaminations during this step. That is because reads coming from contaminant bacteria might still map to sequences in the reference database but with much lower sequence identity and therefore will be discarded.
 2. Most reads map to Streptococcus and Lactococcus, consistent with the experiment. A few unassigned reads may come from contamination or poor-quality reads.
 3. Streptococcus had ~10× more reads than Lactococcus. This may indicate stronger growth due to better adaptation to liquid media or competitive advantage in the co-culture.
   

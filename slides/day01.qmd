@@ -27,12 +27,14 @@ filters:
   - editable
 ---
 
+
+
 ## Introduction to Bioinformatics
 
 [Bioinformatics applies computational methods to store, manage, and analyse biological data]{.highlighted}
 
 - Experiments involving sequencing generates too much data to analyse manually
-- Your Nanopore sequencing generated ~ 100,000 sequencing reads
+- Your Nanopore sequencing generated ~ 950,000 sequencing reads
 - Computational tools allow you to store, filter and analyse such data
 
 
@@ -125,11 +127,10 @@ PAF:
 
 [The Phred score is a measure for base quality. The larger the Phred value, the better the quality of a base]{.highlighted}
 
-::: {.fragment}
 
 ![](../img/phred1.png){.absolute top=200px}
 
-:::
+
 
 
 ## Phred scores
