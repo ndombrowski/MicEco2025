@@ -78,6 +78,8 @@ quarto render
 # Render main doc (if needed)
 cd ..
 quarto render
+
+quarto render .\source\miceco2025_analysis.qmd --execute-dir .
 ```
 
 ::: {.callout-question .callout-warning collapse=false}

@@ -2222,7 +2222,8 @@ vertical-align: -.125em;
   <li><a href="#check-quality-of-the-cleaned-data" id="toc-check-quality-of-the-cleaned-data" class="nav-link" data-scroll-target="#check-quality-of-the-cleaned-data">Check quality of the cleaned data</a></li>
   <li><a href="#read-mapping" id="toc-read-mapping" class="nav-link" data-scroll-target="#read-mapping">Read mapping</a></li>
   </ul></li>
-  <li><a href="#analyse-count-table" id="toc-analyse-count-table" class="nav-link" data-scroll-target="#analyse-count-table">Analyse count table</a>
+  <li><a href="#analyse-paf-files-in-more-detail" id="toc-analyse-paf-files-in-more-detail" class="nav-link" data-scroll-target="#analyse-paf-files-in-more-detail">Analyse PAF files in more detail</a></li>
+  <li><a href="#analyse-count-table-not-started-yet" id="toc-analyse-count-table-not-started-yet" class="nav-link" data-scroll-target="#analyse-count-table-not-started-yet">Analyse count table (not started yet)</a>
   <ul class="collapse">
   <li><a href="#read-in-the-data" id="toc-read-in-the-data" class="nav-link" data-scroll-target="#read-in-the-data">Read in the data</a></li>
   <li><a href="#data-wrangling" id="toc-data-wrangling" class="nav-link" data-scroll-target="#data-wrangling">Data wrangling</a></li>
@@ -2259,7 +2260,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">December 10, 2025</p>
+      <p class="date-modified">December 11, 2025</p>
     </div>
   </div>
     
@@ -2318,11 +2319,9 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="prepare-input-files">Prepare input files</h2>
 <p>We work with the following data:</p>
 <ul>
-<li>Sequencing data was provided as zipped folder called <code>Microbiocourse2025.zip</code> by Peter Kuperus Oktober 22, 2026 via SurfDrive and stored in the data folder</li>
-<li>The file <code>filelists/barcode_to_sample</code> was generated manually from the mapping file provided by Peter Kuperus and links the barcode to a sample ID.</li>
+<li>Sequencing data was provided as zipped folder called <code>Microbiocourse2025.zip</code> by Peter Kuperus December 10, 2025 via SurfDrive and stored in the data folder</li>
 </ul>
-<p>To analyse the data, individual files per sample were first combined into a single file.</p>
-<p>data/Microbio2025/Soil/fastq_pass/barcode23</p>
+<p>To analyse the data, individual fastq files per sample were first combined into a single file.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> data/combined scripts results filelists logs</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2373,16 +2372,16 @@ vertical-align: -.125em;
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">-a</span> <span class="at">-To</span> results/seqkit/seqkit_raw.tsv data/combined/<span class="pp">*</span>fastq.gz <span class="at">--threads</span> 10</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4} END {print sum}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4} END {print sum/NR}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR==2 {min=$4; max=$4} NR&gt;1 {if ($4&lt;min) min=$4; if ($4&gt;max) max=$4} END {print min, max}&#39;</span> results/seqkit/seqkit_raw.tsv </span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$7} END {print sum/NR}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$10} END {print sum/NR}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$7; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$10; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$16} END {print sum/NR}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$16; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_raw.tsv</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Flag samples with too few reads and remove</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 &amp;&amp; $4 &lt; 1000 {print $1}&#39;</span> results/seqkit/seqkit_raw.tsv <span class="op">&gt;</span> filelists/low_count_samples</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 &amp;&amp; $4 &lt; 100 {print $1}&#39;</span> results/seqkit/seqkit_raw.tsv <span class="op">&gt;</span> filelists/low_count_samples</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="kw">`</span><span class="fu">cat</span> filelists/low_count_samples<span class="kw">`;</span> <span class="cf">do</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rm</span> <span class="va">$i</span> </span>
@@ -2418,13 +2417,13 @@ vertical-align: -.125em;
 </div>
 <p>Notes:</p>
 <ul>
-<li>Total number of reads: 952,522 (min:1, avg: 23813, max:39075)</li>
+<li>Total number of reads: 952,522 (min:1, avg: 24423, max:39075)</li>
 <li>Samples with few reads
 <ul>
 <li>h_bc05, s_bc04, s_bc18, s_bc24</li>
 </ul></li>
-<li>The average read length and median (Q2) is 1508 and 1544 bp</li>
-<li>The phred score is around 14.9</li>
+<li>The average read length and median (Q2) is 1546 and 1584 bp</li>
+<li>The phred score is around 15</li>
 <li>Notes from the combined Nanoplots:
 <ul>
 <li>Most reads around 1600 bp and longer than expected</li>
@@ -2456,13 +2455,13 @@ vertical-align: -.125em;
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">-a</span> <span class="at">-To</span> results/seqkit/seqkit_porechop.tsv results/porechop/<span class="pp">*</span>fastq.gz <span class="at">--threads</span> 10</span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4} END {print sum}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4} END {print sum/NR}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR==2 {min=$4; max=$4} NR&gt;1 {if ($4&lt;min) min=$4; if ($4&gt;max) max=$4} END {print min, max}&#39;</span> results/seqkit/seqkit_porechop.tsv </span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$7} END {print sum/NR}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$10} END {print sum/NR}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$7; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$10; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$16} END {print sum/NR}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$16; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_porechop.tsv</span>
 <span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot </span></span>
 <span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nanoplot_1.42.0</span>
@@ -2489,25 +2488,29 @@ vertical-align: -.125em;
 </div>
 <p>Notes:</p>
 <ul>
-<li>Total number of reads: 947,147 (min:1008, avg: 26,309, max:38,848)</li>
+<li>Total number of reads: 947,147 (min:1008, avg: 27,061, max:38,848)</li>
 <li>Samples with fewest reads
 <ul>
 <li>s_bc02 (1008), h_bc01 (6795)</li>
 </ul></li>
-<li>The average read length and median (Q2) is 1415 and 1455 bp</li>
-<li>The phred score is around 17.9</li>
+<li>The average read length and median (Q2) is 1496 and 1496 bp</li>
+<li>The phred score is around 18</li>
 <li>Notes from the combined Nanoplots:
 <ul>
-<li>Most reads around 1600 bp</li>
+<li>Most reads around 1500 bp</li>
+<li>There is sometimes a smaller cloud of longer but lower quality reads
+<ul>
+<li>–&gt; will try to get a threshold to discard these since the quality is consistently lower across all plots</li>
+</ul></li>
 <li>Few reads that are longer, more reads that are a bit shorter</li>
-<li>Phread score evenly distributed around Phred score 10-20</li>
+<li>Phread score evenly distributed around Phred score 10-35</li>
 </ul></li>
 </ul>
 <p>Settings I chose for cleaning based on the NanoPlots:</p>
 <ul>
 <li>Phred 12</li>
-<li>Min length 1500</li>
-<li>Max length 1700</li>
+<li>Min length 1400</li>
+<li>Max length 1540</li>
 </ul>
 </section>
 <section id="quality-reads-with-chopper" class="level3">
@@ -2516,7 +2519,7 @@ vertical-align: -.125em;
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run chopper</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate chopper_0.11.0</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> data/combined/barcode<span class="pp">*</span>fastq.gz<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> results/porechop/<span class="pp">*</span>fastq.gz<span class="kw">;</span> <span class="cf">do</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">barcode</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">&quot;</span><span class="va">$file</span><span class="st">&quot;</span> .fastq.gz<span class="va">)</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">outdir</span><span class="op">=</span><span class="st">&quot;results/chopper/&quot;</span> </span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">&quot;</span><span class="va">$outdir</span><span class="st">&quot;</span></span>
@@ -2526,7 +2529,7 @@ vertical-align: -.125em;
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="ex">srun</span> <span class="at">--cpus-per-task</span> 10 <span class="at">--mem</span><span class="op">=</span>50G chopper <span class="at">-i</span> <span class="st">&quot;</span><span class="va">$file</span><span class="st">&quot;</span> <span class="dt">\</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">-q</span> 12 <span class="dt">\</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">--trim-approach</span> trim-by-quality <span class="at">--cutoff</span> 12 <span class="dt">\</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">-l</span> 1300 <span class="at">--maxlength</span> 1650 <span class="dt">\</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">-l</span> 1400 <span class="at">--maxlength</span> 1540 <span class="dt">\</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">--threads</span> 10 <span class="kw">|</span> <span class="fu">gzip</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">${outdir}</span><span class="st">/</span><span class="va">${barcode}</span><span class="st">.fastq.gz&quot;</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
@@ -2545,110 +2548,265 @@ vertical-align: -.125em;
 </thead>
 <tbody>
 <tr class="odd">
-<td>barcode01</td>
-<td>3835</td>
-<td>1957</td>
-<td>51.0%</td>
+<td>h_bc01</td>
+<td>6795</td>
+<td>6009</td>
+<td>88.43</td>
 </tr>
 <tr class="even">
-<td>barcode02</td>
-<td>3725</td>
-<td>1950</td>
-<td>52.3%</td>
+<td>h_bc02</td>
+<td>29468</td>
+<td>24548</td>
+<td>83.3</td>
 </tr>
 <tr class="odd">
-<td>barcode03</td>
-<td>3892</td>
-<td>1976</td>
-<td>50.8%</td>
+<td>h_bc03</td>
+<td>15181</td>
+<td>13159</td>
+<td>86.68</td>
 </tr>
 <tr class="even">
-<td>barcode04</td>
-<td>4346</td>
-<td>2274</td>
-<td>52.3%</td>
+<td>h_bc04</td>
+<td>30927</td>
+<td>26614</td>
+<td>86.05</td>
 </tr>
 <tr class="odd">
-<td>barcode05</td>
-<td>3497</td>
-<td>1872</td>
-<td>53.5%</td>
+<td>h_bc06</td>
+<td>8675</td>
+<td>7703</td>
+<td>88.8</td>
 </tr>
 <tr class="even">
-<td>barcode06</td>
-<td>3422</td>
-<td>1749</td>
-<td>51.1%</td>
+<td>h_bc08</td>
+<td>28093</td>
+<td>23820</td>
+<td>84.79</td>
 </tr>
 <tr class="odd">
-<td>barcode07</td>
-<td>3785</td>
-<td>1883</td>
-<td>49.8%</td>
+<td>h_bc09</td>
+<td>23210</td>
+<td>20325</td>
+<td>87.57</td>
 </tr>
 <tr class="even">
-<td>barcode08</td>
-<td>3613</td>
-<td>1923</td>
-<td>53.2%</td>
+<td>h_bc10</td>
+<td>30476</td>
+<td>25789</td>
+<td>84.62</td>
 </tr>
 <tr class="odd">
-<td>barcode09</td>
-<td>3546</td>
-<td>1814</td>
-<td>51.2%</td>
+<td>h_bc11</td>
+<td>18829</td>
+<td>16561</td>
+<td>87.95</td>
 </tr>
 <tr class="even">
-<td>barcode10</td>
-<td>3937</td>
-<td>2073</td>
-<td>52.7%</td>
+<td>h_bc12</td>
+<td>29962</td>
+<td>23065</td>
+<td>76.98</td>
 </tr>
 <tr class="odd">
-<td>barcode11</td>
-<td>4366</td>
-<td>2306</td>
-<td>52.8%</td>
+<td>h_bc14</td>
+<td>21650</td>
+<td>18922</td>
+<td>87.4</td>
 </tr>
 <tr class="even">
-<td>barcode12</td>
-<td>4386</td>
-<td>2251</td>
-<td>51.3%</td>
+<td>h_bc16</td>
+<td>25502</td>
+<td>22725</td>
+<td>89.11</td>
 </tr>
 <tr class="odd">
-<td>barcode13</td>
-<td>4239</td>
-<td>2182</td>
-<td>51.5%</td>
+<td>h_bc17</td>
+<td>25185</td>
+<td>22372</td>
+<td>88.83</td>
 </tr>
 <tr class="even">
-<td>barcode14</td>
-<td>4927</td>
-<td>2587</td>
-<td>52.5%</td>
+<td>h_bc18</td>
+<td>24704</td>
+<td>19636</td>
+<td>79.49</td>
 </tr>
 <tr class="odd">
-<td>barcode15</td>
-<td>4681</td>
-<td>2427</td>
-<td>51.8%</td>
+<td>h_bc19</td>
+<td>21506</td>
+<td>19087</td>
+<td>88.75</td>
+</tr>
+<tr class="even">
+<td>h_bc20</td>
+<td>32735</td>
+<td>28077</td>
+<td>85.77</td>
+</tr>
+<tr class="odd">
+<td>h_bc23</td>
+<td>17229</td>
+<td>15369</td>
+<td>89.2</td>
+</tr>
+<tr class="even">
+<td>s_bc01</td>
+<td>27972</td>
+<td>25175</td>
+<td>90</td>
+</tr>
+<tr class="odd">
+<td>s_bc02</td>
+<td>1008</td>
+<td>907</td>
+<td>89.98</td>
+</tr>
+<tr class="even">
+<td>s_bc03</td>
+<td>31668</td>
+<td>27707</td>
+<td>87.49</td>
+</tr>
+<tr class="odd">
+<td>s_bc05</td>
+<td>29156</td>
+<td>25974</td>
+<td>89.09</td>
+</tr>
+<tr class="even">
+<td>s_bc06</td>
+<td>31612</td>
+<td>27935</td>
+<td>88.37</td>
+</tr>
+<tr class="odd">
+<td>s_bc07</td>
+<td>38186</td>
+<td>33722</td>
+<td>88.31</td>
+</tr>
+<tr class="even">
+<td>s_bc08</td>
+<td>25214</td>
+<td>22225</td>
+<td>88.15</td>
+</tr>
+<tr class="odd">
+<td>s_bc09</td>
+<td>33018</td>
+<td>29429</td>
+<td>89.13</td>
+</tr>
+<tr class="even">
+<td>s_bc11</td>
+<td>29620</td>
+<td>26694</td>
+<td>90.12</td>
+</tr>
+<tr class="odd">
+<td>s_bc13</td>
+<td>31721</td>
+<td>27992</td>
+<td>88.24</td>
+</tr>
+<tr class="even">
+<td>s_bc14</td>
+<td>37025</td>
+<td>30473</td>
+<td>82.3</td>
+</tr>
+<tr class="odd">
+<td>s_bc15</td>
+<td>33519</td>
+<td>30123</td>
+<td>89.87</td>
+</tr>
+<tr class="even">
+<td>s_bc16</td>
+<td>38848</td>
+<td>34147</td>
+<td>87.9</td>
+</tr>
+<tr class="odd">
+<td>s_bc17</td>
+<td>30428</td>
+<td>27673</td>
+<td>90.95</td>
+</tr>
+<tr class="even">
+<td>s_bc19</td>
+<td>30741</td>
+<td>27209</td>
+<td>88.51</td>
+</tr>
+<tr class="odd">
+<td>s_bc21</td>
+<td>37846</td>
+<td>31969</td>
+<td>84.47</td>
+</tr>
+<tr class="even">
+<td>s_bc22</td>
+<td>37565</td>
+<td>32774</td>
+<td>87.25</td>
+</tr>
+<tr class="odd">
+<td>s_bc23</td>
+<td>31873</td>
+<td>29181</td>
+<td>91.55</td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>Will keep all samples for downstream analyses.</p>
 </section>
 <section id="check-quality-of-the-cleaned-data" class="level3">
 <h3 class="anchored" data-anchor-id="check-quality-of-the-cleaned-data">Check quality of the cleaned data</h3>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get overaching summary with seqkit and summarize with awk</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--cpus-per-task</span><span class="op">=</span>10 <span class="at">--mem</span><span class="op">=</span>5G seqkit stats results/chopper/<span class="pp">*</span>fastq.gz  <span class="dt">\</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">-Tao</span> results/seqkit/fastq_filtered.tsv <span class="at">--threads</span> 10</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">-Tao</span> results/seqkit/seqkit_chopper.tsv <span class="at">--threads</span> 10</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Run seqkit </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4} END {print sum}&#39;</span> results/seqkit/seqkit_chopper.tsv</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$4; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_chopper.tsv</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR==2 {min=$4; max=$4} NR&gt;1 {if ($4&lt;min) min=$4; if ($4&gt;max) max=$4} END {print min, max}&#39;</span> results/seqkit/seqkit_chopper.tsv </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="at">-F</span> <span class="st">&#39;\t&#39;</span>  <span class="st">&#39;NR&gt;1 {sum+=$10; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_chopper.tsv</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;NR&gt;1 {sum+=$16; count++} END {print sum/count}&#39;</span> results/seqkit/seqkit_chopper.tsv</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Nanoplot </span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate nanoplot_1.42.0</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> results/chopper/<span class="pp">*</span>fastq.gz<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">barcode</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$file</span> .fastq.gz<span class="va">)</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;Start analysis for </span><span class="va">$barcode</span><span class="st">&quot;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="ex">srun</span> <span class="at">--cpus-per-task</span> 6 <span class="at">--mem</span><span class="op">=</span>10G NanoPlot <span class="dt">\</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">--fastq</span> <span class="va">${file}</span> <span class="dt">\</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">-t</span> 6 <span class="dt">\</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">--tsv_stats</span> <span class="dt">\</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">--plots</span> dot <span class="dt">\</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">-o</span> results/nanoplot/chopper/<span class="va">${barcode}</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> deactivate</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/combine_nanoplot_html.py <span class="at">--base_path</span> results/nanoplot/chopper <span class="dt">\</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">--output_html</span> results/nanoplot/chopper/chopper_nanoplot_s.html</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/combine_nanoplot_html.py <span class="at">--base_path</span> results/nanoplot/chopper <span class="dt">\</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">--output_html</span> results/nanoplot/chopper/chopper_nanoplot_h.html</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
-<li>Total number of reads is very evenly distributed, from 1700-2600 reads/sample</li>
-<li>The median read length (Q2) is around 1450 bp</li>
-<li>The phred score is around 13.5</li>
+<li>We work with a total of 825,090 reads</li>
+<li>Total number of reads is unevenly distributed, from 907-34147 reads/sample (mean 23,574)</li>
+<li>The median read length (Q2) is around 1496 bp and the second low quality cloud in the nanoplots is mostly gone</li>
+<li>Note that some samples have a small dual-peak (1470 and 1500), i.e. s_bc03, s_bc05, s_bc06, but there is no difference in sequence quality, so that could be due natural sequence length variation</li>
+<li>The phred score is around 19</li>
 </ul>
 </section>
 <section id="read-mapping" class="level3">
@@ -2662,7 +2820,7 @@ vertical-align: -.125em;
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://raw.githubusercontent.com/ndombrowski/MicEco2025/refs/heads/main/data/accession_to_genus.tsv <span class="at">-P</span> data</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Run minimap </span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> results/chopper/barcode<span class="pp">*</span>.fastq.gz<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> results/chopper/<span class="pp">*</span>.fastq.gz<span class="kw">;</span> <span class="cf">do</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">ref_db</span><span class="op">=</span><span class="st">&quot;data/amplicons_nr.fasta&quot;</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">barcode</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="va">$file</span> .fastq.gz<span class="va">)</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    </span>
@@ -2681,289 +2839,415 @@ vertical-align: -.125em;
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> results/mapping_counts/ <span class="dt">\</span></span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> results/tables/ <span class="dt">\</span></span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">-t</span> data/accession_to_genus.tsv <span class="dt">\</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">-s</span> results/seqkit/fastq_filtered.tsv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">-s</span> results/seqkit/seqkit_chopper.tsv </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Test with single sample </span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> test </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> results/mapping_counts/s_bc05.paf test/</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scripts/paf_to_matrix.py <span class="dt">\</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">-i</span> test/ <span class="dt">\</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">-o</span> test/ <span class="dt">\</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">-t</span> data/accession_to_genus.tsv <span class="dt">\</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">-s</span> results/seqkit/seqkit_chopper.tsv </span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Some more exploration of the paf file in py showed low sequence identity in blastn showed hits against Blautia </span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="co"># In total we have 56,966 out of 825,090 reads that are unassigned (ca 6%)</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="co"># To make it easier to explore this further, these hits were extracted into a fastq/fasta file</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> results/tables/bad_hit_read_ids.txt</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="ex">seqtk</span> subseq <span class="op">&lt;(</span><span class="fu">cat</span> results/chopper/<span class="pp">*</span>gz<span class="op">)</span> results/tables/bad_hit_read_ids.txt <span class="op">&gt;</span> results/mapping_counts/bad_hits.fastq</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="ex">seqtk</span> seq <span class="at">-a</span> <span class="at">-l</span> 100 results/mapping_counts//bad_hits.fastq <span class="op">&gt;</span> results/mapping_counts//bad_hits.fasta</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="st">    /^&gt;/ {</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a><span class="st">        split($0, f, &quot; &quot;);</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="st">        readid = substr(f[1],2);</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="st">        bcid = &quot;&quot;;</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="st">        for (i=2; i&lt;=NF; i++) {</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a><span class="st">            if (f[i] ~ /^barcode=/) {</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="st">                split(f[i], b, &quot;=&quot;);</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="st">                bcid = b[2];</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="st">        print &quot;&gt;&quot; readid &quot;-&quot; bcid;</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a><span class="st">        next</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a><span class="st">    { print }&#39;</span> <span class="dt">\</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a> results/mapping_counts//bad_hits.fasta <span class="op">&gt;</span> results/mapping_counts//bad_hits2.fasta</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-c</span> <span class="st">&quot;&gt;&quot;</span> results/mapping_counts/bad_hits2.fasta</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Blastn search against a random nr of sequences returns hits to</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a><span class="co"># Blautia VII, Stapylococcus, Anaerostipes, Limosilactobacillus </span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a><span class="co"># Blautia IX Anaerostipes (bc09)</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Blautia V, Limosilactobacillus III, Anaerostipes, Bacteroidetes (bc11)</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a><span class="ex">seqtk</span> sample results/mapping_counts/bad_hits2.fasta 10 <span class="kw">|</span>  <span class="ex">seqtk</span> seq <span class="at">-l</span> 100  <span class="op">&gt;</span> random10.fasta</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;/^&gt;.*barcode09/{p=1; print; next} p{if (/^&gt;/){p=0} else print}&#39;</span> results/mapping_counts/bad_hits2.fasta <span class="dt">\</span></span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="ex">seqtk</span> sample <span class="at">-</span> 10 <span class="dt">\</span></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="ex">seqtk</span> seq <span class="at">-l</span> 100 <span class="op">&gt;</span> random10_barcode09.fasta</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="fu">awk</span> <span class="st">&#39;/^&gt;.*barcode11/{p=1; print; next} p{if (/^&gt;/){p=0} else print}&#39;</span> results/mapping_counts/bad_hits2.fasta <span class="dt">\</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="ex">seqtk</span> sample <span class="at">-</span> 10 <span class="dt">\</span></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="ex">seqtk</span> seq <span class="at">-l</span> 100 <span class="op">&gt;</span> random10_barcode11.fasta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Notes:</p>
 <ul>
-<li>More reads removed in barcode01-barcode06 –&gt; likely due to Pseudomonas multi-mappers that had a low mapping quality</li>
-<li>Also note that these samples still had many more matches than reads even after quality filtering</li>
-<li>To control the counts, I opened <code>otu_table_genus.tsv</code> in excel to calculate the total counts/sample and these corresponded to the total counts after chopper that are shown above</li>
+<li>In some samples a lot of reads were filtered due to the quality thresholds, i.e. h_bc19 –&gt;
+<ul>
+<li>I found GCF_000714595 in there which had more than one rrn, so that could result in reads mapping more to the mismatches to the second copy</li>
+</ul></li>
+<li>I investigated identity_hist.png (output of paf_to_matrix) and that showed a clear peak around 0.7-0.8 indicating some lower identity mapping results in the paf files. These will be removed during the filtering step considering the 0.9 threshold used by default by the script</li>
+<li>Notice that there is a small coverage peak at ~0.97 (possibly the second GCF_000714595 rrna sequence?)</li>
+<li>During the run with the default thresholds I noticed that in the human samples there was a large fraction of unassigned reads
+<ul>
+<li>these are not due to unmapped reads (tested by extracting these)</li>
+<li>these are due to reads with lower mapping/identity that were lost in the filtering process and affected some taxa more than others:
+<ul>
+<li>Streptococcus, Lactobacillus</li>
+</ul></li>
+</ul></li>
 </ul>
 <pre><code>Per-sample filtering summary:
-           before  after  removed  removed_frac_perc
+        before   after  removed  removed_frac_perc
 sample
-barcode01    5799   5041      758          13.071219
-barcode02    5795   5044      751          12.959448
-barcode03    5898   5124      774          13.123093
-barcode04    6764   5373     1391          20.564755
-barcode05    5555   4409     1146          20.630063
-barcode06    5201   4114     1087          20.899827
-barcode07    1950   1904       46           2.358974
-barcode08    1980   1940       40           2.020202
-barcode09    1878   1829       49           2.609159
-barcode10    2140   2091       49           2.289720
-barcode11    2345   2301       44           1.876333
-barcode12    2316   2257       59           2.547496
-barcode13    2195   2120       75           3.416856
-barcode14    2604   2504      100           3.840246
-barcode15    2443   2370       73           2.988129</code></pre>
-<p>OTU table without multi-mappers summarized on genus rank:</p>
-<div class="table-responsive">
-<table class="table-striped table-sm small caption-top table">
-<colgroup>
-<col style="width: 11%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 5%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>genus</th>
-<th>barcode01</th>
-<th>barcode02</th>
-<th>barcode03</th>
-<th>barcode04</th>
-<th>barcode05</th>
-<th>barcode06</th>
-<th>barcode07</th>
-<th>barcode08</th>
-<th>barcode09</th>
-<th>barcode10</th>
-<th>barcode11</th>
-<th>barcode12</th>
-<th>barcode13</th>
-<th>barcode14</th>
-<th>barcode15</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Flavobacterium</td>
-<td>33</td>
-<td>14</td>
-<td>11</td>
-<td>21</td>
-<td>27</td>
-<td>19</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr class="even">
-<td>Lactobacillus</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-</tr>
-<tr class="odd">
-<td>Lactococcus</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>193</td>
-<td>141</td>
-<td>181</td>
-<td>188</td>
-<td>108</td>
-<td>183</td>
-<td>2117</td>
-<td>2497</td>
-<td>2369</td>
-</tr>
-<tr class="even">
-<td>Microbacterium</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>2</td>
-<td>1</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr class="odd">
-<td>Pseudomonas</td>
-<td>1913</td>
-<td>1922</td>
-<td>1956</td>
-<td>2234</td>
-<td>1833</td>
-<td>1723</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr class="even">
-<td>Pseudoxanthomonas</td>
-<td>1</td>
-<td>7</td>
-<td>1</td>
-<td>3</td>
-<td>4</td>
-<td>2</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-<tr class="odd">
-<td>Streptococcus</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>1675</td>
-<td>1771</td>
-<td>1618</td>
-<td>1864</td>
-<td>2174</td>
-<td>2041</td>
-<td>0</td>
-<td>6</td>
-<td>0</td>
-</tr>
-<tr class="even">
-<td>unassigned</td>
-<td>10</td>
-<td>7</td>
-<td>8</td>
-<td>13</td>
-<td>7</td>
-<td>4</td>
-<td>15</td>
-<td>11</td>
-<td>15</td>
-<td>21</td>
-<td>24</td>
-<td>26</td>
-<td>64</td>
-<td>84</td>
-<td>57</td>
-</tr>
-</tbody>
-</table>
+h_bc01   14044    6425     7619          54.250926
+h_bc02   45221   39610     5611          12.407952
+h_bc03   32383    7915    24468          75.558163
+h_bc04   27122   26549      573           2.112676
+h_bc06   14610   12347     2263          15.489391
+h_bc08   43854   38784     5070          11.561089
+h_bc09   53161   18645    34516          64.927296
+h_bc10   48240   42296     5944          12.321725
+h_bc11   44836    8251    36585          81.597377
+h_bc12   27517   25874     1643           5.970854
+h_bc14   38320   27346    10974          28.637787
+h_bc16   42358   37363     4995          11.792341
+h_bc17   58831   15518    43313          73.622750
+h_bc18   35304   30739     4565          12.930546
+h_bc19   53345    8901    44444          83.314275
+h_bc20   28432   28141      291           1.023495
+h_bc23   15477   15334      143           0.923952
+s_bc01   35268   34886      382           1.083135
+s_bc02    2609    2564       45           1.724799
+s_bc03   41693   37460     4233          10.152783
+s_bc05   49539   48712      827           1.669392
+s_bc06   47569   46542     1027           2.158969
+s_bc07  101071   99105     1966           1.945167
+s_bc08   66445   65142     1303           1.961020
+s_bc09   45118   44523      595           1.318764
+s_bc11   36428   33385     3043           8.353464
+s_bc13   44303   43632      671           1.514570
+s_bc14   53944   52637     1307           2.422883
+s_bc15   90250   88482     1768           1.959003
+s_bc16  102220  100161     2059           2.014283
+s_bc17   42534   42083      451           1.060328
+s_bc19   38752   35183     3569           9.209847
+s_bc21   64051   54349     9702          15.147304
+s_bc22   48454   43754     4700           9.699922
+s_bc23   87391   69881    17510          20.036388</code></pre>
+</section>
+</section>
+<section id="analyse-paf-files-in-more-detail" class="level2">
+<h2 class="anchored" data-anchor-id="analyse-paf-files-in-more-detail">Analyse PAF files in more detail</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_paf_with_AS(paf_file):</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">    Reads a PAF file, keeping the first 12 standard columns and the AS:i: optional field.</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns a DataFrame with AS as a separate column.</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">    &quot;&quot;&quot;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> []</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(paf_file) <span class="im">as</span> f:</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> line <span class="kw">in</span> f:</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> line.startswith(<span class="st">&quot;#&quot;</span>) <span class="kw">or</span> <span class="kw">not</span> line.strip():</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            parts <span class="op">=</span> line.strip().split(<span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            <span class="co"># First 12 standard columns</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>            std_cols <span class="op">=</span> parts[:<span class="dv">12</span>]</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Look for AS:i:&lt;value&gt; in optional fields</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            AS <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> opt <span class="kw">in</span> parts[<span class="dv">12</span>:]:</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> opt.startswith(<span class="st">&quot;AS:i:&quot;</span>):</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>                    AS <span class="op">=</span> <span class="bu">int</span>(opt.split(<span class="st">&quot;:&quot;</span>)[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Append row (first 12 + AS)</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            rows.append(std_cols <span class="op">+</span> [AS])</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Create DataFrame</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    colnames <span class="op">=</span> [</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;qname&quot;</span>,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;qlen&quot;</span>,</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;qstart&quot;</span>,</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;qend&quot;</span>,</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;strand&quot;</span>,</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tname&quot;</span>,</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tlen&quot;</span>,</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tstart&quot;</span>,</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;tend&quot;</span>,</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;nmatch&quot;</span>,</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;alen&quot;</span>,</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;mapq&quot;</span>,</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;AS&quot;</span>,</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(rows, columns<span class="op">=</span>colnames)</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Define data paths</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>input_folder <span class="op">=</span> Path(<span class="st">&quot;data_analysis/practical_data//results/mapping_counts/&quot;</span>)</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>taxon_path <span class="op">=</span> Path(<span class="st">&quot;data/accession_to_genus.tsv&quot;</span>)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>stats_path <span class="op">=</span> Path(<span class="st">&quot;data_analysis/practical_data/results/seqkit/seqkit_chopper.tsv&quot;</span>)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>output_folder <span class="op">=</span> Path(<span class="st">&quot;data_analysis/practical_data/results&quot;</span>)</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>coverage_threshold <span class="op">=</span> <span class="fl">0.9</span> </span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>identity_threshold <span class="op">=</span> <span class="fl">0.9</span> </span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>mapq_threshold <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in data</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>taxon_df <span class="op">=</span> pd.read_csv(taxon_path, sep<span class="op">=</span><span class="st">&quot;</span><span class="ch">\t</span><span class="st">&quot;</span>)</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">&quot;tname&quot;</span> <span class="kw">not</span> <span class="kw">in</span> taxon_df.columns:</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>    taxon_df.columns <span class="op">=</span> [<span class="st">&quot;tname&quot;</span>, <span class="st">&quot;genus&quot;</span>]</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>all_files <span class="op">=</span> <span class="bu">list</span>(input_folder.glob(<span class="st">&quot;*.paf&quot;</span>))</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>dfs <span class="op">=</span> []</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a><span class="co"># On all files</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> paf_file <span class="kw">in</span> all_files:</span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>    barcode <span class="op">=</span> paf_file.stem</span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> read_paf_with_AS(paf_file)</span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">&quot;sample&quot;</span>] <span class="op">=</span> barcode</span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    dfs.append(df)</span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat(dfs, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.copy()</span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>numeric_cols <span class="op">=</span> [</span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;qlen&quot;</span>,</span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;qstart&quot;</span>,</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;qend&quot;</span>,</span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tlen&quot;</span>,</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tstart&quot;</span>,</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tend&quot;</span>,</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;nmatch&quot;</span>,</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;alen&quot;</span>,</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;mapq&quot;</span>,</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;AS&quot;</span>,</span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>df[numeric_cols] <span class="op">=</span> df[numeric_cols].<span class="bu">apply</span>(pd.to_numeric, errors<span class="op">=</span><span class="st">&quot;coerce&quot;</span>)</span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate query coverage and identity</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;qcov&quot;</span>] <span class="op">=</span> (df.qend <span class="op">-</span> df.qstart) <span class="op">/</span> df.qlen</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>df[<span class="st">&quot;identity&quot;</span>] <span class="op">=</span> df[<span class="st">&quot;nmatch&quot;</span>] <span class="op">/</span> df[<span class="st">&quot;alen&quot;</span>].replace(<span class="dv">0</span>, pd.NA)</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="co"># add tax</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>df_tax <span class="op">=</span> df.merge(taxon_df, left_on <span class="op">=</span> <span class="st">&quot;tname&quot;</span>, right_on <span class="op">=</span> <span class="st">&#39;tname&#39;</span>)</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="co"># remove dubs </span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>df_best <span class="op">=</span> df_tax.sort_values(</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;qname&quot;</span>, <span class="st">&quot;identity&quot;</span>, <span class="st">&quot;AS&quot;</span>, <span class="st">&quot;mapq&quot;</span>, <span class="st">&quot;qcov&quot;</span>, <span class="st">&quot;alen&quot;</span>],</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>        ascending<span class="op">=</span>[<span class="va">True</span>, <span class="va">False</span>, <span class="va">False</span>, <span class="va">False</span>, <span class="va">False</span>, <span class="va">False</span>],</span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>    ).drop_duplicates(<span class="st">&quot;qname&quot;</span>)</span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>strepto_data <span class="op">=</span> df_best[df_best[<span class="st">&#39;genus&#39;</span>] <span class="op">==</span> <span class="st">&#39;Streptococcus&#39;</span>]</span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a><span class="co"># Search individual seqa </span></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a><span class="co"># zcat results/chopper/*gz | grep -A2 &quot;af394f78-8fc9-4075-aad8-e8284c38071e&quot;</span></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a><span class="co"># grep &quot;0000521d-cfa9-4914-b76c-3ff885795a61&quot; results/mapping_counts/*paf</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The table above was generated by opening <code>otu_table_genus.tsv</code> in excel and converting input to markdown using <a href="https://tabletomarkdown.com">tabletomarkdown.com</a>.</p>
+<p>Notes:</p>
+<ul>
+<li>Streptomyces have a calculated coverage from 0.7 - 0.98 but the majority of hits have a coverage identity score of 0.8. Did some blastn searches
+<ul>
+<li>d3f03318-362f-4644-af15-c9c3c71a7083: 98% similar to Streptococcus salvarius ATCC 49124 (which makes sense with the calculated identity)</li>
+<li>000177cd-140f-4d44-87e5-d4e9db9a5c6f : 80% similar to stretococcus, blastn all hits to Blautia (at high id)</li>
+<li>00045f5e-d1fc-4b74-a827-834253091336: again, all hits to Blautia</li>
+</ul></li>
+</ul>
 </section>
-</section>
-<section id="analyse-count-table" class="level2">
-<h2 class="anchored" data-anchor-id="analyse-count-table">Analyse count table</h2>
-<p>For this analysis, `<code>otu_table_genus.tsv</code> was moved into <code>../data/</code> in order to interactively analyse the data inside this notebool</p>
+<section id="analyse-count-table-not-started-yet" class="level2">
+<h2 class="anchored" data-anchor-id="analyse-count-table-not-started-yet">Analyse count table (not started yet)</h2>
+<p>For this analysis, relevant data, such as the <code>otu_table_genus.tsv</code> was moved into <code>../data/</code> in order to interactively analyse the data inside this notebook</p>
 <section id="read-in-the-data" class="level3">
 <h3 class="anchored" data-anchor-id="read-in-the-data">Read in the data</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df_wide <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;data/otu_table_genus.tsv&quot;</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>mapping <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/barcode_to_sample.csv&quot;</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>expected <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/expected.csv&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;tidyverse&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;ggplot2&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;tibble&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;readr&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;purrr&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;stringr&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;forcats&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.6
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.1     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.2.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package &#39;patchwork&#39; was built under R version 4.4.3</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df_wide <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;data/otu_table_genus.tsv&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 9 Columns: 36
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: &quot;\t&quot;
+chr  (1): genus
+dbl (35): h_bc01, h_bc02, h_bc03, h_bc04, h_bc06, h_bc08, h_bc09, h_bc10, h_...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mapping <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/metadata.csv&quot;</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 48 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr (10): unique_barcode, barcode_well, student_group, groupID, microbes_use...
+dbl  (1): barcode
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#expected &lt;- read_csv(&quot;data/expected.csv&quot;)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="data-wrangling" class="level3">
 <h3 class="anchored" data-anchor-id="data-wrangling">Data wrangling</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df_wide <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&quot;barcode&quot;</span>),</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_to =</span> <span class="st">&quot;barcode&quot;</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_to =</span> <span class="st">&quot;counts&quot;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">merge</span>(df, mapping, <span class="at">by =</span> <span class="st">&quot;barcode&quot;</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">separate</span>(sample, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;culture&quot;</span>, <span class="st">&quot;replicate&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;_&quot;</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">environment =</span> <span class="fu">case_when</span>(</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">startsWith</span>(culture, <span class="st">&quot;H&quot;</span>) <span class="sc">~</span> <span class="st">&quot;human&quot;</span>,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">startsWith</span>(culture, <span class="st">&quot;S&quot;</span>) <span class="sc">~</span> <span class="st">&quot;soil&quot;</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> </span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(sample) <span class="sc">|&gt;</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">rel_abundance =</span> (counts <span class="sc">/</span> <span class="fu">sum</span>(counts)) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">genus =</span> <span class="fu">fct_reorder</span>(genus, rel_abundance, <span class="at">.fun =</span> sum)) <span class="sc">|&gt;</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">genus =</span> <span class="fu">fct_relevel</span>(genus, <span class="st">&quot;unassigned&quot;</span>, <span class="at">after =</span> <span class="dv">0</span>))</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>df_filtered <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(expected, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;culture&quot;</span>, <span class="st">&quot;genus&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(sample) <span class="sc">|&gt;</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">rel_abundance =</span> (counts <span class="sc">/</span> <span class="fu">sum</span>(counts)) <span class="sc">*</span> <span class="dv">100</span>) </span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df_wide <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">cols =</span> <span class="fu">contains</span>(<span class="st">&quot;bc&quot;</span>),</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_to =</span> <span class="st">&quot;barcode&quot;</span>,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_to =</span> <span class="st">&quot;counts&quot;</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">|&gt;</span> </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(barcode) <span class="sc">|&gt;</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">rel_abundance =</span> (counts <span class="sc">/</span> <span class="fu">sum</span>(counts)) <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">genus =</span> <span class="fu">fct_reorder</span>(genus, rel_abundance, <span class="at">.fun =</span> sum)) <span class="sc">|&gt;</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">genus =</span> <span class="fu">fct_relevel</span>(genus, <span class="st">&quot;unassigned&quot;</span>, <span class="at">after =</span> <span class="dv">0</span>))</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>df_all <span class="ot">&lt;-</span> <span class="fu">merge</span>(df, mapping, <span class="at">by.x =</span> <span class="st">&quot;barcode&quot;</span>, <span class="at">by.y =</span> <span class="st">&quot;unique_barcode&quot;</span>, <span class="at">all.y =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="co"># df_filtered &lt;- df |&gt;</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     inner_join(expected, by = c(&quot;culture&quot;, &quot;genus&quot;)) |&gt;</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sample) |&gt;</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="co">#     mutate(rel_abundance = (counts / sum(counts)) * 100) </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="plotting" class="level3">
 <h3 class="anchored" data-anchor-id="plotting">Plotting</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_filtered, <span class="fu">aes</span>(<span class="at">x =</span> sample, <span class="at">y =</span> rel_abundance, <span class="at">fill =</span> genus)) <span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.95</span>) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>)) ) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">&quot;Relative abundance (%)&quot;</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="st">&quot;Genus&quot;</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="sc">~</span>environment <span class="sc">+</span> culture, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()   </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df_h <span class="ot">&lt;-</span> df_all <span class="sc">|&gt;</span> <span class="fu">filter</span>(microbes_used <span class="sc">==</span> <span class="st">&quot;h&quot;</span>) </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>df_s <span class="ot">&lt;-</span> df_all <span class="sc">|&gt;</span> <span class="fu">filter</span>(microbes_used <span class="sc">==</span> <span class="st">&quot;s&quot;</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>sample_counts_h <span class="ot">&lt;-</span> df_h <span class="sc">|&gt;</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(barcode, community, d) <span class="sc">|&gt;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">sum</span>(counts), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>sample_counts_s <span class="ot">&lt;-</span> df_s <span class="sc">|&gt;</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(barcode, community, d) <span class="sc">|&gt;</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">total =</span> <span class="fu">sum</span>(counts), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_h, <span class="fu">aes</span>(<span class="at">x =</span> barcode, <span class="at">y =</span> rel_abundance)) <span class="sc">+</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> genus), <span class="at">width =</span> <span class="fl">0.95</span>) <span class="sc">+</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Paired&quot;</span>, <span class="at">na.translate =</span> <span class="cn">FALSE</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.12</span>)) ) <span class="sc">+</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> sample_counts_h, </span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> barcode, <span class="at">y =</span> <span class="dv">101</span>, <span class="at">label =</span> total),  <span class="co"># y = 1 puts labels above 100% stacked bars</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">angle =</span> <span class="dv">80</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Human-related strain interactions&quot;</span>,</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">&quot;Relative abundance (%)&quot;</span>,</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="st">&quot;Genus&quot;</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(community, d), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()    <span class="sc">+</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_s, <span class="fu">aes</span>(<span class="at">x =</span> barcode, <span class="at">y =</span> rel_abundance)) <span class="sc">+</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> genus), <span class="at">width =</span> <span class="fl">0.95</span>) <span class="sc">+</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">&quot;Paired&quot;</span>, <span class="at">na.translate =</span> <span class="cn">FALSE</span>, <span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">expand =</span> <span class="fu">expansion</span>(<span class="at">mult =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.12</span>)) ) <span class="sc">+</span></span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(</span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> sample_counts_s, </span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> barcode, <span class="at">y =</span> <span class="dv">101</span>, <span class="at">label =</span> total),  <span class="co"># y = 1 puts labels above 100% stacked bars</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">hjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">3</span>, <span class="at">angle =</span> <span class="dv">80</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Human-related strain interactions&quot;</span>,</span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">&quot;Relative abundance (%)&quot;</span>,</span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="st">&quot;Genus&quot;</span></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(community, d), <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_classic</span>()    <span class="sc">+</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust =</span> <span class="dv">1</span>)</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">guides</span>(<span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 7 rows containing missing values or values outside the scale range
+(`geom_col()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 7 rows containing missing values or values outside the scale range
+(`geom_text()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 6 rows containing missing values or values outside the scale range
+(`geom_col()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 6 rows containing missing values or values outside the scale range
+(`geom_text()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img role="img" src="data:image/png;base64,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" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
 </div>
 </section>
 </section>

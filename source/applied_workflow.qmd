@@ -157,7 +157,7 @@ percent_error <- P_error * 100
 message("Error rate: ", round(percent_error, 2), "%")
 ```
 
-This shows that with a mean Phred quality of 12, each base has roughly a 6% chance of being incorrect. For a 1,500 bp 16S amplicon we expect 150 errors per sequence with such a quality score. While Nanopore long reads are useful because they capture the full 16S rRNA gene, a high level of errors can make species-level identification unreliable.
+This shows that with a mean Phred quality of 12, each base has roughly a 6% chance of being incorrect. For a 1,500 bp 16S amplicon we expect 90 errors per sequence with such a quality score. While Nanopore long reads are useful because they capture the full 16S rRNA gene, a high level of errors can make species-level identification unreliable.
 
 To classify our filtered Nanopore reads, we use **Minimap2** to map each read against a reference database of 16S rRNA sequences from all the strains used in your lab experiments. Mapping identifies the reference sequence most similar to each read. The read is then aligned base-by-base to the corresponding reference sequence to check for exact matches or mismatches. Depending on the similarity, one or more hits may be recorded for each read.
 

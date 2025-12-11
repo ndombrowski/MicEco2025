@@ -396,6 +396,16 @@ python scripts/paf_to_matrix.py \
     -t data/accession_to_genus.tsv \
     -s results/seqkit/seqkit_chopper.tsv 
 
+# Test with single sample 
+mkdir test 
+cp results/mapping_counts/s_bc05.paf test/
+
+python scripts/paf_to_matrix.py \
+    -i test/ \
+    -o test/ \
+    -t data/accession_to_genus.tsv \
+    -s results/seqkit/seqkit_chopper.tsv 
+
 # Some more exploration of the paf file in py showed low sequence identity in blastn showed hits against Blautia 
 # In total we have 56,966 out of 825,090 reads that are unassigned (ca 6%)
 # To make it easier to explore this further, these hits were extracted into a fastq/fasta file
@@ -425,8 +435,18 @@ awk '
 grep -c ">" results/mapping_counts/bad_hits2.fasta
 
 # Blastn search against a random nr of sequences returns hits to
-# Blatula VII, Stapylococcus, Anaerostipes, Limosilactobacillus
+# Blautia VII, Stapylococcus, Anaerostipes, Limosilactobacillus 
+# Blautia IX Anaerostipes (bc09)
+# Blautia V, Limosilactobacillus III, Anaerostipes, Bacteroidetes (bc11)
 seqtk sample results/mapping_counts/bad_hits2.fasta 10 |  seqtk seq -l 100  > random10.fasta
+
+awk '/^>.*barcode09/{p=1; print; next} p{if (/^>/){p=0} else print}' results/mapping_counts/bad_hits2.fasta \
+  | seqtk sample - 10 \
+  | seqtk seq -l 100 > random10_barcode09.fasta
+
+awk '/^>.*barcode11/{p=1; print; next} p{if (/^>/){p=0} else print}' results/mapping_counts/bad_hits2.fasta \
+  | seqtk sample - 10 \
+  | seqtk seq -l 100 > random10_barcode11.fasta
 ```
 
 Notes: 
@@ -537,10 +557,10 @@ def read_paf_with_AS(paf_file):
     return df
 
 # Define data paths
-input_folder = Path("../analyse_practical_data/results/mapping_counts/")
+input_folder = Path("data_analysis/practical_data//results/mapping_counts/")
 taxon_path = Path("data/accession_to_genus.tsv")
-stats_path = Path("data_analysis/results/seqkit/seqkit_chopper.tsv")
-output_folder = Path("data_analysis/results")
+stats_path = Path("data_analysis/practical_data/results/seqkit/seqkit_chopper.tsv")
+output_folder = Path("data_analysis/practical_data/results")
 coverage_threshold = 0.9 
 identity_threshold = 0.9 
 mapq_threshold = 30
@@ -607,16 +627,18 @@ Notes:
 
 ## Analyse count table  (not started yet)
 
-For this analysis, ``otu_table_genus.tsv` was moved into `../data/` in order to interactively analyse the data inside this notebool
+For this analysis,  relevant data, such as the `otu_table_genus.tsv` was moved into `../data/` in order to interactively analyse the data inside this notebook
 
 ### Read in the data
 
 ```{r}
 library(tidyverse)
+library(patchwork) 
 
 df_wide <- read_tsv("data/otu_table_genus.tsv")
-mapping <- read_csv("data/barcode_to_sample.csv")
-expected <- read_csv("data/expected.csv")
+mapping <- read_csv("data/metadata.csv") 
+
+#expected <- read_csv("data/expected.csv")
 ```
 
 ### Data wrangling
@@ -624,52 +646,86 @@ expected <- read_csv("data/expected.csv")
 ```{r}
 df <- df_wide |>
     pivot_longer(
-        cols = starts_with("barcode"),
+        cols = contains("bc"),
         names_to = "barcode",
         values_to = "counts"
     )
 
-df <- merge(df, mapping, by = "barcode")
-
-df <- df |>
-    separate(sample, into = c("culture", "replicate"), sep = "_", remove = FALSE) |>
-    mutate(
-        environment = case_when(
-            startsWith(culture, "H") ~ "human",
-            startsWith(culture, "S") ~ "soil"
-        )
-    )
-
 df <- df |> 
-    group_by(sample) |>
+    group_by(barcode) |>
     mutate(rel_abundance = (counts / sum(counts)) * 100) |>
     ungroup() |>
     mutate(genus = fct_reorder(genus, rel_abundance, .fun = sum)) |>
     mutate(genus = fct_relevel(genus, "unassigned", after = 0))
 
-df_filtered <- df |>
-    inner_join(expected, by = c("culture", "genus")) |>
-    group_by(sample) |>
-    mutate(rel_abundance = (counts / sum(counts)) * 100) 
+df_all <- merge(df, mapping, by.x = "barcode", by.y = "unique_barcode", all.y = TRUE) 
 
-head(df)
+# df_filtered <- df |>
+#     inner_join(expected, by = c("culture", "genus")) |>
+#     group_by(sample) |>
+#     mutate(rel_abundance = (counts / sum(counts)) * 100) 
+
 ```
 
 
 ### Plotting
 
 ```{r}
-p <- ggplot(df_filtered, aes(x = sample, y = rel_abundance, fill = genus)) +
-    geom_col(width = 0.95) +
-    scale_fill_brewer(palette = "Dark2", direction = -1) +
-    scale_y_continuous(expand = expansion(mult = c(0, 0.05)) ) +
+df_h <- df_all |> filter(microbes_used == "h") 
+df_s <- df_all |> filter(microbes_used == "s")
+
+sample_counts_h <- df_h |>
+    group_by(barcode, community, d) |>
+    summarise(total = sum(counts), .groups = "drop")
+
+sample_counts_s <- df_s |>
+    group_by(barcode, community, d) |>
+    summarise(total = sum(counts), .groups = "drop")
+
+
+p1 <- ggplot(df_h, aes(x = barcode, y = rel_abundance)) +
+    geom_col(aes(fill = genus), width = 0.95) +
+    scale_fill_brewer(palette = "Paired", na.translate = FALSE, direction = -1) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12)) ) +
+    geom_text(
+    data = sample_counts_h, 
+    aes(x = barcode, y = 101, label = total),  # y = 1 puts labels above 100% stacked bars
+    vjust = 0, hjust = 0, size = 3, angle = 80
+    ) +
     labs(
+        title = "Human-related strain interactions",
         y = "Relative abundance (%)",
         x = "",
         fill = "Genus"
     ) +
-    facet_grid(~environment + culture, scales = "free") +
-    theme_classic()   
+    facet_grid(cols = vars(community, d), scales = "free") +
+    theme_classic()    +
+    theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+    ) +
+    guides(fill = guide_legend(reverse = TRUE))
 
-p
+p2 <- ggplot(df_s, aes(x = barcode, y = rel_abundance)) +
+    geom_col(aes(fill = genus), width = 0.95) +
+    scale_fill_brewer(palette = "Paired", na.translate = FALSE, direction = -1) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.12)) ) +
+    geom_text(
+    data = sample_counts_s, 
+    aes(x = barcode, y = 101, label = total),  # y = 1 puts labels above 100% stacked bars
+    vjust = 0, hjust = 0, size = 3, angle = 80
+    ) +
+    labs(
+        title = "Human-related strain interactions",
+        y = "Relative abundance (%)",
+        x = "",
+        fill = "Genus"
+    ) +
+    facet_grid(cols = vars(community, d), scales = "free") +
+    theme_classic()    +
+    theme(
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)
+    ) +
+    guides(fill = guide_legend(reverse = TRUE))
+
+p1 / p2
 ```

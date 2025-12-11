@@ -346,7 +346,7 @@ Also, NEVER run `rm -r` or `rm -rf` on the root `/` folder or any important path
 Download another fasta file:
 
 - Download the fasta file from GCF_000714595 with wget
-    - Use this path `https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/LjRoot303.fasta.gz`
+    - Use this path `https://github.com/ndombrowski/MicEco2025/raw/refs/heads/main/data/GCF_000714595.fasta.gz`
 - Make sure that the new file stored in the data folder
 - Check the file size (hint: use the -h option with ls)
 

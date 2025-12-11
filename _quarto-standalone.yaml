@@ -1,5 +1,6 @@
 # _quarto-standalone.yml
 project:
+  execute-dir: project
   output-dir: standalone
   resources: "!slides"
 
